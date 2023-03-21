@@ -1,5 +1,0 @@
-/Users/wenya589/mana/Github Repos/Pico-Backscatter/receiver-CC2500/build/elf2uf2/CMakeFiles/elf2uf2.dir
-/Users/wenya589/mana/Github Repos/Pico-Backscatter/receiver-CC2500/build/elf2uf2/CMakeFiles/edit_cache.dir
-/Users/wenya589/mana/Github Repos/Pico-Backscatter/receiver-CC2500/build/elf2uf2/CMakeFiles/rebuild_cache.dir
-/Users/wenya589/mana/Github Repos/Pico-Backscatter/receiver-CC2500/build/elf2uf2/boot_uf2_headers/CMakeFiles/edit_cache.dir
-/Users/wenya589/mana/Github Repos/Pico-Backscatter/receiver-CC2500/build/elf2uf2/boot_uf2_headers/CMakeFiles/rebuild_cache.dir
