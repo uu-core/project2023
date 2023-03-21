@@ -12,6 +12,7 @@ An educational project on backscatter using Raspberry Pi Pico
 - `carrier-receiver-baseband` integrates all components into one setup: the Pico generates the baseband, uses one Mikroe-1435 (CC2500) to generate a carrier and a second Mikroe-1435 (CC2500) to receive the backscattered signal.
 - `stats` contains the system evaluation script
 - 'project_pico_libs' contains the libs for all projects.
+- 'xxx'
 
 ## Installation
 A number of pre-requisites are needed to work with this repo:
