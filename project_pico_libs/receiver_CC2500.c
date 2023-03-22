@@ -10,6 +10,7 @@
  *
  * The example uses SPI port 0.
  * The stdout has been directed to USB.
+ * To reconfigure the receiver see ../receiver-CC2500/README.md
  *
  */
 

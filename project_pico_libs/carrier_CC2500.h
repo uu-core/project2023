@@ -9,6 +9,7 @@
  * 
  * The example uses SPI port 0. 
  * The stdout has been directed to USB.
+ * To reconfigure the carrier frequency see ../carrier-CC2500/README.md
  * 
  */
 
