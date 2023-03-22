@@ -3,15 +3,15 @@ An educational project on backscatter using Raspberry Pi Pico
 
 ## Repo Organization
 - `hardware` contains the hardware design with further description and explanation.
+- `project_pico_libs` contains the libs for all projects using the RPI Pico (carrier/receiver/baseband).
 - `baseband` contains a 2-FSK baseband code using Pico PIO together with a generator script, its description and some exercise questions.
-- `project_pico_libs` contains the libs for all projects.
-- `carrier-CC2500` contains a carrier generator using the Mikroe-1435 (CC2500) on the Pico
-- `receiver-CC2500` contains a receiver using the Mikroe-1435 (CC2500) on the Pico
-- `carrier-Firefly` contains the configuration guidance for home setup with zolertia firefly as carrier
+- `carrier-CC2500` contains a carrier generator using the Mikroe-1435 (CC2500) on the Pico.
+- `receiver-CC2500` contains a receiver using the Mikroe-1435 (CC2500) on the Pico.
+- `carrier-Firefly` contains the configuration guidance for home setup with zolertia firefly as carrier.
 - `carrier-characteristics` contains a measurement to estimate the typical carrier bandwidth.
-- `carrier_receiver-CC1312` contains the configuration guidance for lab setup with CC1312 as carrier and/or receiver
+- `carrier_receiver-CC1312` contains the configuration guidance for lab setup with CC1312 as carrier and/or receiver.
 - `carrier-receiver-baseband` integrates all components into one setup: the Pico generates the baseband, uses one Mikroe-1435 (CC2500) to generate a carrier and a second Mikroe-1435 (CC2500) to receive the backscattered signal.
-- `stats` contains the system evaluation script
+- `stats` contains the system evaluation script.
 
 ## Installation
 A number of pre-requisites are needed to work with this repo:
