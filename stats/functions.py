@@ -76,16 +76,6 @@ def replace_seq(df, MAX_SEQ):
         df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
     return df
 
-# # 16-bit random number generator
-# seed  = 0xabcd # global seed
-# def rnd():
-#     global seed
-#     A1 = 1664525
-#     C1 = 1013904223
-#     RAND_MAX1 = 0xFFFFFFFF
-#     seed = ((seed * A1 + C1) & RAND_MAX1)
-#     return seed
-
 def rnd(seed):
     A1 = 1664525
     C1 = 1013904223
@@ -105,17 +95,6 @@ def data(seed):
         u2 = np.float64(seed/0xFFFFFFFF)
     tmp = 0x7FF * np.float64(math.sqrt(np.float64(-2.0 * np.float64(math.log(u1)))))
     return np.trunc(max([0,min([0x3FFFFF,np.float64(np.float64(tmp * np.float64(math.cos(np.float64(two_pi * u2)))) + 0x1FFF)])])), seed
-
-# # returns compressible 16-bit data sample
-# def data():
-#     two_pi = np.float64(2.0 * np.float64(math.pi))
-#     u1 = 0
-#     u2 = 0
-#     while(u1 == 0 or u2 == 0):
-#         u1 = np.float64((rnd())/0xFFFFFFFF)
-#         u2 = np.float64((rnd())/0xFFFFFFFF)
-#     tmp = 0x7FF * np.float64(math.sqrt(np.float64(-2.0 * np.float64(math.log(u1)))))
-#     return np.trunc(max([0,min([0x3FFFFF,np.float64(np.float64(tmp * np.float64(math.cos(np.float64(two_pi * u2)))) + 0x1FFF)])]))
 
 # generate the correct file for BER calculation
 TOTAL_NUM_16RND = 512*40 # generate a 40MB file, in case transmit too many data
@@ -137,7 +116,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     packets = len(df)
-    
+
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
@@ -145,11 +124,11 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
-    
+
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    last_pseudoseq = 0 # record the previous 
+    last_pseudoseq = 0 # record the previous
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
@@ -160,11 +139,11 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
         error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
         last_pseudoseq = pseudoseq
-        
+
     # total bit error counter initialization
     counter = 0
     bit_error = []
-    # for the lost packet 
+    # for the lost packet
     for l in error.bit_error_tmp:
         if l == []:
             tmp = PACKET_LEN*8
@@ -180,7 +159,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     print(error)
     return counter / file_size, error, file_content
 
-# plot radar chart 
+# plot radar chart
 def radar_plot(metrics):
     categories = ['Time', 'Reliability', 'Distance']
     system_ref = [62.321888, 0.201875*100, 39.956474923886844]
