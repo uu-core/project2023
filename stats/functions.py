@@ -149,17 +149,17 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    last_pesudoseq = 0 # record the previous 
+    last_pseudoseq = 0 # record the previous 
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
         error_idx = error.index[error.seq == df.seq[idx]][0]
         # compute the bit errors
         payload = parse_payload(df.payload[idx])
-        pesudoseq = int(((payload[0]<<8) - 0) + payload[1])
-        if pesudoseq not in file_content.index: pesudoseq = last_pesudoseq + PACKET_LEN
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pesudoseq, 'data'], PACKET_LEN=PACKET_LEN))
-        last_pesudoseq = pesudoseq
+        pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
+        if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
+        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
+        last_pseudoseq = pseudoseq
         
     # total bit error counter initialization
     counter = 0

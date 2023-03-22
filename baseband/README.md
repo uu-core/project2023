@@ -17,6 +17,8 @@ The stdout (printf) has been directed to USB.
 <br> **RX: CC1312**
 <br> | 0xaa 0xaa 0xaa 0xaa | 0x93 0x0b 0x51 0xde | 0x00 | 0x00 |
 <br> Please change the Macro variable RECEIVER, depending on your receiver setup.
+<br>**Random Payload structure**
+<br>| Pseudo sequence {2B} | random number {Max. 58B, which is equal to 29*(16-bit random number)}
 
 ## Usage of the PIO generation script
 
