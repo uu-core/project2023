@@ -1,19 +1,11 @@
 # Pico-Backscatter: frontend
 The implementation for the backscatter tag frontend on a four-layer FR4 PCB with 1oz copper thickness and a spacing of 0.2mm between the top and first inner layer for 50 ohm impedance matching.
 
-The schematic and PCB layout files are in the format of KiCad 6.0 and the generated Gerber-files were manufactured and assembled by Makerfabs.
-
-### Overview of main files and folders
-- `backscatter-tag.kicad_pro` main project file for KiCad 6.0
-- `backscatter-tag-Gerber/` generated and manufactured gerber files
-- `footprints/backscatter.pretty/` footprint library. If KiCad should complain about not finding the used footprints for this project - add this folder as footprint library. This should happen automatically through the file `fp-lib-table`.
-- `symbols/` symbol library. If KiCad should complain about not finding the used symbols for this project - add the contained file as symbol library.  This should happen automatically through the file  `sym-lib-table`.
-
 ### Usage notes
-- The board can be used with the Maker Pi Pico (bottom connectors) or the Rasperry Pi Pico (top connectors). _Do not connect a RPI Pico and Maker Pi Pico at the same time._
+- The board can be used with the Maker Pi Pico (bottom connectors) or the Raspberry Pi Pico (top connectors). _Do not connect a RPI Pico and Maker Pi Pico at the same time._
 - For power measurements, a power profiler can be connected to J5. Remember that the board should not be powered by two sources at the same time. Therefore, _unplug the USB from the RPI Pico before using an external power supply, such as a power profiler_. Just in case that two supplies get connected at the same time, they are be protected by a schottky diode. Therefore the board is supplied with about 0.25V less than provided (the voltage drop can be avoided by: supplying the voltage directly to the VSYS pin rather than J5, which avoids the diode and is therefore unprotected. Another alternative is to replace the diode with a mosfet in standard reverse voltage protection configuration).
 - The board provides an interface to four SMA connectors for backscattering signals. This enables the use of antenna arrays and the resulting directivity/gain of different configurations can be generated using [Matlab's Antenna array design tool](https://se.mathworks.com/help/antenna/gs/design-and-analysis-using-antenna-array-designer-app.html).
-- The board provides two connections for the ccRF click (Mikroe-1435 with the CC2500). They can be used as carrier generator and receiver.
+- The board provides two connections for the ccRF click boards (Mikroe-1435 with the CC2500). They can be used as carrier generator and receiver.
 - Notice that you can simulate a larger distance to the carrier by decreasing the transmission power in a static setup.
 
 ### Technical notes

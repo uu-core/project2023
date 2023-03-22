@@ -3,6 +3,9 @@
 Receiver example using the Mikroe-1435 (CC2500) on the Pico.
 The stdout (printf) has been directed to USB.
 
+## Backscatter Tag Configuration
+Please change the Macro variable RECEIVER to 2500.
+
 ### Radio wiring information
 
 The example here uses SPI 0.
