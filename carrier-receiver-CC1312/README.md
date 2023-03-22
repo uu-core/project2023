@@ -21,7 +21,7 @@ In the control panel, choose `2.4G frequency band`, `Packet RX`
 <br>`RX Filter BW`: $B_{R}$
 <br>Then click `Start`
 
-## Todo
+## Todo add
 
 ## Backscatter Tag Configuration
 Please change the Macro variable RECEIVER to 1352.
