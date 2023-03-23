@@ -1,3 +1,10 @@
+#!/Users/wenya589/.pyenv/shims/python
+#
+# Copyright 2023, 2023 Wenqing Yan <yanwenqingindependent@gmail.com>
+#
+# This file is part of the pico backscatter project
+# Analyze the communication systme performance with the metrics (time, reliability and distance).
+
 from io import StringIO
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,10 +35,9 @@ def readfile(filename):
     # covert to time data type
     df.time_rx = df.time_rx.str.rstrip().str.lstrip()
     df.time_rx = pd.to_datetime(df.time_rx, format='%H:%M:%S.%f')
-    #df.time_rx = df.time_rx.apply(lambda x: x.strftime("%H:%M:%S.%f"))
     for i in range(len(df)):
         df.iloc[i,0] = df.iloc[i,0].strftime("%H:%M:%S.%f")
-    # parse the payload
+    # parse the payload to seq and payload
     df.frame = df.frame.str.rstrip().str.lstrip()
     df = df[df.frame.str.contains("packet overflow") == False]
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
@@ -52,7 +58,7 @@ def parse_payload(payload_string):
 def popcount(n):
     return bin(n).count("1")
 
-
+# compare the received frame and transmitted frame and compute the number of bit errors
 def compute_bit_errors(payload, sequence, PACKET_LEN=32):
     return sum(
         map(
@@ -64,7 +70,7 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32):
         )
     )
 
-# deal with seq field overflow problem, generated actual sequence number
+# deal with seq field overflow problem, generate ground-truth sequence number
 def replace_seq(df, MAX_SEQ):
     df['new_seq'] = None
     count = 0
@@ -76,6 +82,7 @@ def replace_seq(df, MAX_SEQ):
         df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
     return df
 
+# a 8-bit random number generator with uniform distribution
 def rnd(seed):
     A1 = 1664525
     C1 = 1013904223
@@ -83,7 +90,7 @@ def rnd(seed):
     seed = ((seed * A1 + C1) & RAND_MAX1)
     return seed
 
-# returns compressible 16-bit data sample
+# a 16-bit generator returns compressible 16-bit data sample
 def data(seed):
     two_pi = np.float64(2.0 * np.float64(math.pi))
     u1 = 0
@@ -96,8 +103,8 @@ def data(seed):
     tmp = 0x7FF * np.float64(math.sqrt(np.float64(-2.0 * np.float64(math.log(u1)))))
     return np.trunc(max([0,min([0x3FFFFF,np.float64(np.float64(tmp * np.float64(math.cos(np.float64(two_pi * u2)))) + 0x1FFF)])])), seed
 
-# generate the correct file for BER calculation
-TOTAL_NUM_16RND = 512*40 # generate a 40MB file, in case transmit too many data
+# generate the transmitted file for comparison
+TOTAL_NUM_16RND = 512*40 # generate a 40MB file, in case transmit too many data (larger than required 2MB)
 def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     LOW_BYTE = (1 << 8) - 1
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
@@ -124,23 +131,25 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
-
+    # compute in total transmitted file size
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    last_pseudoseq = 0 # record the previous
+    last_pseudoseq = 0 # record the previous pseudoseq
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
         error_idx = error.index[error.seq == df.seq[idx]][0]
-        # compute the bit errors
+        #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
+        # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
+        # compute the bit errors
         error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
         last_pseudoseq = pseudoseq
 
-    # total bit error counter initialization
+    # initialize the total bit error counter for entire file
     counter = 0
     bit_error = []
     # for the lost packet
@@ -155,7 +164,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # update the bit_error column
     error['bit_error'] = bit_error
     # error = error.drop(columns='bit_error_tmp')
-    print("Error statistics dataframe")
+    print("Error statistics dataframe is:")
     print(error)
     return counter / file_size, error, file_content
 
@@ -166,9 +175,10 @@ def radar_plot(metrics):
     system = [metrics[0], metrics[1], metrics[2]]
 
     label_loc = np.linspace(start=0.5 * np.pi, stop=11/6 * np.pi, num=len(categories))
-
     plt.figure(figsize=(8, 8))
     plt.subplot(polar=True)
+
+    # please keep the reference for your plot, we will update the reference after each SR session
     plt.plot(np.append(label_loc, (0.5 * np.pi)), system_ref+[system_ref[0]], label='Reference', color='grey')
     plt.fill(label_loc, system_ref, color='grey', alpha=0.25)
 
