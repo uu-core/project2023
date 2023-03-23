@@ -17,11 +17,11 @@ In the control panel, choose `2.4G frequency band`, `Packet RX`
 <br>`Seq. Number Included in Payload`: uncheck
 <br>`Base Freqeuncy`: $f_{R}$
 <br>`Data Rate`: $R_{b}$
-<br>`Deviation`: $\Delta_f$
+<br>`Deviation`: $\delta_f$
 <br>`RX Filter BW`: $B_{R}$
 <br>Then click `Start`
 
-## Todo add
+## Todo: add a annotated screenshot of the SmartRF configuration
 
 ## Backscatter Tag Configuration
 Please change the Macro variable RECEIVER to 1352.
