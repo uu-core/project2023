@@ -85,6 +85,7 @@ int main() {
     event_t evt = no_evt;
     Packet_status status;
     uint8_t rx_buffer[RX_BUFFER_SIZE];
+    uint64_t time_us;
     setupReceiver();
     RX_start_listen();
     printf("started listening\n");
@@ -100,7 +101,7 @@ int main() {
             break;
             case rx_deassert_evt:
                 // finished receiving
-                uint64_t time_us = to_us_since_boot(get_absolute_time());
+                time_us = to_us_since_boot(get_absolute_time());
                 status = readPacket(rx_buffer);
                 printPacket(rx_buffer,status,time_us);
                 RX_start_listen();
