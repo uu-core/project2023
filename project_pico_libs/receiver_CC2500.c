@@ -233,10 +233,14 @@ void set_datarate(uint32_t r_data)
     // see datasheet, section 12
     uint8_t drate_e = log2(r_data * pow(2,20) / F_XOSC);
     uint8_t drate_m = (r_data * pow(2,28)) / (F_XOSC * pow(2,drate_e)) - 256;
-
+    
     // uint32_t r_data_calculated = (256+drate_m)*pow(2,drate_e) * F_XOSC / pow(2,28);
     // printf("r_data: %u %u | %u\n", drate_e, drate_m, r_data_calculated);
-
+    
+    // MDMCFG3, MDMCFG3
+    // WARNING: overwrites data bandwidth!!!
+    RF_setting set[2] = {{.address = 0x10, .value = ((2 & 0x03) << 6) + ((0 & 0x03) << 4) + (drate_e & 0x0f)}, {.address = 0x11, .value = drate_m}};
+    write_registers_rx(set,2);
 }
 
 void set_filter_bandwidth(uint32_t bw)
@@ -244,9 +248,15 @@ void set_filter_bandwidth(uint32_t bw)
     // see datasheet, section 13
     uint8_t chanbw_e = log2(F_XOSC/(pow(2,5) * bw)/log2(2));
     uint8_t chanbw_m = F_XOSC/(8 * bw * pow(2,chanbw_e)) - 4;
-
+    
     // uint32_t bw_calculated = F_XOSC / (8*(4+chanbw_m)*pow(2,chanbw_e));
     // printf("bw: %u %u | %u\n", chanbw_e, chanbw_m, bw_calculated);
+    
+    // MDMCFG3
+    // WARNING: overwrites data drate_e!!!
+    RF_setting set = {.address = 0x10, .value = ((chanbw_e & 0x03) << 6) + ((chanbw_m & 0x03) << 4) + 12};
+
+    write_register_rx(set);
 }
 
 void set_frequency_deviation(uint32_t f_dev)
@@ -258,6 +268,8 @@ void set_frequency_deviation(uint32_t f_dev)
     // uint32_t f_dev_calculated = F_XOSC * (8 + deviation_m+1)*pow(2,deviation_e) / pow(2,17);
     // printf("f_dev: %u %u | %u\n", deviation_e, deviation_m, f_dev_calculated);
 
+    RF_setting set = {.address = 0x15, .value = ((deviation_e & 0x07) << 4) + (deviation_m & 0x07)};
+    write_register_rx(set);
 }
 
 void set_frecuency(uint32_t f_carrier)
@@ -273,4 +285,15 @@ void set_frecuency(uint32_t f_carrier)
     // printf("debug freq %u\n", freq);
     // printf("debug m %u\n", channspc_m);
     // printf("new f_carrier %u\n", f_carrier_calculated);
+    
+    // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
+    RF_setting set[6] = {
+        {.address = 0x0A, .value = channel},
+        {.address = 0x0D, .value = (freq & 0x003f0000 >> 16) + 0x40},
+        {.address = 0x0E, .value = (freq & 0x0000ff00 >> 8)},
+        {.address = 0x0F, .value = (freq & 0x000000ff)},
+        {.address = 0x13, .value = ((2 & 0x07) << 4) + (channspc_e & 0x03)},
+        {.address = 0x14, .value = channspc_m}
+    };
+    write_registers_rx(set,2);
 }
