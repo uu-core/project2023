@@ -78,6 +78,8 @@ int main() {
 
     /* Start carrier */
     setupCarrier();
+    set_frecuency_tx(2450000000);
+    sleep_ms(1);
     startCarrier();
     printf("started carrier\n");
 
@@ -87,6 +89,11 @@ int main() {
     uint8_t rx_buffer[RX_BUFFER_SIZE];
     uint64_t time_us;
     setupReceiver();
+    set_frecuency_rx(2456596924);
+    set_frequency_deviation_rx(355468);
+    set_datarate_rx(98587);
+    set_filter_bandwidth_rx(812500);
+    sleep_ms(1);
     RX_start_listen();
     printf("started listening\n");
     bool rx_ready = true;

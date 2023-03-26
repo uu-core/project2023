@@ -140,7 +140,7 @@ void stopCarrier(){
     write_strobe_tx(SIDLE); // stop carrier (enter IDLE mode with command strobe: SIDLE)
 }
 
-void set_frecuency_carrier(uint32_t f_carrier)
+void set_frecuency_tx(uint32_t f_carrier)
 {
 // Test read_register_rx
 //    RF_setting a = {.address = 0x13, .value = 0xab};
@@ -157,8 +157,8 @@ void set_frecuency_carrier(uint32_t f_carrier)
 
     // print new value
     uint32_t f_carrier_calculated = F_XOSC * (freq + channel*(256+channspc_m)/pow(2,2)) /pow(2,16);
-    printf("set carrier f_carrier %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
-    
+    printf("set tx f_carrier [%u %u %u %u] %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
+
     // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
     RF_setting mdmcfg1 = read_register_tx(0x13);
     RF_setting set[6] = {
