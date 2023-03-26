@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "pico/binary_info.h"
 #include "hardware/spi.h"
@@ -105,6 +106,15 @@ void write_registers_tx(RF_setting* sets, uint8_t len) {
     cs_deselect_tx();
 }
 
+RF_setting read_register_tx(uint8_t address) {
+    uint8_t buf[2] = {0, 0};
+    cs_select_rx();
+    spi_read_blocking(RADIO_SPI, address+0x80, buf, 2);
+    cs_deselect_rx();
+    sleep_ms(1);
+    return (RF_setting){.address = address, .value = buf[1]};
+}
+
 void setTXpower(RF_power setting) {
     uint8_t buf[3];
     cs_select_tx();
@@ -128,4 +138,37 @@ void startCarrier(){
 
 void stopCarrier(){
     write_strobe_tx(SIDLE); // stop carrier (enter IDLE mode with command strobe: SIDLE)
+}
+
+void set_frecuency_carrier(uint32_t f_carrier)
+{
+// Test read_register_rx
+//    RF_setting a = {.address = 0x13, .value = 0xab};
+//    write_register_rx(a);
+//    RF_setting b = read_register_rx(0x13);
+//    printf("debug return %02x\n", b.value);
+    
+    // see datasheet, section 21
+    // approach: chose start frequency as close as possible to f_carrier, correct with channel
+    uint32_t freq = floor(f_carrier * pow(2,16) / F_XOSC);
+    uint8_t channel = 0;
+    uint8_t channspc_e = 0;
+    uint8_t channspc_m = 0; //floor((f_carrier * pow(2,16) / F_XOSC - freq - pow(2,6)) * pow(2,2));
+
+    // print new value
+    uint32_t f_carrier_calculated = F_XOSC * (freq + channel*(256+channspc_m)/pow(2,2)) /pow(2,16);
+    printf("set carrier f_carrier %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
+    
+    // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
+    RF_setting mdmcfg1 = read_register_tx(0x13);
+    RF_setting set[6] = {
+        {.address = 0x0a, .value = channel},
+        {.address = 0x0d, .value = ((freq & 0x007f0000) >> 16)},
+        {.address = 0x0e, .value = ((freq & 0x0000ff00) >> 8)},
+        {.address = 0x0f, .value = (freq & 0x000000ff)},
+        {.address = 0x13, .value = (mdmcfg1.value & 0xf0) + (channspc_e & 0x03)},
+        {.address = 0x14, .value = channspc_m}
+    };
+    //printf("debug %02x %02x %02x %02x %02x %02x\n", set[0].value, set[1].value, set[2].value, set[3].value, set[4].value, set[5].value);
+    write_registers_rx(set,6);
 }

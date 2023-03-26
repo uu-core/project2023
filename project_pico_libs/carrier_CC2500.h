@@ -73,4 +73,7 @@ void startCarrier();
 
 void stopCarrier();
 
+//set carrier frequency [Hz]
+void set_frecuency_rx(uint32_t f_carrier);
+
 #endif
