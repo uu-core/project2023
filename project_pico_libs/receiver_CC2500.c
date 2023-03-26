@@ -116,13 +116,25 @@ void write_registers_rx(RF_setting* sets, uint8_t len) {
 }
 
 RF_setting read_register_rx(uint8_t address) {
-    uint8_t buf[2];
+    uint8_t buf[2] = {0, 0};
     cs_select_rx();
-    spi_read_blocking(RADIO_SPI, address, buf, 2);
+    spi_read_blocking(RADIO_SPI, address+0x80, buf, 2);
     cs_deselect_rx();
     sleep_ms(1);
-    printf("debug read_register_rx %02x %02x\n", address, buf[1]);
     return (RF_setting){.address = address, .value = buf[1]};
+}
+
+void print_registers_rx() {
+    uint8_t buf[2] = {0, 0};
+    uint8_t r = 0;
+    for (r=0x00; r<=0x2e; r++)
+    {
+        cs_select_rx();
+        spi_read_blocking(RADIO_SPI, r+0x80, buf, 2);
+        cs_deselect_rx();
+        sleep_ms(1);
+        printf("register %02x: %02x\n", r, buf[1]);
+    }
 }
 
 /* ISR */
@@ -246,11 +258,14 @@ void set_datarate(uint32_t r_data)
     
     // print new value
     uint32_t r_data_calculated = (256+drate_m)*pow(2,drate_e) * F_XOSC / pow(2,28);
-    printf("r_data: %u %u | %u\n", drate_e, drate_m, r_data_calculated);
+    printf("set r_data: [%u %u] %u\n", drate_e, drate_m, r_data_calculated);
     
-    // MDMCFG3, MDMCFG3
+    // MDMCFG4, MDMCFG3
     RF_setting mdmcfg3 = read_register_rx(0x10);
-    RF_setting set[2] = {{.address = 0x10, .value = mdmcfg3.value + (drate_e & 0x0f)}, {.address = 0x11, .value = drate_m}};
+    RF_setting set[2] = {
+        {.address = 0x10, .value = (mdmcfg3.value & 0xf0) + (drate_e & 0x0f)},
+        {.address = 0x11, .value = drate_m}
+    };
     write_registers_rx(set,2);
 }
 
@@ -262,7 +277,7 @@ void set_filter_bandwidth(uint32_t bw)
     
     // print new value
     uint32_t bw_calculated = F_XOSC / (8*(4+chanbw_m)*pow(2,chanbw_e));
-    printf("bw: %u %u | %u\n", chanbw_e, chanbw_m, bw_calculated);
+    printf("set bw: [%u %u] %u\n", chanbw_e, chanbw_m, bw_calculated);
     
     // MDMCFG3
     RF_setting mdmcfg3 = read_register_rx(0x10);
@@ -278,9 +293,9 @@ void set_frequency_deviation(uint32_t f_dev)
 
     // new value
     uint32_t f_dev_calculated = F_XOSC * (8 + deviation_m+1)*pow(2,deviation_e) / pow(2,17);
-    printf("new f_dev: %u %u | %u\n", deviation_e, deviation_m, f_dev_calculated);
+    printf("set f_dev: [%u %u] %u\n", deviation_e, deviation_m, f_dev_calculated);
 
-    // print write registers
+    // DEVIATN
     RF_setting set = {.address = 0x15, .value = ((deviation_e & 0x07) << 4) + (deviation_m & 0x07)};
     write_register_rx(set);
 }
@@ -302,14 +317,10 @@ void set_frecuency(uint32_t f_carrier)
 
     // print new value
     uint32_t f_carrier_calculated = F_XOSC * (freq + channel*(256+channspc_m)/pow(2,2)) /pow(2,16);
-    printf("debug freq %u\n", freq);
-    printf("debug e %u\n", channspc_e);
-    printf("debug m %u\n", channspc_m);
-    printf("new f_carrier %u\n", f_carrier_calculated);
+    printf("set f_carrier [%u %u %u %u] %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
     
     // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
     RF_setting mdmcfg1 = read_register_rx(0x13);
-    printf("debug mdmcfg1 %02x\n", mdmcfg1.value);
     RF_setting set[6] = {
         {.address = 0x0a, .value = channel},
         {.address = 0x0d, .value = ((freq & 0x007f0000) >> 16)},
