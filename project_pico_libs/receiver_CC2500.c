@@ -250,7 +250,7 @@ event_t get_event(void)
     return no_evt;
 }
 
-void set_datarate(uint32_t r_data)
+void set_datarate_rx(uint32_t r_data)
 {
     // see datasheet, section 12
     uint8_t drate_e = log2(r_data * pow(2,20) / F_XOSC);
@@ -269,7 +269,7 @@ void set_datarate(uint32_t r_data)
     write_registers_rx(set,2);
 }
 
-void set_filter_bandwidth(uint32_t bw)
+void set_filter_bandwidth_rx(uint32_t bw)
 {
     // see datasheet, section 13
     uint8_t chanbw_e = log2(F_XOSC/(pow(2,5) * bw)/log2(2));
@@ -285,7 +285,7 @@ void set_filter_bandwidth(uint32_t bw)
     write_register_rx(set);
 }
 
-void set_frequency_deviation(uint32_t f_dev)
+void set_frequency_deviation_rx(uint32_t f_dev)
 {
     // see datasheet, section 16
     uint8_t deviation_e = log2(f_dev * pow(2,14) / F_XOSC);
@@ -300,7 +300,7 @@ void set_frequency_deviation(uint32_t f_dev)
     write_register_rx(set);
 }
 
-void set_frecuency(uint32_t f_carrier)
+void set_frecuency_rx(uint32_t f_carrier)
 {
 // Test read_register_rx
 //    RF_setting a = {.address = 0x13, .value = 0xab};

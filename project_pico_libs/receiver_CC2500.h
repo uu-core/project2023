@@ -122,15 +122,15 @@ void printPacket(uint8_t *packet, Packet_status status, uint64_t time_us);
 event_t get_event(void);
 
 //set datarate [baud]
-void set_datarate(uint32_t r_data);
+void set_datarate_rx(uint32_t r_data);
 
 //set filter bandwidth [Hz]
-void set_filter_bandwidth(uint32_t bw);
+void set_filter_bandwidth_rx(uint32_t bw);
 
 //set FSK frequency deviation [Hz]
-void set_frequency_deviation(uint32_t f_dev);
+void set_frequency_deviation_rx(uint32_t f_dev);
 
 //set carrier frequency [Hz]
-void set_frecuency(uint32_t f_carrier);
+void set_frecuency_rx(uint32_t f_carrier);
 
 #endif
