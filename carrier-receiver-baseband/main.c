@@ -33,11 +33,12 @@
 #define RADIO_MOSI              19
 #define RADIO_SCK               18
 
-#define TX_DURATION 50 // send a packet every 50ms
-#define RECEIVER 2500 // define the receiver board either 2500 or 1352
-#define PIN_TX1  6
-#define PIN_TX2 27
+#define TX_DURATION             50 // send a packet every 50ms
+#define RECEIVER              2500 // define the receiver board either 2500 or 1352
+#define PIN_TX1                  6
+#define PIN_TX2                 27
 
+#define CARRIER_FEQ     2450000000
 
 int main() {
     /* setup SPI */
@@ -78,6 +79,8 @@ int main() {
 
     /* Start carrier */
     setupCarrier();
+    set_frecuency_tx(CARRIER_FEQ);
+    sleep_ms(1);
     startCarrier();
     printf("started carrier\n");
 
@@ -85,7 +88,13 @@ int main() {
     event_t evt = no_evt;
     Packet_status status;
     uint8_t rx_buffer[RX_BUFFER_SIZE];
+    uint64_t time_us;
     setupReceiver();
+    set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET);
+    set_frequency_deviation_rx(PIO_DEVIATION);
+    set_datarate_rx(round(((double) PIO_BAUDRATE) * 0.985)); // experimental factor due to clock imprecision
+    set_filter_bandwidth_rx(PIO_MIN_RX_BW);
+    sleep_ms(1);
     RX_start_listen();
     printf("started listening\n");
     bool rx_ready = true;
@@ -100,7 +109,7 @@ int main() {
             break;
             case rx_deassert_evt:
                 // finished receiving
-                uint64_t time_us = to_us_since_boot(get_absolute_time());
+                time_us = to_us_since_boot(get_absolute_time());
                 status = readPacket(rx_buffer);
                 printPacket(rx_buffer,status,time_us);
                 RX_start_listen();
@@ -129,10 +138,10 @@ int main() {
                 sleep_ms(TX_DURATION);
             break;
         }
-        sleep_ms(1);
+        sleep_us(100);
     }
 
-    /* never reached */
+    /* stop carrier and receiver - never reached */
     RX_stop_listen();
     stopCarrier();
 }

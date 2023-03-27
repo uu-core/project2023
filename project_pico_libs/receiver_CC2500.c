@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 #include "pico/binary_info.h"
@@ -112,6 +113,28 @@ void write_registers_rx(RF_setting* sets, uint8_t len) {
         spi_write_blocking(RADIO_SPI, buf, 2);
     }
     cs_deselect_rx();
+}
+
+RF_setting read_register_rx(uint8_t address) {
+    uint8_t buf[2] = {0, 0};
+    cs_select_rx();
+    spi_read_blocking(RADIO_SPI, address+0x80, buf, 2);
+    cs_deselect_rx();
+    sleep_ms(1);
+    return (RF_setting){.address = address, .value = buf[1]};
+}
+
+void print_registers_rx() {
+    uint8_t buf[2] = {0, 0};
+    uint8_t r = 0;
+    for (r=0x00; r<=0x2e; r++)
+    {
+        cs_select_rx();
+        spi_read_blocking(RADIO_SPI, r+0x80, buf, 2);
+        cs_deselect_rx();
+        sleep_ms(1);
+        printf("register %02x: %02x\n", r, buf[1]);
+    }
 }
 
 /* ISR */
@@ -225,4 +248,94 @@ event_t get_event(void)
         return evt;
     }
     return no_evt;
+}
+
+void set_datarate_rx(uint32_t r_data)
+{
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+    
+    // see datasheet, section 12
+    uint8_t drate_e = floor(log2(((double) r_data * (1 << 20)) / ((double) F_XOSC)));
+    uint8_t drate_m = floor(((double) r_data * (1 << 28)) / ((double) F_XOSC * (1 << drate_e)) - 256.0);
+    
+    // print new value
+    uint32_t r_data_calculated = floor(((256.0+drate_m)*(1 << drate_e) * (double) F_XOSC) / ((double) (1 << 28)));
+    printf("set rx r_data: [%u %u] %u\n", drate_e, drate_m, r_data_calculated);
+    
+    // MDMCFG4, MDMCFG3
+    RF_setting mdmcfg3 = read_register_rx(0x10);
+    RF_setting set[2] = {
+        {.address = 0x10, .value = (mdmcfg3.value & 0xf0) + (drate_e & 0x0f)},
+        {.address = 0x11, .value = drate_m}
+    };
+    write_registers_rx(set,2);
+}
+
+void set_filter_bandwidth_rx(uint32_t bw)
+{
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+
+    // see datasheet, section 13
+    uint8_t chanbw_e = floor(log2(((double) F_XOSC)/((double) (1 << 5) * bw)/log2(2.0)));
+    uint8_t chanbw_m = floor(((double) F_XOSC)/((double) 8.0 * bw * (1 << chanbw_e)) - 4.0);
+    
+    // print new value
+    uint32_t bw_calculated = floor(((double) F_XOSC) / ((double) 8.0*(4.0+chanbw_m)*(1 << chanbw_e)));
+    printf("set rx bw: [%u %u] %u\n", chanbw_e, chanbw_m, bw_calculated);
+    
+    // MDMCFG3
+    RF_setting mdmcfg3 = read_register_rx(0x10);
+    RF_setting set = (RF_setting){.address = 0x10, .value = ((chanbw_e & 0x03) << 6) + ((chanbw_m & 0x03) << 4) + (mdmcfg3.value & 0x0f)};
+    write_register_rx(set);
+}
+
+void set_frequency_deviation_rx(uint32_t f_dev)
+{
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+
+    // see datasheet, section 16
+    uint8_t deviation_e = floor(log2(((double) f_dev) * (1 << 14) / ((double) F_XOSC)));
+    uint8_t deviation_m = floor((((double) f_dev) * (1 << 17)) / ((double) (1 << deviation_e) * F_XOSC) - 8.0);
+
+    // new value
+    uint32_t f_dev_calculated = floor(((double) F_XOSC) * (8.0 + (double) deviation_m + 1.0)*(1 << deviation_e) / ((double) (1 << 17)));
+    printf("set rx f_dev: [%u %u] %u\n", deviation_e, deviation_m, f_dev_calculated);
+
+    // DEVIATN
+    RF_setting set = {.address = 0x15, .value = ((deviation_e & 0x07) << 4) + (deviation_m & 0x07)};
+    write_register_rx(set);
+}
+
+void set_frecuency_rx(uint32_t f_carrier)
+{
+// Test read_register_rx
+//    RF_setting a = {.address = 0x13, .value = 0xab};
+//    write_register_rx(a);
+//    RF_setting b = read_register_rx(0x13);
+//    printf("debug return %02x\n", b.value);
+    
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+    // see datasheet, section 21
+    // approach: chose start frequency as close as possible to f_carrier, correct with channel
+    uint32_t freq = floor(f_carrier *((double) (1 << 16)) / ((double) F_XOSC));
+    uint8_t channel = 0;
+    uint8_t channspc_e = 0;
+    uint8_t channspc_m = floor(((((double) f_carrier) * (1 << 16)) / ((double) F_XOSC) - freq - (1 << 6)) * (1 << 2));
+
+    // print new value
+    uint32_t f_carrier_calculated = floor(((double) F_XOSC) * (freq + (double) channel*(256+channspc_m)/((double) (1 << 2))) / ((double) (1 << 16)));
+    printf("set rx f_carrier [%u %u %u %u] %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
+    
+    // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
+    RF_setting mdmcfg1 = read_register_rx(0x13);
+    RF_setting set[6] = {
+        {.address = 0x0a, .value = channel},
+        {.address = 0x0d, .value = ((freq & 0x007f0000) >> 16)},
+        {.address = 0x0e, .value = ((freq & 0x0000ff00) >> 8)},
+        {.address = 0x0f, .value = (freq & 0x000000ff)},
+        {.address = 0x13, .value = (mdmcfg1.value & 0xf0) + (channspc_e & 0x03)},
+        {.address = 0x14, .value = channspc_m}
+    };
+    //printf("debug %02x %02x %02x %02x %02x %02x\n", set[0].value, set[1].value, set[2].value, set[3].value, set[4].value, set[5].value);
+    write_registers_rx(set,6);
 }

@@ -39,6 +39,8 @@
 #define   SRX                 0x34
 #define  SFRX                 0x3A
 
+#define F_XOSC            26000000
+
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
 #ifndef RF_SETTING
@@ -118,5 +120,17 @@ Packet_status readPacket(uint8_t *buffer);
 void printPacket(uint8_t *packet, Packet_status status, uint64_t time_us);
 
 event_t get_event(void);
+
+//set datarate [baud]
+void set_datarate_rx(uint32_t r_data);
+
+//set filter bandwidth [Hz]
+void set_filter_bandwidth_rx(uint32_t bw);
+
+//set FSK frequency deviation [Hz]
+void set_frequency_deviation_rx(uint32_t f_dev);
+
+//set carrier frequency [Hz]
+void set_frecuency_rx(uint32_t f_carrier);
 
 #endif
