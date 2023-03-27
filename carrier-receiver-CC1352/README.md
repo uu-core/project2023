@@ -1,4 +1,4 @@
-# Pico-Backscatter: carrier-receiver-CC1315
+# Pico-Backscatter: carrier-receiver-CC1352
 The configuration for Firefly to generate a unmodulated carrier in the range of 2394MHz to 2507MHz.
 Control the launchpad via SmartRF studio.
 
