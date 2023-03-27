@@ -21,7 +21,8 @@ int main() {
     PIO pio = pio0;
     uint sm = 0;
     uint offset = pio_add_program(pio, &backscatter_program);
-    backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2);
+    backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
+    //backscatter_program_init(pio, sm, offset, PIN_TX1); // one antenna setup
 
     static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
     static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer

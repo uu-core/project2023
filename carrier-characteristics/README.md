@@ -14,3 +14,8 @@ The provided images can be used to estimate the typical carrier bandwidth of the
 - the Firefly was configured for a $f_c=2445$ MHz carrier
     - center: $f_c$ MHz
     - center bandwidth: ~0.918 MHz
+
+## Center
+![plot](./center-measurement.png)
+## Edge
+![plot](./edge-measurement.png)
