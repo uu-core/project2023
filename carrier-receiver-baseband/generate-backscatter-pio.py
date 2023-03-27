@@ -106,8 +106,8 @@ f'#define PIO_BAUDRATE {b}',
 f'#define PIO_CENTER_OFFSET {round(fcenter*1000)}',
 f'#define PIO_DEVIATION {round(fdeviation*1000)}',
 f'#define PIO_MIN_RX_BW {round((b/1000 + 2*fdeviation)*1000)}', '',
-f'static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1{", uint pin2" if TWOANTENNAS else ""})' + '{', 
- '   pio_gpio_init(pio, pin1);', 
+f'static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1{", uint pin2" if TWOANTENNAS else ""})' + '{',
+ '   pio_gpio_init(pio, pin1);',
  '   pio_sm_set_consecutive_pindirs(pio, sm, pin1, 1, true);'] + ([
  '   pio_gpio_init(pio, pin2);',
  '   pio_sm_set_consecutive_pindirs(pio, sm, pin2, 1, true);'] if TWOANTENNAS else []) + [
