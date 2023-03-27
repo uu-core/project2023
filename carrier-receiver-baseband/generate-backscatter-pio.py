@@ -15,7 +15,7 @@ from pathlib import Path
 CLKFREQ = 125 # MHz
 
 # parse arguments and give help option
-parser = argparse.ArgumentParser(prog = 'Backscatter-PIO generator', description='Wireless Communication and Networked Embedded Systems, Project VT2023\nusage example: python3 generate-backscatter-pio.py 18 20 100000 ./backscatter.pio')
+parser = argparse.ArgumentParser(prog = 'Backscatter-PIO generator', description='Wireless Communication and Networked Embedded Systems, Project VT2023\nusage example: python3 generate-backscatter-pio.py 20 18 100000 ./backscatter.pio')
 parser.add_argument('d0', type=int, help=f'clock divider @ {CLKFREQ} MHz for frequency 0 shift; must be an even number e.g. 20 for {(CLKFREQ/20):.3f} MHz')
 parser.add_argument('d1', type=int, help=f'clock divider @ {CLKFREQ} MHz for frequency 1 shift; must be an even number e.g. 18 for {(CLKFREQ/18):.3f} Mhz')
 parser.add_argument( 'b', type=int, help='baud-rate [baud] e.g. 100000 for 100kBaud')

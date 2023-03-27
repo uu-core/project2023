@@ -9,7 +9,7 @@ An educational project on backscatter using Raspberry Pi Pico
 - `receiver-CC2500` contains a receiver using the Mikroe-1435 (CC2500) on the Pico.
 - `carrier-Firefly` contains the configuration guidance for home setup with zolertia firefly as carrier.
 - `carrier-characteristics` contains a measurement to estimate the typical carrier bandwidth.
-- `carrier_receiver-CC1352` contains the configuration guidance for lab setup with CC1312 as carrier and/or receiver.
+- `carrier_receiver-CC1352` contains the configuration guidance for lab setup with CC1352 as carrier and/or receiver.
 - `carrier-receiver-baseband` integrates all components into one setup: the Pico generates the baseband, uses one Mikroe-1435 (CC2500) to generate a carrier and a second Mikroe-1435 (CC2500) to receive the backscattered signal.
 - `stats` contains the system evaluation script.
 
