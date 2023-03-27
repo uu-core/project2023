@@ -1,4 +1,4 @@
-# Pico-Backscatter: carrier-receiver-CC1312
+# Pico-Backscatter: carrier-receiver-CC1315
 The configuration for Firefly to generate a unmodulated carrier in the range of 2394MHz to 2507MHz.
 Control the launchpad via SmartRF studio.
 
@@ -12,17 +12,17 @@ In the control panel, choose `Continuous TX`, `Unmodulated`, `Frequency`, `Trans
 
 ## Packet Receiver
 In the control panel, choose `2.4G frequency band`, `Packet RX`
-<br>`Expected Packet Count`: infinite
-<br>`Viewing Format` : Hexadecimal
-<br>`Seq. Number Included in Payload`: uncheck
 <br>`Base Freqeuncy`: $f_{R}$
 <br>`Data Rate`: $R_{b}$
-<br>`Deviation`: $\delta_f$
+<br>`Deviation`: $\delta_{FSK}$
 <br>`RX Filter BW`: $B_{R}$
+<br>`Viewing Format` : Hexadecimal
+<br>`Seq. Number Included in Payload`: uncheck
+<br>`Length Config`: fixed (set the number based on the frame size configured on tag), or variable (use the length field to decide the frame length)
 <br>Then click `Start`
 
-## Todo: add a annotated screenshot of the SmartRF configuration
-
+## A screenshot of the SmartRF configuration as receiver
+![plot](./SmartRF_1352.png)
 ## Backscatter Tag Configuration
 Please change the Macro variable RECEIVER to 1352.
 
