@@ -38,7 +38,7 @@
 #define PIN_TX1                  6
 #define PIN_TX2                 27
 
-#define CARRIER_FEQ     2440000000
+#define CARRIER_FEQ     2450000000
 
 int main() {
     /* setup SPI */
@@ -77,84 +77,71 @@ int main() {
 
     sleep_ms(5000);
 
-    // Test setup: every 5 seconds shift the carrier by 1 MHz (covering the carrier range 2440 MHz-2470 MHz / receiver range upto 2477 MHz)
-    uint32_t test_duration_ms = 5000;
-    for(uint32_t test_shift = 0; test_shift <= 30000000; test_shift=test_shift + 1000000){
-        /* Start carrier */
-        setupCarrier();
-        set_frecuency_tx(CARRIER_FEQ + test_shift);
-        sleep_ms(1);
-        startCarrier();
-        printf("started carrier\n");
+    /* Start carrier */
+    setupCarrier();
+    set_frecuency_tx(CARRIER_FEQ);
+    sleep_ms(1);
+    startCarrier();
+    printf("started carrier\n");
 
-        /* Start Receiver */
-        event_t evt = no_evt;
-        Packet_status status;
-        uint8_t rx_buffer[RX_BUFFER_SIZE];
-        uint64_t time_us;
-        setupReceiver();
-        set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET + test_shift);
-        set_frequency_deviation_rx(PIO_DEVIATION);
-        set_datarate_rx(round(((double) PIO_BAUDRATE) * 0.985)); // experimental factor due to clock imprecision
-        set_filter_bandwidth_rx(PIO_MIN_RX_BW);
-        sleep_ms(1);
-        RX_start_listen();
-        printf("started listening\n");
-        bool rx_ready = true;
+    /* Start Receiver */
+    event_t evt = no_evt;
+    Packet_status status;
+    uint8_t rx_buffer[RX_BUFFER_SIZE];
+    uint64_t time_us;
+    setupReceiver();
+    set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET);
+    set_frequency_deviation_rx(PIO_DEVIATION);
+    set_datarate_rx(round(((double) PIO_BAUDRATE) * 0.985)); // experimental factor due to clock imprecision
+    set_filter_bandwidth_rx(PIO_MIN_RX_BW);
+    sleep_ms(1);
+    RX_start_listen();
+    printf("started listening\n");
+    bool rx_ready = true;
 
-        /* loop */
-        uint32_t test_start_time = to_ms_since_boot(get_absolute_time());
-        while (true) {
-            evt = get_event();
-            switch(evt){
-                case rx_assert_evt:
-                    // started receiving
-                    rx_ready = false;
-                break;
-                case rx_deassert_evt:
-                    // finished receiving
-                    time_us = to_us_since_boot(get_absolute_time());
-                    status = readPacket(rx_buffer);
-                    printPacket(rx_buffer,status,time_us);
-                    RX_start_listen();
-                    rx_ready = true;
-                break;
-                case no_evt:
-                    // backscatter new packet if receiver is listening
-                    if (rx_ready){
-                        /* generate new data */
-                        generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+    /* loop */
+    while (true) {
+        evt = get_event();
+        switch(evt){
+            case rx_assert_evt:
+                // started receiving
+                rx_ready = false;
+            break;
+            case rx_deassert_evt:
+                // finished receiving
+                time_us = to_us_since_boot(get_absolute_time());
+                status = readPacket(rx_buffer);
+                printPacket(rx_buffer,status,time_us);
+                RX_start_listen();
+                rx_ready = true;
+            break;
+            case no_evt:
+                // backscatter new packet if receiver is listening
+                if (rx_ready){
+                    /* generate new data */
+                    generate_data(tx_payload_buffer, PAYLOADSIZE, true);
 
-                        /* add header (10 byte) to packet */
-                        add_header(&message[0], seq, header_tmplate);
-                        /* add payload to packet */
-                        memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
-                        
-                        /* casting for 32-bit fifo */
-                        for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
-                            buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
-                        }
-                        /*put the data to FIFO*/
-                        backscatter_send(pio,sm,buffer,sizeof(buffer));
-                        //printf("Backscattered packet\n");
-                        seq++;
+                    /* add header (10 byte) to packet */
+                    add_header(&message[0], seq, header_tmplate);
+                    /* add payload to packet */
+                    memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
+                    
+                    /* casting for 32-bit fifo */
+                    for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
+                        buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
                     }
-                    sleep_ms(TX_DURATION);
-                break;
-            }
-            sleep_ms(1);
-            
-            if(test_start_time + test_duration_ms < to_ms_since_boot(get_absolute_time()))
-                break; // break while(true) loop 
+                    /*put the data to FIFO*/
+                    backscatter_send(pio,sm,buffer,sizeof(buffer));
+                    //printf("Backscattered packet\n");
+                    seq++;
+                }
+                sleep_ms(TX_DURATION);
+            break;
         }
-
-        /* stop carrier and receiver */
-        RX_stop_listen();
-        stopCarrier();
-        sleep_ms(5);
+        sleep_us(100);
     }
-    printf("---------------\n");
-    printf("Test completed.\n");
-    printf("---------------\n");
-    printf("\n");
+
+    /* stop carrier and receiver - never reached */
+    RX_stop_listen();
+    stopCarrier();
 }
