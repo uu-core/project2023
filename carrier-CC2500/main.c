@@ -19,6 +19,8 @@
 #include "hardware/spi.h"
 #include "carrier_CC2500.h"
 
+#define CARRIER_FEQ     2450000000
+
 void main() {
     stdio_init_all();
     spi_init(RADIO_SPI, 5 * 1000000); // SPI0 at 5MHz.
@@ -39,7 +41,8 @@ void main() {
 
     // Start carrier
     setupCarrier();
-    startCarrier();
+    set_frecuency_tx(CARRIER_FEQ);
+    sleep_ms(1);
     printf("Started unmodulated carrier at 2450 MHz...\n");
     while (true) {
         sleep_ms(10);

@@ -102,7 +102,10 @@ f'        ; the remaining cycles are:  (b - w) % d0 = ({(CLKFREQ*1000000//b)} - 
  '#include "pico/stdlib.h"',
  '#include "hardware/clocks.h"',
  '#define min(x, y) (((x) < (y)) ? (x) : (y))',
-f'#define BAUDRATE {b}', '',
+f'#define PIO_BAUDRATE {b}',
+f'#define PIO_CENTER_OFFSET {round(fcenter*1000)}',
+f'#define PIO_DEVIATION {round(fdeviation*1000)}',
+f'#define PIO_MIN_RX_BW {round((b/1000 + 2*fdeviation)*1000)}', '',
 f'static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1{", uint pin2" if TWOANTENNAS else ""})' + '{', 
  '   pio_gpio_init(pio, pin1);', 
  '   pio_sm_set_consecutive_pindirs(pio, sm, pin1, 1, true);'] + ([

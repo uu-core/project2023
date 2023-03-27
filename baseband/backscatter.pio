@@ -68,7 +68,10 @@ get_symbol:
 #include "pico/stdlib.h"
 #include "hardware/clocks.h"
 #define min(x, y) (((x) < (y)) ? (x) : (y))
-#define BAUDRATE 100000
+#define PIO_BAUDRATE 100000
+#define PIO_CENTER_OFFSET 6597222
+#define PIO_DEVIATION 347222
+#define PIO_MIN_RX_BW 794444
 
 static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1, uint pin2){
    pio_gpio_init(pio, pin1);

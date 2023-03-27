@@ -108,9 +108,9 @@ void write_registers_tx(RF_setting* sets, uint8_t len) {
 
 RF_setting read_register_tx(uint8_t address) {
     uint8_t buf[2] = {0, 0};
-    cs_select_rx();
+    cs_select_tx();
     spi_read_blocking(RADIO_SPI, address+0x80, buf, 2);
-    cs_deselect_rx();
+    cs_deselect_tx();
     sleep_ms(1);
     return (RF_setting){.address = address, .value = buf[1]};
 }
@@ -142,23 +142,25 @@ void stopCarrier(){
 
 void set_frecuency_tx(uint32_t f_carrier)
 {
-// Test read_register_rx
+// Test read_register_tx
 //    RF_setting a = {.address = 0x13, .value = 0xab};
-//    write_register_rx(a);
-//    RF_setting b = read_register_rx(0x13);
+//    write_register_tx(a);
+//    RF_setting b = read_register_tx(0x13);
 //    printf("debug return %02x\n", b.value);
+    
+    write_strobe_tx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
     
     // see datasheet, section 21
     // approach: chose start frequency as close as possible to f_carrier, correct with channel
-    uint32_t freq = floor(f_carrier * pow(2,16) / F_XOSC);
+    uint32_t freq = floor(f_carrier *((double) (1 << 16)) / ((double) F_XOSC));
     uint8_t channel = 0;
     uint8_t channspc_e = 0;
-    uint8_t channspc_m = 0; //floor((f_carrier * pow(2,16) / F_XOSC - freq - pow(2,6)) * pow(2,2));
+    uint8_t channspc_m = floor(((((double) f_carrier) * (1 << 16)) / ((double) F_XOSC) - freq - (1 << 6)) * (1 << 2));
 
     // print new value
-    uint32_t f_carrier_calculated = F_XOSC * (freq + channel*(256+channspc_m)/pow(2,2)) /pow(2,16);
+    uint32_t f_carrier_calculated = floor(((double) F_XOSC) * (freq + (double) channel*(256+channspc_m)/((double) (1 << 2))) / ((double) (1 << 16)));
     printf("set tx f_carrier [%u %u %u %u] %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
-
+    
     // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
     RF_setting mdmcfg1 = read_register_tx(0x13);
     RF_setting set[6] = {
@@ -170,5 +172,5 @@ void set_frecuency_tx(uint32_t f_carrier)
         {.address = 0x14, .value = channspc_m}
     };
     //printf("debug %02x %02x %02x %02x %02x %02x\n", set[0].value, set[1].value, set[2].value, set[3].value, set[4].value, set[5].value);
-    write_registers_rx(set,6);
+    write_registers_tx(set,6);
 }

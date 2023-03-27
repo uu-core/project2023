@@ -252,12 +252,14 @@ event_t get_event(void)
 
 void set_datarate_rx(uint32_t r_data)
 {
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+    
     // see datasheet, section 12
-    uint8_t drate_e = log2(r_data * pow(2,20) / F_XOSC);
-    uint8_t drate_m = (r_data * pow(2,28)) / (F_XOSC * pow(2,drate_e)) - 256;
+    uint8_t drate_e = floor(log2(((double) r_data * (1 << 20)) / ((double) F_XOSC)));
+    uint8_t drate_m = floor(((double) r_data * (1 << 28)) / ((double) F_XOSC * (1 << drate_e)) - 256.0);
     
     // print new value
-    uint32_t r_data_calculated = (256+drate_m)*pow(2,drate_e) * F_XOSC / pow(2,28);
+    uint32_t r_data_calculated = floor(((256.0+drate_m)*(1 << drate_e) * (double) F_XOSC) / ((double) (1 << 28)));
     printf("set rx r_data: [%u %u] %u\n", drate_e, drate_m, r_data_calculated);
     
     // MDMCFG4, MDMCFG3
@@ -271,12 +273,14 @@ void set_datarate_rx(uint32_t r_data)
 
 void set_filter_bandwidth_rx(uint32_t bw)
 {
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+
     // see datasheet, section 13
-    uint8_t chanbw_e = log2(F_XOSC/(pow(2,5) * bw)/log2(2));
-    uint8_t chanbw_m = F_XOSC/(8 * bw * pow(2,chanbw_e)) - 4;
+    uint8_t chanbw_e = floor(log2(((double) F_XOSC)/((double) (1 << 5) * bw)/log2(2.0)));
+    uint8_t chanbw_m = floor(((double) F_XOSC)/((double) 8.0 * bw * (1 << chanbw_e)) - 4.0);
     
     // print new value
-    uint32_t bw_calculated = F_XOSC / (8*(4+chanbw_m)*pow(2,chanbw_e));
+    uint32_t bw_calculated = floor(((double) F_XOSC) / ((double) 8.0*(4.0+chanbw_m)*(1 << chanbw_e)));
     printf("set rx bw: [%u %u] %u\n", chanbw_e, chanbw_m, bw_calculated);
     
     // MDMCFG3
@@ -287,12 +291,14 @@ void set_filter_bandwidth_rx(uint32_t bw)
 
 void set_frequency_deviation_rx(uint32_t f_dev)
 {
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
+
     // see datasheet, section 16
-    uint8_t deviation_e = log2(f_dev * pow(2,14) / F_XOSC);
-    uint8_t deviation_m = f_dev * pow(2,17) / (pow(2,deviation_e) * F_XOSC) - 8;
+    uint8_t deviation_e = floor(log2(((double) f_dev) * (1 << 14) / ((double) F_XOSC)));
+    uint8_t deviation_m = floor((((double) f_dev) * (1 << 17)) / ((double) (1 << deviation_e) * F_XOSC) - 8.0);
 
     // new value
-    uint32_t f_dev_calculated = F_XOSC * (8 + deviation_m+1)*pow(2,deviation_e) / pow(2,17);
+    uint32_t f_dev_calculated = floor(((double) F_XOSC) * (8.0 + (double) deviation_m + 1.0)*(1 << deviation_e) / ((double) (1 << 17)));
     printf("set rx f_dev: [%u %u] %u\n", deviation_e, deviation_m, f_dev_calculated);
 
     // DEVIATN
@@ -308,15 +314,16 @@ void set_frecuency_rx(uint32_t f_carrier)
 //    RF_setting b = read_register_rx(0x13);
 //    printf("debug return %02x\n", b.value);
     
+    write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
     // see datasheet, section 21
     // approach: chose start frequency as close as possible to f_carrier, correct with channel
-    uint32_t freq = floor(f_carrier * pow(2,16) / F_XOSC);
+    uint32_t freq = floor(f_carrier *((double) (1 << 16)) / ((double) F_XOSC));
     uint8_t channel = 0;
     uint8_t channspc_e = 0;
-    uint8_t channspc_m = 0; //floor((f_carrier * pow(2,16) / F_XOSC - freq - pow(2,6)) * pow(2,2));
+    uint8_t channspc_m = floor(((((double) f_carrier) * (1 << 16)) / ((double) F_XOSC) - freq - (1 << 6)) * (1 << 2));
 
     // print new value
-    uint32_t f_carrier_calculated = F_XOSC * (freq + channel*(256+channspc_m)/pow(2,2)) /pow(2,16);
+    uint32_t f_carrier_calculated = floor(((double) F_XOSC) * (freq + (double) channel*(256+channspc_m)/((double) (1 << 2))) / ((double) (1 << 16)));
     printf("set rx f_carrier [%u %u %u %u] %u\n", freq, channel, channspc_e, channspc_m, f_carrier_calculated);
     
     // CHANNR, FREQ2, FREQ1, FREQ0, MDMCFG1, MDMCFG1
