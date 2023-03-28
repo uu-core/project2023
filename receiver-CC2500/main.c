@@ -64,7 +64,7 @@ void main() {
     setupReceiver();
     set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET);
     set_frequency_deviation_rx(PIO_DEVIATION);
-    set_datarate_rx(round(((double) PIO_BAUDRATE) * 0.985)); // experimental factor due to clock imprecision
+    set_datarate_rx(PIO_BAUDRATE);
     set_filter_bandwidth_rx(PIO_MIN_RX_BW);
     sleep_ms(1);
     RX_start_listen();
