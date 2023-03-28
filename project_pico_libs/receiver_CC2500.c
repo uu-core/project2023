@@ -133,7 +133,7 @@ void print_registers_rx() {
         spi_read_blocking(RADIO_SPI, r+0x80, buf, 2);
         cs_deselect_rx();
         sleep_ms(1);
-        printf("register %02x: %02x\n", r, buf[1]);
+        printf("    {.address = 0x%02x, .value = 0x%02x},\n", r, buf[1]);
     }
 }
 
@@ -158,6 +158,8 @@ void receiver_isr(uint gpio, uint32_t events)
 }
 
 void setupReceiver(){
+    write_strobe_rx(SRES);  // in case of reset without power loss - reset manually
+    sleep_us(100);
     write_strobe_rx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
     write_registers_rx(cc2500_receiver,20);
 

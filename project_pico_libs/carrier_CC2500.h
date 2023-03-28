@@ -30,7 +30,8 @@
 #define CARRIER_CSN              5
 
 #define SIDLE                 0x36
-#define STX                   0x35
+#define   STX                 0x35
+#define  SRES                 0x30
 
 #ifndef RF_SETTING
 #define RF_SETTING

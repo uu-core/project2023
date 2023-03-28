@@ -18,11 +18,11 @@
 ; frequency 1 shift: 6.944 Mhz       (1 period = 18 cycles @ 125 MHz clock)
 ; center frequency shift: 6.597 MHz
 ; deviation from center : 347.22 kHz
-; baud-rate 100.0 kBaud (1250.0 instructions per symbol)
-; occupied bandwith: 794.4 kHz
+; baud-rate 100.00 kBaud (1250.0 instructions per symbol)
+; occupied bandwith: 794.44 kHz
 
 
-; parameter 1:  b = clock-frequency/baud-rate (e.g. 1250.0 for 100.0 kBaud @ 125 MHz clock)   // number of clock cycles per symbol
+; parameter 1:  b = clock-frequency/baud-rate (e.g. 1250.0 for 100.00 kBaud @ 125 MHz clock)   // number of clock cycles per symbol
 ; parameter 2:  w = 4 (wasted cycles per symbol: OUT -> JMP -> MOV -> ... -> JMP )            // fixed wasted cycles per symbol
 ; parameter 3: d0 = clock-frequency/shift-frequency-0 (e.g. 20 for 6.250 MHz @ 125 MHz clock) // must be an _even_ number
 ; parameter 4: d1 = clock-frequency/shift-frequency-1 (e.g. 18 for 6.944 Mhz @ 125 MHz clock) // must be an _even_ number

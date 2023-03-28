@@ -26,6 +26,9 @@ args = parser.parse_args()
 d0 = args.d0
 d1 = args.d1
 b = args.b
+if (CLKFREQ*(10**6)) % args.b != 0:
+    b = round((CLKFREQ*(10**6)) / round((CLKFREQ*(10**6)) / args.b))
+    print(f'\nWARNING: a baudrate of {args.b} Baud is not achievable with a {CLKFREQ} MHz clock.\nTherefore, the closest achievable baud-rate {b} Baud will be used.\n')
 out_path = Path(args.f)
 TWOANTENNAS = args.twoAntennas
 
@@ -57,12 +60,12 @@ f'; frequency 0 shift: {(CLKFREQ/d0):.3f} MHz       (1 period = {d0} cycles @ {C
 f'; frequency 1 shift: {(CLKFREQ/d1):.3f} Mhz       (1 period = {d1} cycles @ {CLKFREQ} MHz clock)',
 f'; center frequency shift: {((CLKFREQ/d0 + CLKFREQ/d1)/2):.3f} MHz',
 f'; deviation from center : {fdeviation:.2f} kHz',
-f'; baud-rate {(b/1000):.1f} kBaud ({(CLKFREQ*1000000/b):.1f} instructions per symbol)',
-f'; occupied bandwith: {(b/1000 + 2*fdeviation):.1f} kHz',''] +
+f'; baud-rate {(b/1000):.2f} kBaud ({(CLKFREQ*1000000/b):.1f} instructions per symbol)',
+f'; occupied bandwith: {(b/1000 + 2*fdeviation):.2f} kHz',''] +
 (['; WARNING: the deviation is too large for the CC2500'] if (fdeviation > 380.86) else []) +
 (['; WARNING: the deviation is too large for the CC1352'] if (fdeviation > 1000) else []) +
 (['; WARNING: symbol 0 has been assigned to larger frequncy than symbol 1'] if (d0 < d1) else []) + ['',
-f'; parameter 1:  b = clock-frequency/baud-rate (e.g. {(CLKFREQ*1000000/b):.1f} for {b/1000:.1f} kBaud @ {CLKFREQ} MHz clock)   // number of clock cycles per symbol',
+f'; parameter 1:  b = clock-frequency/baud-rate (e.g. {(CLKFREQ*1000000/b):.1f} for {b/1000:.2f} kBaud @ {CLKFREQ} MHz clock)   // number of clock cycles per symbol',
  '; parameter 2:  w = 4 (wasted cycles per symbol: OUT -> JMP -> MOV -> ... -> JMP )            // fixed wasted cycles per symbol',
 f'; parameter 3: d0 = clock-frequency/shift-frequency-0 (e.g. {d0} for {CLKFREQ/d0:.3f} MHz @ {CLKFREQ} MHz clock) // must be an _even_ number',
 f'; parameter 4: d1 = clock-frequency/shift-frequency-1 (e.g. {d1} for {CLKFREQ/d1:.3f} Mhz @ {CLKFREQ} MHz clock) // must be an _even_ number', '', '',
@@ -136,8 +139,8 @@ print('\nGenerated Radio seetings:\n' + '\n'.join([f'  - frequency 0 shift: {(CL
 f'  - frequency 1 shift: {(CLKFREQ/d1):.3f} Mhz       (1 period = {d1} cycles @ {CLKFREQ} MHz clock)',
 f'  - center frequency shift: {(fcenter/1000):.3f} MHz',
 f'  - deviation from center : {fdeviation:.2f} kHz',
-f'  - baud-rate {(b/1000):.1f} kBaud ({(CLKFREQ*1000000/b):.1f} instructions per symbol)',
-f'  - occupied bandwith: {(b/1000 + 2*fdeviation):.1f} kHz']),end='\n\n')
+f'  - baud-rate {(b/1000):.2f} kBaud ({(CLKFREQ*1000000/b):.1f} instructions per symbol)',
+f'  - occupied bandwith: {(b/1000 + 2*fdeviation):.2f} kHz']),end='\n\n')
 if (fdeviation > 380.86):
     print('WARNING: the deviation is too large for the CC2500')
 if (fdeviation > 1000):

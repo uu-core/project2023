@@ -127,6 +127,8 @@ void setTXpower(RF_power setting) {
 
 
 void setupCarrier(){
+    write_strobe_tx(SRES);  // in case of reset without power loss - reset manually
+    sleep_us(100);
     write_strobe_tx(SIDLE); // ensure IDLE mode with command strobe: SIDLE
     write_registers_tx(cc2500_unmodulated_2450MHz,16);
     setTXpower(TX_power[17]); // set +1dBm output power (max)
