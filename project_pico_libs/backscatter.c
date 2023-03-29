@@ -106,7 +106,7 @@ void backscatter_program_init(PIO pio, uint sm, uint pin1, uint pin2, uint16_t d
     struct pio_program backscatter_program;
     generatePIOprogram(d0,d1,baud, instructionBuffer, &backscatter_program);
     uint offset = 0;
-    pio_add_program_at_offset(pio, &backscatter_program,0); // load program
+    pio_add_program_at_offset(pio, &backscatter_program, offset); // load program
     /* print state-machine instructions */
     //for (uint16_t t = 0; t < 32; t++){
     //    printf("%04x\n",backscatter_program.instructions[t]);
