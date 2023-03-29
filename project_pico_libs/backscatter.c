@@ -37,8 +37,8 @@ bool generatePIOprogram(uint16_t d0,uint16_t d1, uint32_t baud, uint16_t* instru
     int16_t tmp0 = min(lastPeriodCycles0, d0/2);
     int16_t tmp1count = instructionCount(tmp1);
     int16_t tmp0count = instructionCount(tmp0);
-    /*                                     pull high                pull low            jmp   high                   low                            jmp  */
-    uint8_t send_0_label = send_1_label + instructionCount(d1/2) + instructionCount(d1/2 - 1) + 1 + tmp1count + instructionCount(max(0,lastPeriodCycles1-tmp1count)) + 1;
+    /*                                           pull high                 pull low            jmp     high                       low                            jmp  */
+    uint8_t send_0_label = loop_1_label + instructionCount(d1/2) + instructionCount(d1/2 - 1) + 1 + tmp1count + instructionCount(max(0,lastPeriodCycles1-tmp1)) + 1;
     uint8_t loop_0_label = send_0_label + 1;
 
     // check that the program will fit into memory
