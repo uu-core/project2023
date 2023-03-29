@@ -42,8 +42,8 @@ bool generatePIOprogram(uint16_t d0,uint16_t d1, uint32_t baud, uint16_t* instru
     uint8_t loop_0_label = send_0_label + 1;
 
     // check that the program will fit into memory
-    /*                      pull high           pull low                 jmom  high            low                                    jmp  */
-    if(send_0_label + instructionCount(d0/2) + instructionCount(d0/2 - 1) + 1 + tmp0count + instructionCount(max(0,lastPeriodCycles0-tmp0count)) + 1 >= 32){
+    /*                      pull high                pull low            jmp       high                    low                               jmp  */
+    if(loop_0_label + instructionCount(d0/2) + instructionCount(d0/2 - 1) + 1 + tmp0count + instructionCount(max(0,lastPeriodCycles0-tmp0)) + 1 >= 32){
         printf("ERROR: The clock dividers are too small. The program would not fit into the state-machine instruction memory.");
         return false;
     }
