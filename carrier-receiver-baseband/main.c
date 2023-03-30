@@ -45,7 +45,7 @@
 
 // Baseband setting
 #define TX_DURATION           50 // send a packet every 50ms
-#define RECEIVER              2500 // define the receiver board either 2500 or 1352
+#define RECEIVER              1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1                  6
 #define PIN_TX2                 27
 
@@ -151,9 +151,6 @@ int main() {
                     backscatter_send(pio,sm,buffer,sizeof(buffer));
                     //printf("Backscattered packet\n");
 
-                    //Test by Chou
-                    //printf("No event: ");
-                    //printPacket(rx_buffer,status,time_us);
                     seq++;
                 }
                 sleep_ms(TX_DURATION);
