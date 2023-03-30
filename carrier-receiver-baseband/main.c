@@ -27,17 +27,29 @@
 #include "receiver_CC2500.h"
 #include "packet_generation.h"
 
-
+// Carrier GPIO define
 #define RADIO_SPI             spi0
 #define RADIO_MISO              16
 #define RADIO_MOSI              19
 #define RADIO_SCK               18
 
-#define TX_DURATION             50 // send a packet every 50ms
+// Missing part from receiver
+/* 
+ * The following macros are defined in the generated PIO header file 
+ * We define them here manually here since this example does not require a PIO state machine.
+*/
+#define PIO_BAUDRATE 100000
+#define PIO_CENTER_OFFSET 6597222
+#define PIO_DEVIATION 347222
+#define PIO_MIN_RX_BW 794444
+
+// Baseband setting
+#define TX_DURATION           50 // send a packet every 50ms
 #define RECEIVER              2500 // define the receiver board either 2500 or 1352
 #define PIN_TX1                  6
 #define PIN_TX2                 27
 
+// Carrier frequency setting @ 2450 Mhz
 #define CARRIER_FEQ     2450000000
 
 int main() {
@@ -67,6 +79,9 @@ int main() {
     PIO pio = pio0;
     uint sm = 0;
     uint offset = pio_add_program(pio, &backscatter_program);
+
+    //backscatter_program_init(pio, sm, offset, PIN_TX1);
+    // Original cmd
     backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2);
 
     static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
@@ -92,7 +107,7 @@ int main() {
     setupReceiver();
     set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET);
     set_frequency_deviation_rx(PIO_DEVIATION);
-    set_datarate_rx(PIO_BAUDRATE);
+    set_datarate_rx(round(((double) PIO_BAUDRATE) * 0.985)); // experimental factor due to clock imprecision
     set_filter_bandwidth_rx(PIO_MIN_RX_BW);
     sleep_ms(1);
     RX_start_listen();
@@ -106,6 +121,8 @@ int main() {
             case rx_assert_evt:
                 // started receiving
                 rx_ready = false;
+                printf("rx_assert_evt...\n");
+                //sleep_ms(10);
             break;
             case rx_deassert_evt:
                 // finished receiving
@@ -133,12 +150,16 @@ int main() {
                     /*put the data to FIFO*/
                     backscatter_send(pio,sm,buffer,sizeof(buffer));
                     //printf("Backscattered packet\n");
+
+                    //Test by Chou
+                    //printf("No event: ");
+                    //printPacket(rx_buffer,status,time_us);
                     seq++;
                 }
                 sleep_ms(TX_DURATION);
             break;
         }
-        sleep_ms(1);
+        sleep_us(100);
     }
 
     /* stop carrier and receiver - never reached */
