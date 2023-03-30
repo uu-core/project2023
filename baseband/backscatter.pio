@@ -30,8 +30,8 @@
 
 ; interface: 
 ; comment: the parameters have to be obtained from the fifo, since the SET command only provides 5-bit
-; 1. obtain from fifo: floor((b - w) / d0) // (number of full periods in symbol of frequency 0)
-; 2. obtain from fifo: floor((b - w) / d1) // (number of full periods in symbol of frequency 1)
+; 1. obtain from fifo: floor((b - w) / d0) - 1 // (number of full periods in symbol of frequency 0)
+; 2. obtain from fifo: floor((b - w) / d1) - 1 // (number of full periods in symbol of frequency 1)
 ; 3. then simply provide data
 
 SET  pins   1  side 1  ; swtich output off

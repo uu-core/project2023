@@ -15,7 +15,7 @@
 #define TX_DURATION 50 // send a packet every 50ms
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
-#define PIN_TX2 9
+#define PIN_TX2 27
 
 int main() {
     PIO pio = pio0;

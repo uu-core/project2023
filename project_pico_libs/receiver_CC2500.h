@@ -42,7 +42,11 @@
 
 #define F_XOSC            26000000
 
+#ifndef MINMAX
+#define MINMAX
+#define max(x, y) (((x) > (y)) ? (x) : (y))
 #define min(x, y) (((x) < (y)) ? (x) : (y))
+#endif
 
 #ifndef RF_SETTING
 #define RF_SETTING

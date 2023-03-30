@@ -17,8 +17,12 @@
 #define PAYLOADSIZE 14
 #define HEADER_LEN  10 // 8 header + length + seq
 #define buffer_size(x, y) (((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1)) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
+
+#ifndef MINMAX
+#define MINMAX
+#define max(x, y) (((x) > (y)) ? (x) : (y))
 #define min(x, y) (((x) < (y)) ? (x) : (y))
-#define max(a, b) (((a) < (b)) ? (b) : (a))
+#endif
 
 /*
  * obtain the packet header template for the corresponding radio
