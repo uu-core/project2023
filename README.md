@@ -2,7 +2,7 @@
 An educational project on backscatter using Raspberry Pi Pico
 
 ## --> Updates <--:
-- 29.03.2022: We added a new library `project_pico_libs/backscatter.c`. The `baseband` example demonstrates how to generate a PIO-file (python script) and assemble it using `pioasm`. This has the disadvantage that testing different baseband settings require a re-compilation for each setting. Therefore, we implemented the automatic program generation of the assembled pio-instructions in C (`project_pico_libs/backscatter.c`) and demonstrate its use in `carrier-receiver-baseband`. This enables changing the baseband settings on-the-fly for a convenient automation of tests.
+- 29.03.2022: We added a new library `project_pico_libs/backscatter.c`. The `baseband` example demonstrates how to generate a PIO-file (python script) and assemble it using `pioasm`. This has the disadvantage that testing different baseband settings require a re-compilation for each setting. Therefore, we implemented the automatic program generation of the state-machine binary in C (`project_pico_libs/backscatter.c`) and demonstrate its use in `carrier-receiver-baseband`. This enables changing the baseband settings on-the-fly for a convenient automation of tests.
 
 ## Repo Organization
 - `hardware` contains the hardware design with further description and explanation (generating the PIO using the python script).
@@ -24,4 +24,4 @@ Raspberry Pi Pico SDK, cmake and arm-none-eabi-gcc have to be installed for buil
 
 
 #### Comment
-We recommend using the Raspberry Pi Pico SDK over Zephyr and Contiki for this project, since it integrates the required PIO toolchain. An example of using the PIO with Zephyr can be seen in the [pull request 44316](https://github.com/zephyrproject-rtos/zephyr/pull/44316/files), which is based on pre-assembling the state-machine with `pioasm` since the tool is not integrated to Zephyr.
+We recommend using the Raspberry Pi Pico SDK over Zephyr and Contiki for this project, since it integrates the required PIO toolchain. An example of using the PIO with Zephyr can be seen in the [pull request 44316](https://github.com/zephyrproject-rtos/zephyr/pull/44316/files), which is based on pre-assembling the state-machine with `pioasm` since the tool is not integrated to Zephyr. (this problem is reducing with using `project_pico_libs/backscatter.c`, since it directly generates the state-machine binary).
