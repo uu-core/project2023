@@ -139,6 +139,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
+        print(idx)
         error_idx = error.index[error.seq == df.seq[idx]][0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])

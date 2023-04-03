@@ -1,0 +1,19 @@
+Computed baseband settings: 
+- baudrate: 1000
+- Center offset: 4315475
+- deviation: 148811
+- RX Bandwidth: 298622
+set tx f_carrier [6175507 0 0 0] 2449999725
+started carrier
+set rx f_carrier [6186385 0 0 0] 2454315338
+set rx f_dev: [6 3] 152343
+set rx r_data: [5 66] 998
+set rx bw: [1 1] 325000
+started listening
+00:00:10.166 | 0f 0e 02 4a ea 9f 3b ef 1f 0f fa b3 72 7e 19 3f | -83 CRC error
+00:00:14.876 | packet overflow (possible length field corrupted) | CRC error
+00:00:18.614 | 0f 15 37 ee a7 1f 7d dc 2e 9a 5d 29 1e fa 9d c7 | -84 CRC error
+00:00:21.788 | packet overflow (possible length field corrupted) | CRC error
+00:00:31.772 | packet overflow (possible length field corrupted) | CRC error
+00:00:41.654 | 0f af 82 34 14 8e 2e 29 26 66 3c 5b 4f de 23 8f | -81 CRC error
+00:00:50.204 | packet overflow (possible length field corrupted) | CRC error

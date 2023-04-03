@@ -1,0 +1,705 @@
+WARNING: a baudrate of 75000 Baud is not achievable with a 125 MHz clock.
+Therefore, the closest achievable baud-rate 74985 Baud will be used.
+Computed baseband settings: 
+- baudrate: 74985
+- Center offset: 5445075
+- deviation: 236743
+- RX Bandwidth: 548471
+set tx f_carrier [6175507 0 0 0] 2449999725
+started carrier
+set rx f_carrier [6189232 0 0 0] 2455444824
+set rx f_dev: [7 1] 253906
+set rx r_data: [11 122] 74981
+set rx bw: [0 1] 650000
+started listening
+00:00:05.145 | 0f 01 10 2c 20 6b 2b b2 24 4b 2a 57 1a 52 62 e8 | -94 CRC error
+00:00:05.445 | packet overflow (possible length field corrupted) | CRC error
+00:00:05.510 | packet overflow (possible length field corrupted) | CRC error
+00:00:05.574 | 0f 08 40 e0 16 6f 12 10 23 7b 2e 47 11 f6 1f a4 | -94 CRC error
+00:00:05.640 | 0f 09 00 6c 12 ef 22 36 79 73 31 88 26 0d 1e 06 | -91 CRC error
+00:00:05.706 | 0f 0a 00 78 20 2d 2b f3 59 7d 20 ab 19 6b 0e 36 | -91 CRC error
+00:00:05.771 | 0f 0b 00 84 23 eb 12 4a 23 19 14 e7 29 81 1d cf | -91 CRC error
+00:00:05.896 | 0f 0d 00 9c 31 bc 2d 44 21 a6 12 42 21 f3 20 51 | -93 CRC error
+00:00:05.961 | 07 0e 00 a8 11 0e 25 a4 | -88 CRC error
+00:00:06.026 | 0f 0f 00 b4 1f b8 1d 5e 20 ef 2b 95 25 60 27 37 | -92 CRC error
+00:00:06.092 | 0f 10 00 c0 1f 9a 2c 71 21 2c 21 7f 1e f7 24 92 | -91 CRC error
+00:00:06.158 | 1f 11 00 cc 21 17 2d 98 26 9a 14 08 1e 5a 1c c6 10 02 06 21 00 00 00 40 01 00 00 00 00 00 00 00 | -91 CRC error
+00:00:06.224 | 0f 12 00 d8 2d d7 22 e9 1c e1 11 66 28 f0 1e 22 | -92 CRC error
+00:00:06.290 | packet overflow (possible length field corrupted) | CRC error
+00:00:06.354 | 0f 14 10 f0 26 53 2f 37 1b cc 20 5d 21 a9 22 38 | -93 CRC error
+00:00:06.420 | 0f 15 00 fc 14 8d 10 8a 99 f2 28 e8 16 b1 20 34 | -91 CRC error
+00:00:06.486 | 0f 16 01 09 28 0e 1e 72 20 a5 2b da 1b 77 1f 44 | -92 CRC error
+00:00:06.551 | 0f 17 01 14 1e e7 24 5c 9c 86 0f e2 2b 78 20 ca | -90 CRC error
+00:00:06.617 | 0f 18 01 20 28 4f 17 0e 2b d1 38 60 24 09 13 7e | -93 CRC error
+00:00:06.976 | 0f 1e 01 68 19 d1 29 b7 02 c3 03 a2 19 89 19 3f | -92 CRC error
+00:00:07.041 | 0f 1f 03 74 13 ea 2c 11 1f 86 1c 62 27 56 35 68 | -88 CRC error
+00:00:07.107 | 0f 20 01 80 24 0e 1d 94 23 52 1a ec 11 6f 21 0b | -90 CRC error
+00:00:07.172 | 0f 21 01 8c 24 3d 2d 35 1f 9a 1f c8 15 bb 23 8b | -88 CRC error
+00:00:07.238 | 0f 22 01 98 1e 7f 2f 7a 2c 16 2b 3f 1b 4a 20 f0 | -90 CRC error
+00:00:07.304 | 0f 23 01 e4 27 aa 23 0e 1f 07 1f fb 13 92 21 82 | -88 CRC error
+00:00:07.369 | 0f 24 01 b0 24 f0 20 2e 1e bc 18 3d 14 b3 23 28 | -88 CRC error
+00:00:07.435 | 0f 25 01 bc 1c 41 13 af 20 61 21 60 11 14 16 d0 | -90 CRC error
+00:00:07.501 | packet overflow (possible length field corrupted) | CRC error
+00:00:07.565 | 0f 27 01 d4 25 68 1c 00 2b a1 1d 15 26 f9 2a 38 | -88 CRC error
+00:00:07.631 | 0f 28 01 e0 21 b3 1f 87 21 31 32 36 21 e6 1b 28 | -89 CRC error
+00:00:07.697 | 0f 29 01 ec 13 ae 1f 56 16 d8 19 31 25 dd 24 2a | -89 CRC error
+00:00:07.762 | 0f 2a 01 f8 23 b0 1d 16 26 f1 22 60 1d e0 24 ad | -91 CRC error
+00:00:07.828 | 0f 2b 02 04 15 b4 26 48 3a f5 25 94 1a 07 21 5a | -87 CRC error
+00:00:07.893 | 0f 2c 02 10 19 67 14 cd 23 50 1a 85 20 c1 19 92 | -89 CRC error
+00:00:07.959 | 0f 2d 02 1c 20 1d 19 fd 1b 24 20 aa 1a 6d 28 76 | -88 CRC error
+00:00:08.025 | 0f 2e 02 28 1e 56 0e 8d 20 a2 22 d0 1a d9 1b 0c | -88 CRC error
+00:00:08.090 | 0f 2f 02 34 14 8a 2e 28 24 44 1c 4b 0f 9e 23 8f | -87 CRC error
+00:00:08.156 | 0f 30 02 40 28 01 2d 49 1e 88 18 08 1c 1c 19 f4 | -89 CRC error
+00:00:08.222 | 0f 31 02 4c 1a 82 1e d4 29 89 13 38 20 47 16 38 | -88 CRC error
+00:00:08.287 | 0f 32 02 58 20 ed 1f bc 1d 6e 27 8b 20 c9 1e ec | -88 CRC error
+00:00:08.353 | 0f 33 02 64 1a c7 2a 2a 1f 01 18 65 2b de 15 9a | -89 CRC error
+00:00:08.418 | 0f 34 02 70 24 74 20 fc 18 00 21 7c 1a b5 14 cb | -88 CRC error
+00:00:08.484 | 0f 35 02 7c 22 03 1e 32 2a 94 24 70 11 58 1a 93 | -88 CRC error
+00:00:08.550 | 0f 36 02 88 1f 0a 19 b7 1c 14 24 3a 1f 91 19 f5 | -88 CRC error
+00:00:08.615 | 0f 37 02 94 26 a9 1b e4 1a a1 1e be 1d 86 1b ed | -88 CRC error
+00:00:08.681 | 0f 38 02 a0 26 04 20 c4 20 c6 21 5d 24 4f 17 f6 | -88 CRC error
+00:00:08.747 | 0f 39 02 ac 11 37 24 81 1f 3a 1e 83 16 17 1d 92 | -90 CRC error
+00:00:08.812 | 0f 3a 02 b8 17 22 1b ec 14 6a 1a f6 1f ec 2c 9d | -88 CRC error
+00:00:08.878 | 0f 3b 02 c4 21 54 1e cd 1b 30 19 01 1c b6 1e 9a | -89 CRC error
+00:00:08.943 | 0f 3c 02 d0 1d eb 1e f3 1b 89 27 6b 1f b6 23 c4 | -88 CRC error
+00:00:09.009 | 0f 3d 02 dc 25 11 27 b4 1a 1b 22 2a 26 83 1e 6c | -88 CRC error
+00:00:09.075 | 0f 3e 02 e8 23 e7 25 a2 19 6c 29 c9 24 2f 1d 3d | -89 CRC error
+00:00:09.140 | 0f 3f 02 f4 24 b4 2b a8 25 2c 1f f1 17 6b 13 e6 | -87 CRC error
+00:00:09.206 | 0f 40 03 00 1e 36 18 c2 22 cd 29 d2 19 38 1a 62 | -89 CRC error
+00:00:09.272 | 0f 41 03 0c 1f 10 17 51 25 b3 1e 41 2f 64 26 b5 | -88 CRC error
+00:00:09.337 | 0f 42 03 18 16 c2 0b 22 24 10 16 19 22 12 0e 6e | -89 CRC error
+00:00:09.403 | 0f 43 03 24 18 24 13 41 14 69 20 39 24 f7 20 24 | -87 CRC error
+00:00:09.468 | 0f 44 03 30 18 a6 1d 34 27 4b 24 29 0f 8f 13 73 | -90 CRC error
+00:00:09.534 | 0f 45 03 3c 20 ff 34 a4 21 cd 24 09 1c f0 27 3e | -87 CRC error
+00:00:09.600 | 0f 46 03 48 1f 27 1b 9b 16 18 1b 0d 1e fd 2b 0a | -87 CRC error
+00:00:09.665 | 0f 47 03 54 16 cf 1a dd 25 b2 26 92 27 0d 20 bb | -88 CRC error
+00:00:09.731 | 0f 48 03 60 10 71 27 54 14 73 2c 6a 1e 89 32 62 | -89 CRC error
+00:00:09.796 | 0f 49 03 6c 1b 47 23 73 26 c8 1f 55 13 a5 22 c0 | -89 CRC error
+00:00:09.862 | 0f 4a 03 78 0a 5e 23 d0 17 3c 22 41 21 d9 2f 8b | -90 CRC error
+00:00:09.928 | 0f 4b 03 84 1d 57 1d 29 19 4a 20 69 28 56 18 6c | -88 CRC error
+00:00:09.993 | 0f 4c 03 90 19 24 22 c0 1c 24 26 00 22 ef 26 1d | -89 CRC error
+00:00:10.059 | 0f 4d 03 9c 0e 77 1d fb 23 c8 27 2b 1b 39 21 df | -88 CRC error
+00:00:10.125 | 0f 4e 03 a8 28 9c 12 9c 14 9b 1a 14 1a bd 1a 3c | -90 CRC error
+00:00:10.190 | 0f 4f 03 b4 1c e5 22 0f 21 ed 22 4c 19 2a 28 35 | -88 CRC error
+00:00:10.256 | 0f 50 03 c0 1e 56 20 e6 13 91 1d f0 1c d2 24 fd | -87 CRC error
+00:00:10.321 | 0f 51 03 cc 1c 04 30 58 28 07 1b 37 1c 84 1c 82 | -88 CRC error
+00:00:10.387 | 0f 52 03 d8 13 df 1d ce 21 0d 22 db 26 73 11 7c | -90 CRC error
+00:00:10.453 | 0f 53 03 e4 24 fa 18 56 20 49 1f b0 2c c8 1c 2b | -89 CRC error
+00:00:10.518 | 0f 54 03 f0 29 43 1d 55 25 be 1b bb 1b 87 1f 30 | -87 CRC error
+00:00:10.584 | 0f 55 03 fc 1f 4b 20 a1 25 62 11 7e 29 14 1f 3b | -87 CRC error
+00:00:10.650 | 0f 56 04 08 19 ef 1f cd 2d fe 16 6b 26 fc 2f 30 | -88 CRC error
+00:00:10.715 | 0f 57 04 14 18 8a 09 bd 16 7a 16 1f 2e 86 2a 6b | -88 CRC error
+00:00:10.781 | 0f 58 04 20 1b 6b 17 05 32 69 18 c0 1e 3a 26 d3 | -90 CRC error
+00:00:10.846 | 0f 59 04 2c 23 39 1d c5 28 41 25 87 28 03 21 d9 | -89 CRC error
+00:00:10.912 | 0f 5a 04 38 28 59 22 ea 1a 18 26 ee 22 79 16 fe | -89 CRC error
+00:00:10.978 | 0f 5b 04 44 25 23 24 d7 20 42 18 9f 15 a8 17 cb | -87 CRC error
+00:00:11.043 | 0f 5c 04 50 22 6b 1d 47 1c 93 32 40 25 95 2c 4f | -90 CRC error
+00:00:11.109 | 0f 5d 04 5c 1f 73 20 42 26 28 14 5e 1e 3e 29 b9 | -88 CRC error
+00:00:11.174 | 0f 5e 04 68 1d c1 28 f6 2c 2a 1a c3 11 57 29 51 | -88 CRC error
+00:00:11.240 | 0f 5f 04 74 2a 76 19 9e 16 8b 21 54 17 9f 28 3f | -88 CRC error
+00:00:11.306 | 0f 60 04 80 1e 10 11 68 28 81 1d c3 15 96 14 cd | -87 CRC error
+00:00:11.371 | 0f 61 04 8c 30 04 29 76 1c 88 18 1a 2f f7 1e 55 | -86 CRC error
+00:00:11.437 | 0f 62 04 98 0e de 21 93 1e 36 17 7f 35 78 26 4a | -88 CRC error
+00:00:11.503 | 0f 63 04 a4 16 e3 18 43 1e 7e 0a c4 1b ed 24 ad | -89 CRC error
+00:00:11.568 | 0f 64 04 b0 2c db 21 59 1d aa 1b 2a 23 33 1b ad | -89 CRC error
+00:00:11.634 | 0f 65 04 bc 1d d3 1d c5 18 8e 1d 6c 19 08 22 6d | -87 CRC error
+00:00:11.700 | 0f 66 04 c8 1c 5e 25 e0 21 bd 22 32 1d c3 33 de | -88 CRC error
+00:00:11.765 | 0f 67 04 d4 20 63 23 d1 19 3b 25 11 19 df 26 b7 | -89 CRC error
+00:00:11.889 | 0f 69 04 ec 19 9e 1c 55 22 1c 24 b4 19 ed 14 db | -89 CRC error
+00:00:11.955 | 0f 6a 04 f8 1f 76 1f 8c 22 66 27 74 25 1c 28 95 | -89 CRC error
+00:00:12.021 | 0f 6b 05 04 26 2f 1b d0 1d b9 12 c0 13 32 1e d4 | -89 CRC error
+00:00:12.086 | 0f 6c 05 10 28 29 31 05 2c 0e 29 08 20 91 20 ed | -88 CRC error
+00:00:12.152 | 0f 6d 05 1c 23 03 1b bb 22 0e 2c 27 25 b0 13 d5 | -89 CRC error
+00:00:12.217 | 0f 6e 05 28 2f 2d 1a e1 1c 39 16 31 24 d7 21 01 | -92 CRC error
+00:00:12.283 | 0f 6f 05 34 13 1f 19 de 27 9e 1a 72 1c 0c 17 e1 | -89 CRC error
+00:00:12.349 | 0f 70 05 40 33 47 15 b3 22 98 22 8a 22 05 10 41 | -90 CRC error
+00:00:12.414 | 0f 71 05 4c 17 5f 29 8a 23 44 28 f9 21 70 2f c3 | -88 CRC error
+00:00:12.480 | 0f 72 05 58 21 5b 1a 1e 25 95 14 f5 17 40 21 d6 | -88 CRC error
+00:00:12.546 | 0f 73 05 64 28 be 2a a5 1c 45 25 17 22 88 1a 48 | -89 CRC error
+00:00:12.611 | 0f 74 05 70 1e 51 10 59 15 cc 18 bd 2d 93 1f cb | -88 CRC error
+00:00:12.677 | 0f 75 05 7c 1c 01 1b c3 2a f6 14 bc 2b d0 29 59 | -87 CRC error
+00:00:12.742 | 0f 76 05 88 21 9e 24 4c 1c d0 28 a0 24 2a 32 31 | -88 CRC error
+00:00:12.808 | 0f 77 05 94 23 fa 13 d4 1e 82 24 e8 22 5b 26 78 | -87 CRC error
+00:00:12.874 | 0f 7c 85 b0 24 1c 31 8b 27 e6 7b 8f 31 23 e2 24 | -88 CRC error
+00:00:12.939 | 0f 79 05 ac 19 35 2a 19 1d 08 1c b6 19 94 19 73 | -87 CRC error
+00:00:13.005 | 0f 7a 05 b8 25 74 2a 1a 19 89 26 33 17 8b 25 fc | -88 CRC error
+00:00:13.071 | 0f 7b 05 c4 30 c4 1e 85 0c 4c 1b e2 25 8f 1e dd | -87 CRC error
+00:00:13.136 | 0f 7c 05 d0 24 5d 17 d1 21 c6 29 54 21 41 1f 21 | -88 CRC error
+00:00:13.202 | 0f 7d 05 dc 22 c3 1a 45 15 16 2b d7 1e 60 1f e0 | -88 CRC error
+00:00:13.267 | 0f 7e 05 e8 2e 21 29 12 14 ec 15 b0 22 9f 15 f8 | -89 CRC error
+00:00:13.333 | 0f 7f 05 f4 27 a3 26 71 22 09 19 22 17 16 1a e6 | -90 CRC error
+00:00:13.399 | 0f 80 06 00 1c be 1a 43 23 f1 1b 5c 1e 0f 2c 24 | -89 CRC error
+00:00:13.464 | 0f 81 06 0c 2d 5c 26 b8 22 9c 1f db 22 30 22 41 | -89 CRC error
+00:00:13.530 | 0f 82 06 18 0e d6 30 44 25 a6 23 c4 14 c4 1a 53 | -90 CRC error
+00:00:13.596 | 0f 83 06 24 1e 29 23 c4 15 c8 29 4a 18 93 24 14 | -88 CRC error
+00:00:13.661 | 0f 84 06 30 0f 52 32 00 18 1a 27 02 21 52 1e 64 | -89 CRC error
+00:00:13.727 | 0f 85 07 3c 16 b5 2b c7 2d fc 24 f7 0f fe 1f bc | -88 CRC error
+00:00:13.792 | 0f 86 06 48 1c f2 16 35 24 ce 25 ba 22 d1 20 73 | -88 CRC error
+00:00:13.858 | packet overflow (possible length field corrupted) | CRC error
+00:00:13.923 | 0f 88 06 60 26 97 1b 27 27 3f 28 ca 20 2b 1d b8 | -89 CRC error
+00:00:13.988 | 0f 89 06 6c a6 be 1b fd 9f 8e 16 13 9b 63 2f 15 | -87 CRC error
+00:00:14.054 | 0f 8a 06 78 0d da 24 24 1b e4 1f 8a 23 9d 1b c3 | -87 CRC error
+00:00:14.178 | 0f 8c 06 90 15 59 21 d0 29 4e 30 2b 17 5b 1a e5 | -89 CRC error
+00:00:14.244 | 0f 8d 06 9c 1f e0 24 8c 26 97 1d 9a 30 a8 26 9d | -88 CRC error
+00:00:14.310 | 0f 8e 06 a8 18 00 25 72 21 5b 18 30 20 15 1b 0c | -89 CRC error
+00:00:14.375 | 0f 8f 06 b4 0f ce 1c a2 22 ce 1d f2 1f 79 13 ee | -88 CRC error
+00:00:14.441 | 0f 90 06 c0 28 5a 17 f1 23 6f 12 f5 20 df 1b d6 | -87 CRC error
+00:00:14.506 | 0f 91 06 cc 23 18 38 67 25 67 26 13 2b 3e 25 26 | -89 CRC error
+00:00:14.572 | 0f 92 06 d8 0b fe 1f ab 10 de 1e 4d 15 f5 17 e3 | -87 CRC error
+00:00:14.638 | 0f 93 06 e4 12 da 25 6f 16 43 18 7f 27 46 29 f9 | -87 CRC error
+00:00:14.703 | 0f 94 06 f0 20 dd 23 ea 14 3e 16 ab 1d af 22 48 | -87 CRC error
+00:00:14.769 | 0f 95 06 fc 27 ce 1a 4b 1a f2 1d 1b 3b 8c 18 0a | -88 CRC error
+00:00:14.835 | 0f 96 07 08 21 0b 29 33 15 d6 1b 02 1c ce 14 d6 | -88 CRC error
+00:00:14.900 | 0f 97 07 14 22 9b 0c dc 20 e3 27 46 26 2f 22 c9 | -88 CRC error
+00:00:14.966 | 0f 98 07 20 20 0a 22 8a 1b b2 1b c3 1e 97 2a 6a | -88 CRC error
+00:00:15.031 | 0f 99 07 2c 23 b0 1e 5b 20 5f 1c fa 10 9e 15 3f | -87 CRC error
+00:00:15.097 | 0f 9a 07 38 15 a2 1b f5 2c e2 1b 7f 23 31 25 a3 | -88 CRC error
+00:00:15.163 | 0f 9b 07 44 22 74 17 ff 20 69 1f ec 1c d2 20 d2 | -90 CRC error
+00:00:15.228 | 0f 9c 07 50 1f 7e 18 65 26 90 00 37 23 2a 24 99 | -87 CRC error
+00:00:15.294 | 0f 9d 07 5c 1c 2d 22 4c 1b f1 21 de 28 91 1e 3c | -89 CRC error
+00:00:15.360 | 0f 9e 07 68 1a fa 10 b2 2f 87 17 ee 1b 78 26 8f | -89 CRC error
+00:00:15.425 | 0f 9f 07 74 20 d3 27 b5 2b ac 24 98 18 fb 24 66 | -88 CRC error
+00:00:15.491 | 0f a0 07 80 29 08 16 2e 17 b1 11 1b 1f d2 28 13 | -88 CRC error
+00:00:15.556 | 0f a1 07 8c 1e f3 23 98 1e 03 17 4a 1f 44 1e 4a | -89 CRC error
+00:00:15.622 | 0f a2 07 98 25 0c 1d b6 15 f4 1a 20 27 74 28 cd | -85 CRC error
+00:00:15.688 | 0f a3 07 a4 2a bd 18 de 1a 28 39 d3 27 af 26 1e | -87 CRC error
+00:00:15.753 | 0f a4 07 b0 1f 9c 6f 1a a2 bf 2e c2 5d 26 1e aa | -85 CRC error
+00:00:15.819 | 0f a5 07 bc 25 8c 16 c0 16 9d 22 5e 1f 2d 2e e1 | -86 CRC error
+00:00:15.885 | 0f a6 07 c8 1b 59 24 32 0b 75 21 4c 18 5e 18 53 | -87 CRC error
+00:00:15.950 | 0f a7 07 d4 16 bd 20 cb 21 1d 20 c1 1d a2 1c a8 | -87 CRC error
+00:00:16.016 | 0f a8 07 e0 33 91 21 6e 17 ff 1f 27 1f 12 1b 52 | -88 CRC error
+00:00:16.081 | 0f a9 07 ec 1a f4 15 2e 28 a9 22 03 30 80 1a b6 | -87 CRC error
+00:00:16.147 | 0f aa 07 f8 0f 48 26 a7 27 59 1e b1 13 70 19 65 | -87 CRC error
+00:00:16.213 | 0f ab 08 04 21 d0 0a f2 19 c2 16 d9 2d 0e 18 31 | -88 CRC error
+00:00:16.278 | 0f ac 08 10 16 15 33 d9 36 08 1b f0 28 fe 17 0f | -89 CRC error
+00:00:16.344 | 0f ad 08 1c 26 23 12 81 14 7e 26 cf 22 05 10 c0 | -86 CRC error
+00:00:16.409 | 0f ae 08 28 10 71 24 1f 22 cf 24 c4 2d be 2b bb | -87 CRC error
+00:00:16.475 | 0f af 08 34 22 ca 24 59 1e df 2e 65 12 06 25 b8 | -87 CRC error
+00:00:16.541 | 0f b0 08 40 12 be 16 22 24 83 1b c3 18 08 25 aa | -85 CRC error
+00:00:16.606 | 0f b1 08 4c 1a be 1e 64 20 35 23 de 24 8e 1f 2d | -87 CRC error
+00:00:16.672 | 0f b2 08 58 25 3f 1d 20 26 a0 16 cb 1e 9a 1e 71 | -87 CRC error
+00:00:16.738 | 0f b3 08 64 16 4e 25 5b 1e d6 23 6b 20 e8 1e b7 | -87 CRC error
+00:00:16.803 | 0f b4 08 70 1e 14 11 95 1f 0c 24 1e 20 b1 27 ee | -87 CRC error
+00:00:16.869 | 0f b5 08 7c 1e 4f 2f 5a 2c 10 2f 00 29 0d 1d 09 | -86 CRC error
+00:00:16.934 | 0f b6 08 88 28 18 13 fc 1b 95 13 64 15 a7 0f a7 | -87 CRC error
+00:00:17.000 | 0f b7 08 94 14 c2 21 57 23 84 1c 76 24 fa 20 dd | -86 CRC error
+00:00:17.066 | 0f b8 08 a0 28 32 1f 79 17 a7 16 a1 1b ca 23 63 | -86 CRC error
+00:00:17.131 | 0f b9 08 ac 1b d8 1a 94 29 4f 31 e2 15 5d 16 49 | -85 CRC error
+00:00:17.197 | 0f ba 08 b8 20 60 1c c2 13 64 23 db 1a ec 20 94 | -88 CRC error
+00:00:17.263 | 0f bb 08 c4 14 56 16 6c 24 52 1e 23 24 cd 19 36 | -86 CRC error
+00:00:17.328 | 0f bc 08 d0 1d c5 20 05 2b 60 1a c9 26 e0 21 59 | -87 CRC error
+00:00:17.394 | 0f bd 08 dc 1f 13 1f b9 15 66 10 9c 1e 2f 1b be | -85 CRC error
+00:00:17.459 | 0f be 08 e8 1e b9 1e 73 24 7b 1f 47 0c f5 2b f6 | -86 CRC error
+00:00:17.525 | 0f bf 08 f4 15 6c 16 ee 1a d6 1b df 24 82 2c 22 | -86 CRC error
+00:00:17.591 | 0f c0 09 00 21 1b 18 e6 1e 27 24 32 15 0e 24 f3 | -85 CRC error
+00:00:17.656 | 0f c1 09 0c 1f ba 18 27 18 f5 0b 6e 1d 23 14 74 | -86 CRC error
+00:00:17.722 | 0f c2 09 18 20 3a 2a 0b 13 45 19 5e 28 ac 14 38 | -85 CRC error
+00:00:17.787 | 0f c3 09 24 1f ed 28 1a 2a 3a 2b 83 21 c2 2e 08 | -85 CRC error
+00:00:17.853 | 0f c4 09 30 2a cc 19 4f 1b 1a 1d ef 2d 50 20 89 | -86 CRC error
+00:00:17.919 | 0f c5 09 3c 28 82 21 3f 27 94 20 fd 1d 92 21 66 | -85 CRC error
+00:00:17.984 | 0f c6 09 48 2b 87 13 28 27 19 22 8d 26 32 12 2c | -85 CRC error
+00:00:18.050 | 0f c7 09 54 18 da 20 88 15 c3 1a a8 1e ba 2b d6 | -85 CRC error
+00:00:18.116 | 0f c8 09 60 25 31 18 83 17 43 19 b6 1e 0c 28 5e | -87 CRC error
+00:00:18.181 | 0f c9 09 6c 21 91 17 f5 23 21 1d 54 2f 59 26 9d | -86 CRC error
+00:00:18.247 | 0f ca 09 78 16 e4 19 69 24 b9 28 88 1c 72 23 1d | -85 CRC error
+00:00:18.312 | 0f cb 09 84 17 44 26 fa 25 0e 22 15 19 57 13 a3 | -86 CRC error
+00:00:18.378 | 0f cc 09 90 23 c6 16 e0 25 13 23 21 19 dd 31 1c | -86 CRC error
+00:00:18.444 | 0f cd 09 9c 24 f0 1f 08 18 5d 19 a4 25 1a 18 32 | -86 CRC error
+00:00:18.509 | 0f ce 09 a8 20 c3 21 75 1a 87 21 a8 1b 4c 02 0d | -86 CRC error
+00:00:18.575 | 0f cf 09 b4 18 ec 23 9d 26 cf 22 3f 1c 5b 22 5b | -88 CRC error
+00:00:18.641 | 0f d0 09 c0 26 6c 1c ad 29 fc 19 7c 22 0a 21 bb | -87 CRC error
+00:00:18.706 | 0f d1 09 cc 15 85 20 f9 29 64 19 5d 1c e1 20 98 | -88 CRC error
+00:00:18.772 | 0f d2 09 d8 1a 13 1e 61 08 15 1a 74 2a bf 21 fe | -87 CRC error
+00:00:18.838 | 0f d3 09 e4 1f 3f 1a c7 23 f9 23 04 1f d6 24 55 | -85 CRC error
+00:00:18.903 | 0f d4 09 f0 1d bd 2c 40 2a 7e 30 cd 20 4f 1d 94 | -85 CRC error
+00:00:18.969 | 0f d5 09 fc 1e a5 25 19 25 67 1c da 20 bd 1f 0d | -87 CRC error
+00:00:19.034 | 0f d6 0a 08 22 aa 18 7f 18 eb 22 0f 18 2f 0c 6b | -86 CRC error
+00:00:19.100 | 0f d7 0a 14 17 3b 14 c0 0c 6b 20 c3 2f 67 10 4e | -87 CRC error
+00:00:19.166 | 0f d8 0a 20 2c 77 17 b9 30 4d 2c 78 1e f7 22 52 | -87 CRC error
+00:00:19.231 | 0f d9 0a 2c 26 05 1c c2 28 6a 23 ad 2e 35 14 dc | -87 CRC error
+00:00:19.297 | 0f da 0a 38 1d cf 2f 24 18 78 22 b9 1e 81 2e 2d | -86 CRC error
+00:00:19.362 | 0f db 0a 44 1d 3a 1c 0e 3a 94 1e e6 24 75 25 c7 | -86 CRC error
+00:00:19.428 | 0f dc 0a 50 2e 2c 0e 13 22 94 2d 34 22 90 1c 98 | -85 CRC error
+00:00:19.494 | 0f dd 0a 5c 1e 43 16 e3 27 d7 2c ae 1e c0 1e 60 | -86 CRC error
+00:00:19.559 | 0f de 0a 68 1f 51 25 c8 1f 4e 22 a8 1f 90 27 f2 | -88 CRC error
+00:00:19.625 | 0f df 0a 74 21 ae 10 52 2c 9a 1f e3 27 6a 0f b7 | -86 CRC error
+00:00:19.691 | 0f e0 0a 80 24 d0 23 76 26 b4 1d c2 16 22 19 ea | -88 CRC error
+00:00:19.756 | 0f e1 0a 8c 16 84 17 b6 1d c1 1c a7 22 2e 18 bc | -87 CRC error
+00:00:19.822 | 0f e2 0a 98 09 66 1a 71 1f 53 28 d6 1f ec 19 af | -88 CRC error
+00:00:19.887 | 0f e3 0a a4 2c 7f 24 13 19 ec 29 db 12 ec 25 2d | -87 CRC error
+00:00:19.953 | 0f e4 0a b0 1d bc 20 d5 21 15 13 17 20 b7 20 7b | -87 CRC error
+00:00:20.019 | 0f e5 0a bc 0d bb 28 56 22 2c 20 0e 12 5d 24 cd | -86 CRC error
+00:00:20.084 | 0f e6 0a c8 1b c2 18 8f 2e 21 26 b1 0a fa 25 5f | -86 CRC error
+00:00:20.208 | 0f e8 0a e0 2d 22 13 04 0c bc 1c 26 2c d2 18 66 | -86 CRC error
+00:00:20.274 | 0f e9 0a ec 38 f4 26 59 18 00 1d d2 23 81 1a 80 | -86 CRC error
+00:00:20.340 | 0f ea 0a f8 22 7e 1e 52 0b 29 1a b9 20 eb 18 07 | -88 CRC error
+00:00:20.405 | 0f eb 0b 04 20 d5 26 76 23 1c 1e 3a 1e 15 2a 37 | -87 CRC error
+00:00:20.471 | 0f ec 0b 10 17 9b 1d 3d 1f b8 20 63 28 55 20 cb | -87 CRC error
+00:00:20.536 | 0f ed 0b 1c 1a bf 2a 2c 2f bb 1f 64 18 f0 17 8f | -86 CRC error
+00:00:20.602 | 0f ee 0b 28 2a fc 32 ee 1f 77 22 8e 1a 6d 15 7c | -87 CRC error
+00:00:20.668 | 0f ef 0b 34 21 dc 21 c0 19 8d 29 97 23 10 28 f6 | -86 CRC error
+00:00:20.733 | 0f f0 0b 40 24 85 1f ec 18 14 23 6f 20 cb 1b d5 | -87 CRC error
+00:00:20.799 | 0f f1 0b 4c 26 79 18 bd 21 d4 25 e9 14 ef 22 44 | -87 CRC error
+00:00:20.865 | 0f f2 0b 58 15 57 16 a8 13 9d 1d d7 12 e2 1d 5a | -85 CRC error
+00:00:20.930 | 0f f3 0b 64 14 ef 19 ef 18 9c 28 8e 27 24 16 76 | -88 CRC error
+00:00:20.996 | 0f f4 0b 70 27 50 2f 56 20 db 26 9d 17 8c 1d 71 | -86 CRC error
+00:00:21.061 | 0f f5 0b 7c 2c bb 19 85 1d 6f 11 ae 1e d4 28 c2 | -86 CRC error
+00:00:21.127 | 0f f6 0b 88 24 1b 20 c4 23 95 1a ab 21 01 27 72 | -86 CRC error
+00:00:21.193 | 0f f7 0b 94 1f 59 27 2a 17 cb 0a bb 2b 3d 1c 4f | -86 CRC error
+00:00:21.258 | 0f f8 0b a0 25 b4 1c 29 22 b1 30 46 78 3b 17 6f | -87 CRC error
+00:00:21.324 | 0f f9 0b ac 22 55 22 27 2e ef 16 ce 22 ab 27 41 | -86 CRC error
+00:00:21.390 | 0f fa 0b b8 1f 5f 24 2f 16 b9 20 cb 1a c3 32 7e | -87 CRC error
+00:00:21.455 | 0f fb 0b c4 20 41 13 18 1a 7b 2a 76 16 79 22 0a | -85 CRC error
+00:00:21.521 | 0f fc 0b d0 2c 1d 1c 2e 27 47 28 5d 1e 2a 1a 35 | -86 CRC error
+00:00:21.586 | 0f fd 0b dc 24 ff 2a 8a 22 04 19 2e 1a 5b 22 90 | -85 CRC error
+00:00:21.652 | 0f fe 0b e8 12 6e 28 e1 2b 90 17 1f 19 e8 27 f4 | -85 CRC error
+00:00:21.718 | 0f ff 0b f4 21 cc 24 18 11 50 2d ab 1a 3e 15 f4 | -86 CRC error
+00:00:21.783 | 0f 00 0c 00 20 56 25 5c 1e 27 17 d2 18 09 0e 34 | -86 CRC error
+00:00:21.849 | 0f 01 0c 0c 23 4a 1e 21 20 15 18 9e 22 a9 2b 68 | -88 CRC error
+00:00:21.915 | 0f 02 0c 18 10 68 30 6e 24 9d 22 f5 27 f2 29 43 | -87 CRC error
+00:00:21.980 | 0f 03 0c 24 16 2e 1b a3 23 dd 25 26 1a 21 25 9b | -87 CRC error
+00:00:22.046 | 0f 04 0c 30 17 69 13 3b 1b ce 21 06 1d 0f 1c c8 | -87 CRC error
+00:00:22.112 | 0f 05 0c 3c 14 b3 11 39 11 fc 12 c3 14 7d 1e 47 | -87 CRC error
+00:00:22.177 | 0f 06 0c 48 1c 48 26 41 20 a6 25 55 20 95 2a 5b | -88 CRC error
+00:00:22.243 | 0f 07 0c 54 1d 99 1e 55 21 c4 1c 85 1b 4e 1c f7 | -88 CRC error
+00:00:22.308 | 0f 08 0c 60 28 4a 23 b8 1e 23 28 47 14 0a 21 5e | -90 CRC error
+00:00:22.374 | 0f 09 0c 6c 29 d6 0e 3a 14 6e 2e 25 2e 91 1f 21 | -91 CRC error
+00:00:22.440 | 0f 0a 0c 78 1f a9 1b 11 19 c1 1c f2 1f 7a 16 6f | -91 CRC error
+00:00:22.505 | 0f 0b 0c 84 1f d3 0f cb 33 d6 18 b0 1e ef 29 f4 | -89 CRC error
+00:00:22.571 | 0f 0c 0c 90 15 8e 1d 92 19 94 1f a6 17 cb a2 d0 | -90 CRC error
+00:00:22.636 | 0f 0d 0c dc 1a 14 15 20 21 47 22 86 28 dc 24 ac | -88 CRC error
+00:00:22.702 | 0f 0e 0c a8 20 8f 2b f9 25 49 20 cc 24 24 21 1e | -89 CRC error
+00:00:22.768 | 0f 0f 0c b4 1b d4 1f d1 2d 17 15 b1 23 a7 29 02 | -88 CRC error
+00:00:22.833 | 0f 10 0c c0 25 a1 1d 9c 23 c0 0e 29 26 2f 28 04 | -92 CRC error
+00:00:23.075 | 0f 05 1c f0 2d 03 af f7 25 c2 1d ed 1e eb 5b 18 | -95 CRC error
+00:00:23.492 | 0f 9b 0d 44 9e 5e 24 b5 a6 4e 10 a7 1c 51 35 09 | -96 CRC error
+00:00:23.616 | 2f 09 4d 1c 1a db 00 f3 64 c9 97 96 9d 39 2b d3 91 04 06 21 00 00 02 08 01 00 00 00 00 01 00 00 00 12 00 00 09 00 00 01 40 84 40 08 08 a7 19 00 | -96 CRC error
+00:00:23.742 | 0f 1f 0d 74 39 c6 0f 0f 1f 9f 23 a4 1e 7e 66 23 | -95 CRC error
+00:00:23.983 | 0f 23 0d a4 17 65 20 53 22 82 11 74 0e 34 1c 69 | -90 CRC error
+00:00:24.049 | 0f 24 0d b0 20 f3 18 a9 19 ad 20 62 0b f8 22 4c | -95 CRC error
+00:00:24.114 | 0f 25 0d bc 12 47 28 14 12 7b 1c c6 2d fa 1a a3 | -89 CRC error
+00:00:24.239 | 0f 27 0d d4 2b 25 23 b2 1e ca 14 50 20 e2 25 75 | -93 CRC error
+00:00:24.304 | 0f 28 0d e0 ab 85 1f cb 23 9b 1c 79 1d 21 26 11 | -89 CRC error
+00:00:24.370 | 0f 29 0d ec 0c 97 16 e6 15 71 19 3e 1f d5 20 ce | -94 CRC error
+00:00:24.436 | 0f 2a 0d f8 19 ef 20 48 1f 62 28 34 20 3d 1e 57 | -91 CRC error
+00:00:24.501 | 0f 2b 0e 04 1d 93 25 fb 1a c5 21 b9 27 17 19 bf | -90 CRC error
+00:00:24.567 | 0f 2c 0e 10 1f 68 27 16 16 d6 19 05 15 db 1a a9 | -91 CRC error
+00:00:24.632 | 0f 2d 0e 1c 23 76 21 19 25 1a 25 bf 28 29 20 4b | -91 CRC error
+00:00:24.757 | 0f 2f 0e 34 1b 56 1d 45 18 c5 1a ec 1a ae 1f a2 | -91 CRC error
+00:00:24.881 | 0f 31 8e 4c 20 e5 18 1e 20 6d 27 b4 28 3b 31 cb | -90 CRC error
+00:00:24.946 | 0f 36 0e 58 1a cf 26 a7 1f 07 19 d3 1e 40 29 f1 | -92 CRC error
+00:00:25.012 | 0f 33 0e 64 2c a2 16 1e 2c 11 60 80 14 06 21 8f | -89 CRC error
+00:00:25.078 | packet overflow (possible length field corrupted) | CRC error
+00:00:25.143 | 0f 35 0e 7c 1f 6f 1c d0 25 f8 1f dd 21 e1 27 06 | -92 CRC error
+00:00:25.208 | 0f 36 1e c8 25 88 20 9b 07 99 22 52 27 81 25 b1 | -93 CRC error
+00:00:25.274 | 0f 77 0e 94 24 61 22 1c 25 67 37 88 22 df 15 74 | -94 CRC error
+00:00:25.339 | 0f 38 0e a0 14 bd 1a ac 24 f5 2b e3 1d 4b 24 1c | -95 CRC error
+00:00:25.464 | 0f 3a 0e b8 34 32 28 04 0f a4 24 97 1d 09 1b 23 | -93 CRC error
+00:00:25.588 | 06 3c 8e d0 21 ee 59 | -91 CRC error
+00:00:25.653 | 0f 3d 0e dc 23 be 19 27 11 70 1f 9e 23 a3 1f 38 | -94 CRC error
+00:00:25.719 | 0f 7e 07 f8 1d 26 2c 36 c5 c2 73 8d 4a bc 0f c3 | -91 CRC error
+00:00:25.784 | 0f 3f 0e f4 22 75 22 19 13 51 22 9e 21 eb 1d 96 | -91 CRC error
+00:00:25.850 | 0f 40 0f 00 0d dc 7b 0a 76 7f 9f ff dd cf 67 8f | -90 CRC error
+00:00:25.916 | 0f 41 0f 0c 20 00 22 23 14 47 21 d5 16 5d 16 a3 | -89 CRC error
+00:00:25.981 | 0f 42 0f 18 27 5d 20 b7 16 f6 20 f4 1c 9e 25 16 | -88 CRC error
+00:00:26.047 | 0f 43 0f 24 1f cb 1a 1c 22 c9 1a 73 13 b7 1e a6 | -87 CRC error
+00:00:26.112 | 0f 44 0f 30 18 2a 33 80 2d b3 2a 46 1b 53 1c 3e | -90 CRC error
+00:00:26.178 | 0f 45 0f 3c 1f bd 1a d9 19 2d 18 0a 27 02 26 b1 | -90 CRC error
+00:00:26.244 | 0f 46 0f 48 20 03 1c 2b 20 11 25 99 25 df 20 6b | -89 CRC error
+00:00:26.309 | 0f 47 0f 54 2a d7 14 89 1f 19 1e 10 1f b5 1f 1b | -89 CRC error
+00:00:26.375 | 0f 48 0f 60 25 d1 1e c4 17 38 27 3e 27 dc 14 9d | -89 CRC error
+00:00:26.441 | 0f 49 0f 6c 23 1e 12 d1 1b a4 2b 56 1c bf 28 eb | -87 CRC error
+00:00:26.506 | 0f 4a 0f 78 18 e8 1c 21 1f 67 1f a3 22 b4 29 44 | -87 CRC error
+00:00:26.572 | 0f 4b 0f 84 1c e1 28 89 16 e4 13 b6 20 6d 2b 19 | -87 CRC error
+00:00:26.637 | 0f 4c 0f 90 1a 88 1a f6 1a 32 20 85 2b 62 2e d7 | -89 CRC error
+00:00:26.703 | 0f 4d 0f 9c 25 a3 1c 99 18 4c 15 0c 22 de 23 8c | -89 CRC error
+00:00:26.769 | 0f 4e 0f a8 2d 10 15 c4 11 10 15 19 23 81 23 41 | -90 CRC error
+00:00:26.834 | 0f 4f 0f b4 1d 27 14 20 1a 0b 1b 9a 19 93 1c 5c | -89 CRC error
+00:00:26.900 | 0f 50 0f c0 15 ab 1d 3f 28 dd 19 fb 22 e8 1a 60 | -91 CRC error
+00:00:26.966 | 0f 51 0f cc 2c b8 23 20 1b 0e 1d 2d 21 50 1c 1c | -86 CRC error
+00:00:27.031 | 0f 52 0f d8 24 f2 26 5c 1c ba 1b ed 19 dd 15 0f | -87 CRC error
+00:00:27.097 | 0f 53 0f e4 1e 22 23 8b 24 8f 21 93 19 f5 1a 97 | -89 CRC error
+00:00:27.162 | 0f 54 0f f0 24 11 1d d0 19 40 34 67 24 6c 22 7f | -90 CRC error
+00:00:27.228 | 0f 75 0f fc 24 f8 18 2b 1e 0b 22 38 1f aa 1e 59 | -89 CRC error
+00:00:27.294 | 0f 56 10 08 20 26 2b e9 2c 0e 2d 46 18 4a 2b 85 | -88 CRC error
+00:00:27.359 | 0f 57 10 14 19 49 26 b2 24 98 15 c1 1f 89 30 e2 | -88 CRC error
+00:00:27.483 | 0f 59 10 2c 1c 15 25 d3 22 b3 13 98 29 3a 1b ad | -85 CRC error
+00:00:27.549 | 0f 5a 10 38 36 88 29 bd 0f 5d 23 b7 23 41 1c 1b | -87 CRC error
+00:00:27.615 | 0f 5b 10 44 21 cd 1f ae 1a 77 2d 39 14 bf 21 72 | -87 CRC error
+00:00:27.680 | 0f 5c 10 50 26 11 1b be 0e b2 20 18 15 bc 25 b1 | -86 CRC error
+00:00:27.746 | 0f 5d 10 5c 26 32 1f df 13 48 14 7f 22 b7 24 30 | -86 CRC error
+00:00:27.812 | 0f 5e 10 68 1e ad 1f da 12 8b 12 8a 25 50 2b fe | -87 CRC error
+00:00:27.877 | 0f 5f 10 74 2d 40 1d 99 19 5e 23 f3 11 46 29 70 | -88 CRC error
+00:00:27.943 | 0f 60 10 80 19 fc 16 ef 1e a2 24 f6 2a 42 26 b2 | -88 CRC error
+00:00:28.008 | 0f 61 10 8c 29 6a 1d bd 21 37 24 97 1c 6e 11 67 | -90 CRC error
+00:00:28.074 | 0f 62 10 98 1d 99 18 4e 26 ef 2e 9d 0d 24 1c ca | -90 CRC error
+00:00:28.140 | 0f 63 10 a4 2b 36 13 fc 1e 7e 2b fd 28 1f 29 52 | -88 CRC error
+00:00:28.205 | 0f 64 10 b0 13 b4 1d 3d 18 19 21 b5 21 10 2e 11 | -88 CRC error
+00:00:28.271 | packet overflow (possible length field corrupted) | CRC error
+00:00:28.394 | 0f 67 10 d4 1c 5b 17 97 16 bb 6d bb 1d da 14 73 | -93 CRC error
+00:00:28.870 | 0b ef 10 54 36 c3 65 f9 39 19 22 30 | -96 CRC error
+00:00:29.053 | 0f 72 15 58 2d ee 23 a9 2a 7e 1c 84 27 34 1e e4 | -93 CRC error
+00:00:29.294 | 0f b7 11 a8 28 c3 a3 52 20 0d 1d f2 5e 60 14 e3 | -92 CRC error
+00:00:29.712 | 0f 6d 71 bc 24 e3 29 7b a1 81 4c 7c 9b 07 17 f4 | -94 CRC error
+00:00:29.836 | 2f 7f 30 f7 1e fb 7f 26 2c 7f a8 06 8e f6 35 8e 10 00 0e 60 00 00 20 40 11 04 01 02 10 00 04 00 10 08 20 00 10 82 00 a0 08 00 12 40 01 b7 3a 22 | -93 CRC error
+00:00:29.903 | 0f c0 12 00 21 b8 72 1e 1e 58 15 fb 59 d7 1c 22 | -92 CRC error
+00:00:29.968 | 0e 81 52 14 16 b8 29 56 14 f1 08 fb 21 39 20 | -94 CRC error
+00:00:30.092 | packet overflow (possible length field corrupted) | CRC error
+00:00:30.157 | 05 84 12 38 19 71 | -95 CRC error
+00:00:30.223 | 1e e4 12 2c 09 5c 3c c3 1c bc 2a 0e 9e 79 1f 3b 10 00 07 61 00 40 02 00 01 00 10 00 00 00 00 | -92 CRC error
+00:00:30.347 | 0f 87 17 54 28 d9 24 39 1d ff 2d f8 27 d3 1e f4 | -94 CRC error
+00:00:30.472 | 0f 89 1e 6c 1a 4a a0 18 1c 3a 22 65 22 16 21 b7 | -99 CRC error
+00:00:30.596 | 0f 8b 12 84 22 fc 29 b5 62 30 67 40 31 3f 21 1f | -92 CRC error
+00:00:30.720 | 0d 8d 02 9d 1f b5 18 70 2a db 4c d9 2f 62 | -91 CRC error
+00:00:30.844 | 0f 8f 12 b4 1d 85 14 c9 ab c3 27 33 29 41 27 ca | -92 CRC error
+00:00:30.968 | 0f 95 12 8c 22 a8 4e 78 28 a8 32 de 1c 17 1a ce | -94 CRC error
+00:00:31.093 | 1f b7 23 c0 2a d2 43 ba 23 ee 42 98 5d 02 32 dc a0 00 0c c2 00 20 40 00 02 00 00 40 00 20 00 00 | -95 CRC error
+00:00:31.159 | 0f 94 12 f0 20 97 6c 9f 3a 72 a6 56 0f 8b 19 ed | -92 CRC error
+00:00:31.283 | 0f 96 13 0e 17 94 1f 13 1f 1c 2f cb 2a 5d 2b e4 | -96 CRC error
+00:00:31.407 | 0f 98 13 20 1e 03 26 7d 23 2f a9 25 1d 6f 64 94 | -93 CRC error
+00:00:31.473 | 0f 98 03 2c 4c e2 26 ea 19 79 25 72 a4 7e 1f ac | -97 CRC error
+00:00:31.597 | 0f db 13 44 20 9e 1c 2f 1f 3a 20 4f 1d e7 23 4c | -98 CRC error
+00:00:31.780 | 0f 3e 22 e0 34 04 c8 60 67 fc 41 18 0c 7e 61 28 | -93 CRC error
+00:00:31.846 | 0f 9d 92 74 26 35 26 69 1e 86 1e 80 36 c5 22 a5 | -92 CRC error
+00:00:31.911 | 2f b0 1b 86 8c ce 98 57 1b 5d 1b 67 30 97 2c ad 00 00 06 61 18 00 00 02 01 10 05 28 40 20 04 40 00 04 0d 00 40 10 20 00 21 01 00 00 00 e7 3b 08 | -92 CRC error
+00:00:32.037 | 0f a2 13 b8 20 05 1b 03 19 b3 1d 13 29 8b a0 2c | -89 CRC error
+00:00:32.161 | 0f a4 13 b0 1b 58 1a f6 1e 0d 2f b9 10 78 14 fc | -92 CRC error
+00:00:32.227 | 0f a5 15 3c 2f d7 4b 09 71 36 18 c4 1b ad 1e 8f | -93 CRC error
+00:00:32.351 | 0f a7 13 d4 21 68 24 6d 24 40 27 01 6d 86 0d 9f | -92 CRC error
+00:00:32.475 | 0f e9 13 ec 1c 43 29 b7 0c 25 1b fd 22 ea 19 ca | -93 CRC error
+00:00:32.716 | 0f 2d 24 1d 39 72 3c 4c a7 34 3f 39 05 8c 1d e1 | -95 CRC error
+00:00:32.841 | 0d 3f 14 34 1a 14 22 0c 08 1c 22 bf 1d 5b | -95 CRC error
+00:00:33.023 | packet overflow (possible length field corrupted) | CRC error
+00:00:33.147 | 0f a5 ad f0 1b 7f 37 6a 1a 4f 42 d0 03 e4 6a 02 | -94 CRC error
+00:00:33.388 | 2e ba 14 e0 33 c9 2c 66 1c 85 13 36 1c 41 61 16 10 00 06 71 80 20 00 00 41 00 20 00 00 00 28 04 00 00 00 00 01 00 00 08 00 00 20 00 80 bd 1b | -93 CRC error
+00:00:33.514 | 0f ba 74 b8 1a 37 19 95 21 6c 21 7f 2d ac 2e 5e | -91 CRC error
+00:00:33.579 | 0e bb 14 c4 1d f8 1b 17 1e 99 1b a7 3a 2b 57 | -94 CRC error
+00:00:33.704 | 0f bc 1c dc 12 9a 2e 6b 27 7e 2e 8c 23 aa 2b be | -94 CRC error
+00:00:33.886 | 2f c2 17 01 15 3d 31 e3 18 b0 1d 41 19 ff 17 08 10 00 06 60 00 00 00 00 09 00 02 80 00 00 00 00 00 00 00 00 00 00 00 40 00 00 00 04 0c b7 1b 01 | -94 CRC error
+00:00:33.953 | 0f c1 15 2c 21 dd 2a 7b 1d 0d 2c f9 1d da 11 d5 | -92 CRC error
+00:00:34.078 | 0f c3 15 24 18 ec 21 8f 1e d4 26 20 1c 5d 23 58 | -92 CRC error
+00:00:34.202 | packet overflow (possible length field corrupted) | CRC error
+00:00:34.325 | 25 c7 15 55 38 e7 1c 09 2a 0d 12 e4 26 3b 19 17 30 00 06 61 02 10 90 02 01 00 00 05 00 01 24 00 00 04 0a 80 01 00 | -93 CRC error
+00:00:34.450 | 0f cd 15 68 1b b7 17 6d 1b 65 1f af 00 7c 1b 1e | -94 CRC error
+00:00:34.575 | 0f cb 15 84 21 9f 19 a2 26 5e a4 7c 5b 6f 1a 07 | -90 CRC error
+00:00:34.640 | 0f cc 95 90 2f 0d 1e 18 1e 19 1d 10 2b fc 25 fb | -92 CRC error
+00:00:34.706 | 0f cd 15 9c 25 e7 13 5b 19 16 2c 8c 9a 6f 24 bf | -92 CRC error
+00:00:34.889 | 0f d0 14 c0 19 a7 3e f7 1b e9 12 7c 20 02 2a 3c | -91 CRC error
+00:00:34.954 | 1f f1 15 cc 26 51 0a 68 29 3a 15 f1 28 fc 21 15 10 00 06 71 26 08 80 00 01 40 c0 00 00 00 00 00 | -91 CRC error
+00:00:35.079 | 29 d2 15 e4 19 ee 1d 9d 68 6b 1f a0 16 27 2c 76 10 10 06 e1 00 00 02 00 01 00 02 08 80 02 00 00 88 00 44 42 00 20 00 00 00 00 | -94 CRC error
+00:00:35.205 | 05 c5 85 f8 60 66 | -92 CRC error
+00:00:35.328 | 0e 5f 16 12 2b c0 2c dd 1e 71 a7 b9 15 67 27 | -96 CRC error
+00:00:35.453 | 0f db 56 2c 26 c9 19 ff 1f 1f 3b 68 1f 28 38 5c | -91 CRC error
+00:00:35.577 | packet overflow (possible length field corrupted) | CRC error
+00:00:35.700 | 0f fd 96 5d 25 7c 0a 86 5f 63 26 b2 35 7e 1f 2e | -95 CRC error
+00:00:35.824 | packet overflow (possible length field corrupted) | CRC error
+00:00:35.948 | 0b e1 16 8c 27 72 1d 2a 25 a4 31 98 | -92 CRC error
+00:00:36.072 | 0f e3 16 b4 1b be 21 61 14 00 20 9c 1c 47 1d ca | -92 CRC error
+00:00:36.138 | packet overflow (possible length field corrupted) | CRC error
+00:00:36.202 | 0f e5 16 bc 1f dc 33 64 1a fe 17 b8 1c 59 1c e7 | -89 CRC error
+00:00:36.268 | 0f e6 16 c8 27 56 14 99 22 08 1b 65 1f 44 14 a8 | -88 CRC error
+00:00:36.334 | 0f e7 16 d4 1e e0 3c 6f 15 7a 1d 8c 20 d6 2a e1 | -91 CRC error
+00:00:36.399 | 0f e8 16 e0 18 4f 19 71 29 cd 1e 29 63 76 24 a6 | -94 CRC error
+00:00:36.465 | 0f e9 16 ec 36 bd 20 a8 23 b8 22 bb 1b 2c 1e 1b | -91 CRC error
+00:00:36.531 | 0f ea 16 f8 21 df 24 a3 24 10 23 a8 1b f0 25 65 | -90 CRC error
+00:00:36.655 | 0f ec 17 10 1f 08 21 49 60 a9 23 f5 18 03 28 62 | -92 CRC error
+00:00:36.720 | 0f ed 17 5c 2a 57 29 0d 29 3c 20 dc 26 df 1b ad | -90 CRC error
+00:00:36.786 | 0f ee 17 28 20 da 25 36 1e 2c 2e 2e 20 91 57 09 | -91 CRC error
+00:00:36.910 | 0f f0 17 48 2a 9e 12 7d 20 06 3b f3 1b 71 11 ba | -95 CRC error
+00:00:36.976 | 0f f1 17 4c 17 ec 24 8e 18 74 1e 33 30 2b 96 4b | -91 CRC error
+00:00:37.041 | 0f f2 17 58 25 7d 27 20 39 1a 19 14 1a 0e 1c f8 | -91 CRC error
+00:00:37.107 | packet overflow (possible length field corrupted) | CRC error
+00:00:37.172 | 0f b4 17 70 1e a0 25 65 2f 71 23 da 1d a5 1e 8c | -92 CRC error
+00:00:37.355 | 0f f7 17 94 0c 9a 1e 66 21 58 16 12 13 9a 0f d9 | -94 CRC error
+00:00:37.420 | 0f f8 07 a0 21 9d 1f 3e 08 52 22 fc 1b c1 1c 9e | -93 CRC error
+00:00:37.486 | 2f f9 17 ac 31 25 19 5a 23 12 2d c3 1f 64 23 94 80 00 46 61 01 00 00 00 00 02 00 00 00 40 00 00 00 00 00 04 80 00 00 00 08 00 00 00 00 b7 1b 00 | -91 CRC error
+00:00:37.612 | 1f fb 57 c4 25 4d 1b 04 0a 7c 1d 0c 29 8f 23 d5 10 00 06 61 00 00 00 20 05 10 00 00 02 00 00 00 | -91 CRC error
+00:00:37.678 | 0f fc 95 d1 27 38 1a a2 22 b0 2b 5a 21 9a 25 b1 | -93 CRC error
+00:00:37.743 | 0f fd 17 dc 2d 59 26 e4 16 5c 1a bc 23 61 1a f2 | -93 CRC error
+00:00:37.809 | 0f fe 17 e8 1e c9 37 0a 25 6d 10 8b 16 47 19 7f | -91 CRC error
+00:00:38.050 | 0f 02 18 18 31 bd 1e 10 22 4e 29 de 1f bf 20 6e | -90 CRC error
+00:00:38.116 | 0f 03 1a 24 13 c8 1a ec 1e 86 26 34 27 c7 16 4b | -93 CRC error
+00:00:38.240 | 0f 05 18 3c 27 05 8e c0 16 8c 24 66 20 6b 2b a2 | -91 CRC error
+00:00:38.364 | 0f 07 18 54 20 79 24 dc 2a db 17 8e 2c f2 11 e8 | -93 CRC error
+00:00:38.489 | 0f 09 58 6c 1d 60 08 da 1f bf 29 93 25 b7 12 e6 | -90 CRC error
+00:00:38.554 | 0f 0a 18 78 16 78 1f fe 1c e8 1d d5 20 f9 26 5d | -88 CRC error
+00:00:38.620 | 0f 0b 18 84 21 53 16 03 20 40 13 2b 1f 89 22 59 | -89 CRC error
+00:00:38.686 | 0f 0c 18 90 18 90 2d 6e 1b 24 2b cc 23 d1 25 b8 | -88 CRC error
+00:00:38.751 | 0f 0d 18 9c 27 b8 1d 13 17 9c 1e 1b 20 5a 2b 68 | -90 CRC error
+00:00:38.817 | 0f 2e 18 a8 1c cc 12 03 19 83 1f 8c 30 87 19 33 | -91 CRC error
+00:00:38.882 | 0f 0f 18 b4 24 71 29 7d 1f a1 10 97 19 73 0b dd | -89 CRC error
+00:00:38.948 | 0f 10 18 c0 1f 7d ac 5f 25 21 23 95 1f 43 22 b3 | -93 CRC error
+00:00:39.014 | 0f 11 18 cc 21 59 23 40 23 59 1b 93 1e 58 28 09 | -89 CRC error
+00:00:39.079 | 0f 12 18 d8 23 a6 1b 85 24 f6 1a b7 1d d3 27 c5 | -90 CRC error
+00:00:39.145 | 0f 13 18 e4 1e e4 17 96 28 3e 20 de 0c 97 1e c4 | -90 CRC error
+00:00:39.269 | 0f 15 18 fc 17 71 28 aa 1c 4d 19 21 20 85 1b f2 | -89 CRC error
+00:00:39.335 | 0f 16 19 08 23 ec 26 9a 16 1a 21 e0 19 3d 27 ce | -88 CRC error
+00:00:39.400 | 0f 17 19 14 1f 60 1a 21 1b 31 22 47 1e 48 17 21 | -88 CRC error
+00:00:39.466 | 0f 58 19 20 23 7c 20 7f 1a 43 19 f9 28 70 22 79 | -89 CRC error
+00:00:39.532 | 0f 19 19 2c 19 75 07 bf 23 0b 23 f7 23 4f 26 42 | -92 CRC error
+00:00:39.656 | 0f 1b 19 44 25 78 23 c1 2b 4e 1b d6 26 fe 23 bf | -87 CRC error
+00:00:39.722 | 0f 1c 19 50 1b 6f 1d e3 22 c2 18 b7 2c 1a 1d 0f | -88 CRC error
+00:00:39.787 | 0f 1d 1d 5c 0a c0 20 bf 2d b5 12 00 22 5f 1e 3e | -91 CRC error
+00:00:39.970 | 0f 20 19 80 1a 16 38 f7 27 ef 2b 3f 1f 1a 12 e9 | -89 CRC error
+00:00:40.036 | 0f 21 19 8c 22 74 1b 9d 1e 74 19 06 25 36 15 35 | -88 CRC error
+00:00:40.101 | 0f 22 19 98 16 2a 1f 92 22 f4 1e f5 1c 0b 24 1e | -91 CRC error
+00:00:40.167 | 0f 23 19 a4 19 02 1e 3a 2d 83 17 76 1a 52 16 e8 | -89 CRC error
+00:00:40.232 | packet overflow (possible length field corrupted) | CRC error
+00:00:40.356 | 0f 26 19 c8 27 20 1e 07 1b b3 1a b8 1d 83 20 e2 | -91 CRC error
+00:00:40.422 | 0f 27 19 d4 1c 74 20 34 1b 2c 22 64 18 dd 21 11 | -90 CRC error
+00:00:40.487 | 0f 28 19 e0 31 ac 15 d9 15 13 30 99 13 9f 1f 52 | -87 CRC error
+00:00:40.553 | 0f 29 19 ec 1c 66 1e ed 18 c6 23 6d 1f 50 21 8f | -91 CRC error
+00:00:40.618 | 0f 2a 19 f8 26 02 23 55 20 ff 13 15 2d 2d 19 ff | -90 CRC error
+00:00:40.684 | 0f 2b 1a 04 2d ff 18 f1 22 e8 1e 9a 2b 57 0f 64 | -91 CRC error
+00:00:40.750 | 0f 3c 1a 11 22 22 24 eb 26 da 06 17 2d a0 2d 57 | -90 CRC error
+00:00:40.815 | 0f 2f 1a 1c 20 cc 25 e5 23 b6 18 44 5e b2 25 3f | -89 CRC error
+00:00:40.881 | 0f 2e 1a 28 1c 7a 1a 03 29 13 19 e7 2b e7 2a dc | -90 CRC error
+00:00:40.947 | 0e 2f 1a 34 27 3c 25 37 2e dc 14 a7 24 88 1f | -91 CRC error
+00:00:41.012 | 0f 32 1a 40 14 9a 20 78 23 2a 58 c3 18 68 1b 60 | -91 CRC error
+00:00:41.136 | packet overflow (possible length field corrupted) | CRC error
+00:00:41.201 | 0f 33 1a 64 0c e6 2e c4 26 2d 18 e8 1d 81 1d 2d | -89 CRC error
+00:00:41.267 | 0f 34 1a 70 17 dc 21 f2 1c b1 26 48 1f 91 1c 4e | -91 CRC error
+00:00:41.332 | packet overflow (possible length field corrupted) | CRC error
+00:00:41.397 | 0f 36 1a 88 20 6b 16 d1 2e ca 14 7e 31 2f 20 e3 | -89 CRC error
+00:00:41.463 | 0f 37 1a 94 22 da 1a 98 22 59 21 22 24 61 2a 2b | -90 CRC error
+00:00:41.587 | 0f 39 1a ac 1a 2c 0a 1f 22 9a 21 d4 18 b4 1c d9 | -96 CRC error
+00:00:41.653 | 0f 3a 1a 98 22 5a 21 10 2c f2 0d f6 1e 03 96 1e | -94 CRC error
+00:00:41.718 | 0f 3b 1a c4 17 05 18 b0 29 69 23 42 29 4b 21 39 | -90 CRC error
+00:00:41.843 | 0f bd 1a dc 1e 77 16 d7 13 2a 20 37 22 e4 1b 9a | -94 CRC error
+00:00:41.967 | packet overflow (possible length field corrupted) | CRC error
+00:00:42.149 | 0f 42 1f 18 21 84 28 21 31 5f 25 a7 25 0d ab 9f | -92 CRC error
+00:00:42.215 | 0f 43 1b 24 26 4f 20 b0 23 76 15 95 34 27 1a df | -89 CRC error
+00:00:42.280 | 0f 44 1b 30 1e 86 13 b7 1d 81 19 f1 16 68 20 a4 | -89 CRC error
+00:00:42.346 | 0f 45 1b 3c 26 88 22 ac 2d ef 1c ce 21 a1 28 ff | -88 CRC error
+00:00:42.411 | 0f 46 1b 49 16 d1 21 31 13 bd 13 38 1a 92 23 30 | -91 CRC error
+00:00:42.477 | 0f 47 1b 54 1a aa 16 42 29 e5 29 76 13 a3 14 05 | -91 CRC error
+00:00:42.543 | 0f 48 1b 60 02 d2 22 d9 1a 66 22 cd 23 b1 1e f7 | -90 CRC error
+00:00:42.608 | 0f 49 1b 6c 12 25 10 f2 20 dc 1e f3 21 95 21 2d | -90 CRC error
+00:00:42.674 | 0f 4a 1b 78 2f 5d 25 40 1e b8 1e 6c 1f d8 2b 2f | -91 CRC error
+00:00:42.739 | 0f 4b 1b 84 1a 99 22 e2 1c d3 20 a9 23 c4 21 d8 | -92 CRC error
+00:00:42.805 | 0f 4c 1b 90 24 12 1a 7b 23 0e 17 cd 22 61 26 38 | -90 CRC error
+00:00:42.871 | 0f 4d 1b 9c 26 1e 23 fa 15 33 24 ea 1a 08 21 ca | -90 CRC error
+00:00:42.936 | 0f 4e 1b a8 14 7b 21 95 24 17 26 8c 1b 29 13 41 | -89 CRC error
+00:00:43.002 | 0f 4f 1b b4 1f 1e 23 f0 27 b2 1f b7 2a bf 18 ce | -91 CRC error
+00:00:43.126 | 0f 51 1b cc 1a 74 1d cb 16 0d 21 c6 25 3a 1e 92 | -92 CRC error
+00:00:43.192 | 0f 52 1b d8 27 93 22 ff 1a da 23 f1 1e 76 1f c4 | -92 CRC error
+00:00:43.258 | 0f 53 1b e4 19 b7 1c 93 17 0c 20 96 15 0a 22 17 | -89 CRC error
+00:00:43.323 | 0f 54 1b f0 19 af 1f 46 25 7b 23 12 1b 84 14 8b | -90 CRC error
+00:00:43.389 | 0f 55 1b fc 1b fd 1d 6e 20 bc 1f e0 14 0c 22 6e | -89 CRC error
+00:00:43.454 | 0f 56 1c 08 21 23 1f e4 20 d6 19 e1 1d 4e 19 f7 | -88 CRC error
+00:00:43.520 | 0f 57 1c 14 15 5b 23 6f 1f 0e 1b ac 2e 65 25 3e | -91 CRC error
+00:00:43.586 | 0f 58 1c 20 1b c3 2b a1 1d a6 21 97 18 44 27 dc | -90 CRC error
+00:00:43.710 | 0e b4 38 70 4a de 30 74 b5 62 89 ac 39 68 55 | -93 CRC error
+00:00:43.834 | 0f 5c 1c 70 12 d1 22 ad 23 c0 21 1a 15 8e 23 f5 | -92 CRC error
+00:00:43.958 | 0f 5e 1c 68 1d 0e 29 cf 19 48 1a 53 21 e5 1d 14 | -92 CRC error
+00:00:44.258 | packet overflow (possible length field corrupted) | CRC error
+00:00:44.382 | 0f 65 1c bc 1c da 19 89 36 a6 19 a0 25 6b 26 a7 | -91 CRC error
+00:00:44.447 | 0f 66 1c d8 1d 2e 2e 19 1c 9f 21 00 a7 36 16 aa | -90 CRC error
+00:00:44.572 | 2f 68 5c e0 1b 04 1f 44 21 c8 21 0f da 45 24 ce 10 00 06 61 00 00 00 00 01 00 00 00 01 00 00 00 04 01 00 00 00 00 00 00 10 00 00 00 00 b7 1b 80 | -94 CRC error
+00:00:44.639 | 0f 69 1c ec 1c 45 a3 05 1f 2b 20 88 1d 4a 19 ec | -90 CRC error
+00:00:44.763 | 1f 6f 15 14 6a ac 23 42 23 ce 26 11 17 ae 1b 39 10 00 06 51 60 00 00 00 41 00 00 01 00 01 00 00 | -93 CRC error
+00:00:44.888 | packet overflow (possible length field corrupted) | CRC error
+00:00:45.011 | 1f 6f 1d 34 5e 0b 19 28 16 54 26 c7 40 b0 20 e9 58 20 06 63 20 00 00 00 01 20 04 18 00 00 00 00 | -92 CRC error
+00:00:45.312 | 0f f4 5d 70 de 63 1f 49 21 f6 1a ab 21 1c 24 6d | -91 CRC error
+00:00:45.377 | packet overflow (possible length field corrupted) | CRC error
+00:00:45.442 | 0f 76 1d 89 24 1e 2b ab 1f 59 21 5b 25 73 22 da | -91 CRC error
+00:00:45.566 | packet overflow (possible length field corrupted) | CRC error
+00:00:45.690 | 0f 7a 9d b8 7e e9 1e 1b 27 67 1d ff 59 98 22 3f | -97 CRC error
+00:00:45.756 | 0f 7b 1d c4 20 11 12 13 26 4f 2e d5 22 a7 23 65 | -92 CRC error
+00:00:45.821 | 0f 7c 0d d0 0f 2f 2e d8 19 bb 1c d7 25 24 19 9c | -93 CRC error
+00:00:45.887 | 0f 7d 1d dc 22 71 1b 38 22 3b 23 56 24 58 21 8b | -90 CRC error
+00:00:45.952 | 0f 7e 1d e8 1b f1 23 7e 14 12 18 c3 2b bc 1e b7 | -90 CRC error
+00:00:46.018 | 0f 7f 1d f4 18 af 21 b0 24 87 19 29 24 f6 28 34 | -91 CRC error
+00:00:46.084 | 0f 80 1e 00 1c 21 23 d9 2d 78 30 e0 23 78 24 8b | -90 CRC error
+00:00:46.149 | 0f 81 1e 0c 2f a2 24 36 16 da 20 d2 23 1b 31 85 | -89 CRC error
+00:00:46.215 | 0f 82 1e 18 1f cf 15 a4 26 5a 1b 52 18 4e 2a 68 | -90 CRC error
+00:00:46.281 | 0f 83 16 24 30 c2 a0 e7 33 7a 27 43 20 63 1d e5 | -93 CRC error
+00:00:46.463 | 0f 86 1e 48 24 0f 1c 06 22 4e 25 e0 2f 88 22 07 | -92 CRC error
+00:00:46.529 | 0f 07 1e d4 37 2d 1d ff 72 e0 26 ed 10 bf 1d 6a | -94 CRC error
+00:00:46.771 | 0f 83 0e 85 25 76 26 f3 20 52 da e1 1b 39 1d a5 | -96 CRC error
+00:00:47.012 | 0f 8f 1e 94 27 f1 16 fa 18 1e 19 01 1b 65 39 87 | -98 CRC error
+00:00:47.078 | packet overflow (possible length field corrupted) | CRC error
+00:00:47.142 | 1f b0 3c 18 2e fa 4a 08 3c 98 38 a8 5d 74 2d 8e 20 00 2c c4 00 80 18 00 06 00 00 00 80 08 00 01 | -94 CRC error
+00:00:47.267 | 0f 9a 1e e4 19 c5 13 48 0f 9a 2b 05 1b a1 22 c2 | -97 CRC error
+00:00:47.391 | 1f 95 5e fc 16 b0 22 00 25 f7 22 aa 29 6d 67 ad 10 00 06 61 48 00 00 00 09 04 00 80 20 00 00 40 | -90 CRC error
+00:00:47.516 | 2f 97 1f 10 24 f4 21 bd 24 d7 28 2b 62 f2 15 35 10 00 02 e1 00 00 00 00 01 80 08 00 00 10 00 00 00 00 00 00 00 00 00 00 00 02 06 00 00 b7 1f 90 | -93 CRC error
+00:00:47.642 | 0f 99 1f 0c 29 6c 1b 7e 20 26 30 8e 9e 2d 18 6a | -95 CRC error
+00:00:47.766 | 1b 9b 3f 44 29 28 25 68 14 34 27 c8 22 e5 13 54 10 00 16 61 00 00 20 00 01 00 00 00 | -92 CRC error
+00:00:47.891 | 0e 9d 1f 5c 0f a9 25 32 0f 29 18 38 0a 77 31 | -91 CRC error
+00:00:47.956 | 0f 9e 1f 68 22 60 9a ba 1b 87 21 65 36 e0 25 e0 | -93 CRC error
+00:00:48.022 | 0b bf 3f 74 01 0c 1a 5a 1a 2c 28 ea | -95 CRC error
+00:00:48.087 | 1f a0 1f 80 28 23 1d 15 29 10 2e 2c 32 b2 1d 85 10 80 06 61 00 01 08 00 01 00 00 00 40 02 00 00 | -90 CRC error
+00:00:48.388 | 0f a1 1f bc 17 36 2e ea 11 16 3f 6f 17 b1 19 50 | -90 CRC error
+00:00:48.688 | packet overflow (possible length field corrupted) | CRC error
+00:00:48.812 | packet overflow (possible length field corrupted) | CRC error
+00:00:48.876 | 0f ad 20 5c 1e f4 17 a2 17 02 27 dd 2a 30 1f 0b | -93 CRC error
+00:00:49.177 | 0f f2 24 58 25 67 1c 48 21 92 11 2f 20 ea 23 49 | -88 CRC error
+00:00:49.242 | 0f b3 20 64 12 7d 24 f9 23 ec 1b ca a1 37 19 8c | -91 CRC error
+00:00:49.366 | packet overflow (possible length field corrupted) | CRC error
+00:00:49.431 | packet overflow (possible length field corrupted) | CRC error
+00:00:49.555 | 0f 3c 62 e0 00 7e 3d 64 3c 3b 15 eb 1b 1b 31 67 | -89 CRC error
+00:00:49.679 | 0f ba 20 b8 22 ff 23 f0 5c 44 28 1b 1b 31 18 95 | -93 CRC error
+00:00:49.745 | 0f bb 20 c2 1f f9 1b c4 24 a1 1f 0b 19 79 3e 82 | -91 CRC error
+00:00:49.869 | 0f bd 20 dc 21 10 20 57 17 6d 1a 31 20 5a 1f 9c | -90 CRC error
+00:00:49.993 | 0f ff 20 f4 1f 2c 1d 12 6d f0 30 1f 23 53 16 45 | -91 CRC error
+00:00:50.117 | 1f c1 21 0c 2d df 1a b9 25 1f 1f b4 19 be 2d 78 10 00 06 61 01 a0 01 00 01 00 00 00 00 00 00 00 | -90 CRC error
+00:00:50.184 | 0f c2 21 18 39 c0 21 4a 1a cf a0 98 22 aa 2f 84 | -90 CRC error
+00:00:50.249 | 0f c3 21 25 1d 65 2a 99 16 d1 24 f4 10 b5 1f b2 | -90 CRC error
+00:00:50.315 | 0f c4 21 30 21 18 1a 59 28 fb 27 01 1b 40 29 bb | -89 CRC error
+00:00:50.439 | 0f c6 21 4b 24 ec 0a f5 1b 86 28 db 22 45 1e a4 | -91 CRC error
+00:00:50.505 | 2f c7 21 54 2a 95 1b 77 25 45 29 fe 1c ea 19 b8 10 00 06 61 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 b7 1b 00 | -90 CRC error
+00:00:50.572 | 0f c8 21 60 1d e3 1e b7 21 cd 23 15 16 1b 1b 90 | -92 CRC error
+00:00:50.637 | 0f d9 21 6c 1f ef 16 a1 34 85 2a a9 10 cc 28 5b | -90 CRC error
+00:00:50.703 | 0f ca 21 78 27 9f 23 64 23 a0 21 27 19 8d 1a b4 | -89 CRC error
+00:00:50.769 | 0e cb 21 84 37 40 24 3e 1d bf 1c b8 27 e7 24 | -91 CRC error
+00:00:50.834 | 0f cc 21 90 34 18 25 0b 1a 4c 1f 0d 22 c6 19 86 | -92 CRC error
+00:00:50.958 | 0f ce 21 a8 1b a5 10 40 19 6b 21 2a 20 46 24 08 | -92 CRC error
+00:00:51.083 | 0f d0 21 c0 23 bf 21 74 20 ad 10 3b 2b 75 27 af | -91 CRC error
+00:00:51.148 | 0f d1 21 cc 1f 9e 20 94 23 45 13 51 1b 2e 1a 18 | -92 CRC error
+00:00:51.214 | 0f d2 21 d8 31 c2 1c b6 23 94 26 64 14 b2 1e b5 | -92 CRC error
+00:00:51.279 | 0f d3 21 e4 1c 3f 1c 72 1f 12 0d 20 9e a5 23 39 | -92 CRC error
+00:00:51.462 | 0f d6 22 08 1f d5 27 13 24 dc 23 e9 1f bd 32 49 | -92 CRC error
+00:00:51.586 | 07 d8 22 24 26 88 21 56 | -91 CRC error
+00:00:51.652 | 0f d9 62 2c 1d d7 18 7b 03 c1 2a b4 23 5d 25 8f | -92 CRC error
+00:00:51.717 | 0f da 22 38 1a 1b 27 72 26 08 22 d6 19 4e 96 94 | -92 CRC error
+00:00:51.842 | 0f dc 22 50 28 a6 18 10 17 d8 2a 6c 25 07 14 3a | -92 CRC error
+00:00:51.907 | 0f dd 22 5c 1e 52 28 32 27 6d 0e e7 27 5f 19 f4 | -91 CRC error
+00:00:51.973 | packet overflow (possible length field corrupted) | CRC error
+00:00:52.038 | 0f df 22 74 31 86 23 08 23 13 2b 7a 22 d8 20 2d | -94 CRC error
+00:00:52.162 | 0f e1 22 8c 28 ef 1d e8 1d 4e 28 da 67 b2 4b 98 | -91 CRC error
+00:00:52.228 | 0f e2 22 98 21 e8 1e 19 1c 1f 17 37 20 1e 21 2e | -89 CRC error
+00:00:52.293 | 0f e3 22 a4 1a 0f 2a f5 1e 7f 22 3c 1e 70 17 bd | -90 CRC error
+00:00:52.359 | 0f e4 22 b0 25 ac 27 64 20 b8 25 7d 2d ed 1f 66 | -92 CRC error
+00:00:52.483 | 0f e6 22 c8 27 fb 1e f3 17 c7 22 7f 21 95 49 f7 | -95 CRC error
+00:00:52.549 | 0f e7 22 d4 29 c0 1d 80 22 71 27 3c 11 a1 2a 87 | -90 CRC error
+00:00:52.614 | 0f e8 a2 e0 1b fc 37 32 21 82 1e ec 1e d4 19 e0 | -91 CRC error
+00:00:52.680 | 0f e9 22 ec 2b a5 da a0 1e 5c 20 90 2a ed 2c 49 | -91 CRC error
+00:00:52.746 | 0f ea 22 f8 20 a9 18 54 29 bd 1c 69 11 ed 1d 9f | -93 CRC error
+00:00:52.811 | 0f eb 23 04 15 16 1e bd 1b 3c 27 b2 1b f3 2b 3d | -91 CRC error
+00:00:52.877 | packet overflow (possible length field corrupted) | CRC error
+00:00:52.942 | 0f ed 23 1c 04 bc 29 01 19 79 21 41 25 94 20 a4 | -90 CRC error
+00:00:53.125 | packet overflow (possible length field corrupted) | CRC error
+00:00:53.248 | 0f f2 23 58 19 91 25 e8 14 68 23 a0 66 7d 21 d0 | -88 CRC error
+00:00:53.314 | 0f f3 23 64 10 f3 10 40 23 ea 11 aa 23 b6 1a 36 | -91 CRC error
+00:00:53.497 | 0f f6 23 88 99 ed 25 e4 16 75 19 8f 1c da 1e c7 | -90 CRC error
+00:00:53.562 | 0f f7 23 94 1c cc 31 97 22 d7 27 b9 22 3a 1f 74 | -93 CRC error
+00:00:53.628 | 0b f8 23 a0 16 c0 1a 5b 22 90 2c f1 | -91 CRC error
+00:00:53.752 | 0f fa 23 98 1b e6 29 30 1a d4 25 70 95 ea 2c 2c | -90 CRC error
+00:00:53.876 | 0f fc 23 d8 25 6e 13 53 20 01 29 1c 31 2f 21 0b | -89 CRC error
+00:00:53.942 | 0f fd 23 dc 19 eb 18 f0 25 ac 27 30 1f a8 16 74 | -90 CRC error
+00:00:54.007 | 0f fe 23 e8 9e 64 29 0b 2c 16 1b 82 2b 6b 17 f1 | -90 CRC error
+00:00:54.073 | packet overflow (possible length field corrupted) | CRC error
+00:00:54.138 | 0f 00 24 00 33 8e 1c 98 26 79 1c 63 28 5f 0c be | -90 CRC error
+00:00:54.203 | 0e 05 26 08 23 e8 1b 82 23 c6 28 d8 04 b0 b0 | -94 CRC error
+00:00:54.269 | 0f 02 24 18 1f c7 1c 83 1d 11 1e 9a 0c ca 13 25 | -96 CRC error
+00:00:54.569 | packet overflow (possible length field corrupted) | CRC error
+00:00:54.693 | 0f 29 2d 6c 26 7c 24 34 a8 bc 21 10 1b 88 2b dc | -94 CRC error
+00:00:54.934 | 1f 0d 24 9c 21 f9 2a 56 62 10 1f 14 32 57 b0 01 10 00 06 e0 04 80 00 04 09 00 08 20 00 00 08 00 | -93 CRC error
+00:00:55.000 | 0f 0e 44 88 3a 6d 27 8b 2d 58 1f 8b 1d 93 0e f6 | -94 CRC error
+00:00:55.183 | 0b 11 24 cc 01 d2 15 e3 20 f8 23 f7 | -94 CRC error
+00:00:55.307 | 0f 13 24 e4 21 75 27 ed 2a e9 23 6e 3c a9 19 e3 | -93 CRC error
+00:00:55.431 | 0f 15 25 fc 20 be a4 61 21 9c 64 69 22 f0 1b f2 | -94 CRC error
+00:00:55.614 | 0f 18 25 21 35 d7 6a 21 23 3e 1f 8e 1f ed 20 2f | -92 CRC error
+00:00:55.680 | 0f 19 2d 2c 16 03 68 e9 3f 25 9f 5f 5a ab 25 be | -92 CRC error
+00:00:55.863 | 0f 1e 25 40 30 0f 1b 50 3f 9f 39 ca 18 be 1d 6f | -93 CRC error
+00:00:56.045 | 0e 3f 1e ec 6c 5a 1f eb 82 2a 40 9d 16 9c 39 | -93 CRC error
+00:00:56.287 | 0f 21 6d a4 2c 96 28 98 1a 66 29 1b 08 91 24 d8 | -95 CRC error
+00:00:56.411 | 0e a5 25 bc 28 e4 29 fd 13 28 22 85 1d 3c 26 | -92 CRC error
+00:00:56.535 | 0f 2f 25 f4 23 f3 1c fc 28 43 9e f4 16 8f 1e 3d | -93 CRC error
+00:00:56.659 | 0f a9 65 ec 23 28 2a dc 1b e9 35 e3 23 0f 22 9a | -92 CRC error
+00:00:56.784 | 0f 2b 22 4d 21 f3 22 c7 23 55 54 b8 2a 6a 16 c0 | -93 CRC error
+00:00:56.967 | 0f 2e 06 28 2a 33 24 11 19 52 05 af 1a 4e 2a 99 | -95 CRC error
+00:00:57.208 | packet overflow (possible length field corrupted) | CRC error
+00:00:57.273 | 2f b3 26 65 0c 8e 26 68 26 59 20 70 38 cd 2d 54 10 00 c6 61 00 00 00 22 01 00 00 00 00 01 00 00 40 00 02 01 00 00 88 00 00 00 00 02 01 b7 1b 00 | -89 CRC error
+00:00:57.340 | 2f 34 26 70 1c bd 1a de 1b 6e 3c 88 1e 84 1a fc 90 00 26 61 04 00 00 00 01 00 00 00 00 01 00 00 00 00 00 00 00 00 00 20 80 00 00 00 00 b7 1b 00 | -92 CRC error
+00:00:57.407 | 1f 3d 26 7c 25 1a 21 b9 26 30 29 83 22 48 1e 3c 10 00 0e 61 00 00 00 00 01 00 00 00 00 10 20 00 | -92 CRC error
+00:00:57.473 | 0f 36 26 88 1f 61 1c ce 18 dc 1e d6 21 25 26 e0 | -92 CRC error
+00:00:57.539 | 0f 37 26 94 17 e4 1f eb 22 16 23 50 12 a2 24 a1 | -90 CRC error
+00:00:57.604 | packet overflow (possible length field corrupted) | CRC error
+00:00:57.728 | 2f 38 26 98 03 f2 21 76 20 e3 1c ec 25 0c 13 d4 10 00 02 61 00 00 00 00 01 00 00 00 20 00 04 05 00 00 a0 00 20 00 00 00 00 00 00 20 00 37 1b 00 | -92 CRC error
+00:00:57.912 | 0f 3d 26 de 19 4d 10 2b 17 20 27 5c 38 ed 1e 88 | -94 CRC error
+00:00:58.095 | 0f 40 27 00 3c cb 29 cc 22 a6 16 d7 20 c2 28 6e | -92 CRC error
+00:00:58.160 | 0f 41 27 08 21 49 1d f4 1c 45 1c 03 1a 73 15 df | -95 CRC error
+00:00:58.284 | 0b 43 27 24 23 ff 19 3e 12 f1 1c db | -94 CRC error
+00:00:58.408 | 0f 45 27 3c 1b 3f 1d 8a 2e e8 1c 9f 1d 75 1b 67 | -90 CRC error
+00:00:58.533 | 0f 47 27 56 22 db 21 76 1a ea 06 17 21 7e dd 68 | -91 CRC error
+00:00:58.598 | 0f 48 23 64 65 b7 23 25 36 a6 1d f8 36 1d 1f 1f | -92 CRC error
+00:00:58.723 | 0f 4a 27 38 0a fe 17 71 27 dc 20 ef 2b 89 27 88 | -91 CRC error
+00:00:58.788 | 0f 4b 27 84 26 0e 1f a8 1f cd 19 19 0f a7 1f d7 | -97 CRC error
+00:00:58.854 | 0f 4d 27 90 1e 4e 24 3b 26 35 18 09 1a ad 17 4d | -95 CRC error
+00:00:58.919 | 07 4d 67 9d 26 8d 28 eb | -91 CRC error
+00:00:59.043 | 0f 4f 27 b4 1a 14 23 67 22 ba 1f d2 25 f5 23 ee | -92 CRC error
+00:00:59.109 | 0f 50 27 c0 1b 31 28 02 19 c1 16 ad 18 f7 13 e5 | -92 CRC error
+00:00:59.174 | 0f 51 27 4c 27 e8 14 c5 23 84 36 5d 24 e1 19 b7 | -90 CRC error
+00:00:59.240 | 0f 52 27 da 2a 9e 1d 7e 21 88 3f cd 2a b1 23 5b | -91 CRC error
+00:00:59.306 | 0f 53 27 e4 24 77 a4 0e 1d b0 1d be 22 f0 1c 2c | -91 CRC error
+00:00:59.430 | 0b 55 27 fd 24 a1 21 58 18 08 20 88 | -95 CRC error
+00:00:59.495 | 0f 56 28 08 23 6c 18 79 0f 8e 25 d7 35 40 1b 88 | -93 CRC error
+00:00:59.620 | 0f 58 28 20 1e b4 28 65 19 75 2a be 1a 8b 2e 66 | -91 CRC error
+00:00:59.744 | 0f 5a 28 38 20 44 22 80 26 5d 27 46 1f d0 15 5a | -93 CRC error
+00:00:59.868 | 0f 5c 28 52 2c 3a 26 f2 1e 46 17 4d 28 54 1f 68 | -93 CRC error
+00:00:59.934 | 0f 5d 28 5c 15 8b 23 af 1b 69 15 33 25 07 1d ae | -93 CRC error
+00:00:59.999 | 0f 5e 28 68 1d aa 2a c5 21 58 27 9c 12 d3 2a 99 | -93 CRC error
+00:01:00.065 | 2f 5f 28 f4 15 db 1c c9 21 98 1a eb 24 93 1d 1a 10 00 06 61 00 00 00 00 01 00 00 40 00 00 00 00 00 00 00 00 40 10 00 00 00 00 00 08 00 b7 1b 00 | -91 CRC error
+00:01:00.190 | 0f 61 28 8c 15 44 2b 2f 1c de 1f 38 21 3e 16 06 | -92 CRC error
+00:01:00.256 | 0f 62 28 98 a6 41 29 fb 12 96 1b c8 1c 25 91 86 | -92 CRC error
+00:01:00.380 | 0f 64 38 30 25 be 13 0d 16 4a 27 ea 37 c2 21 71 | -91 CRC error
+00:01:00.446 | 0e 64 28 bc 1b 84 22 a7 17 c3 1d e8 27 f5 10 | -92 CRC error
+00:01:00.511 | 0f 66 28 c8 1f 77 1a 61 30 d8 27 bc 20 ae 39 59 | -91 CRC error
+00:01:00.577 | 0f 67 28 d4 25 bf 25 42 19 38 1c 07 1d 7e 16 0c | -89 CRC error
+00:01:00.643 | 07 68 28 e0 19 af 1d a1 | -92 CRC error
+00:01:00.708 | 0f 69 08 ec 20 2d 21 79 9d 44 1e 44 20 d7 26 b7 | -93 CRC error
+00:01:00.832 | 0f 6b 29 04 60 ab 2c ff 15 e0 2e f8 2f 3b 24 43 | -97 CRC error
+00:01:00.956 | 0f 6d 29 1c 13 41 0f 77 2b a2 1c 86 20 9d 0b 7d | -90 CRC error
+00:01:01.022 | 0f 6e 2d 28 0f ea 0d 7b 0e 57 26 b3 1b a2 1a c8 | -93 CRC error
+00:01:01.088 | 0f 6f 29 34 19 47 1a f3 24 92 28 57 15 80 20 24 | -89 CRC error
+00:01:01.153 | 0f 70 29 40 25 2b 19 af 25 99 2b 44 1e bd 09 c3 | -91 CRC error
+00:01:01.219 | packet overflow (possible length field corrupted) | CRC error
+00:01:01.342 | packet overflow (possible length field corrupted) | CRC error
+00:01:01.407 | 0f 75 29 70 33 e3 1a 2c 1e 91 1a 90 2f 5d 21 3c | -92 CRC error
+00:01:01.531 | 0f 76 29 88 25 db 25 bc 29 db 0f ee 64 c1 1e 86 | -91 CRC error
+00:01:01.714 | 0f 79 09 ac 2a 6d 1e 9a 21 0b 26 58 1b ae 35 ad | -90 CRC error
+00:01:01.780 | 2f 7a 29 b8 2c 7f 20 ff 1c d3 a5 17 25 42 15 ea 10 00 06 61 00 00 00 00 01 00 00 00 00 80 00 00 00 02 00 00 00 00 02 00 00 00 04 00 02 b7 1b 00 | -93 CRC error
+00:01:02.023 | 0f 7e 29 e9 1e 9e 10 70 2c 56 23 61 26 02 08 ed | -92 CRC error
+00:01:02.147 | 0f 80 2a 00 29 a2 1f e9 15 5f 23 27 00 09 1e 9e | -88 CRC error
+00:01:02.213 | 0f 81 2a 0c 1c c7 24 2c ab 3f 1c bc 1d 30 21 79 | -87 CRC error
+00:01:02.278 | 0f 82 2a 18 23 e1 1f ea 2c 18 1b 0c 1e d6 1f 6b | -88 CRC error
+00:01:02.344 | 0f 83 2a 24 19 e4 2e 41 1e 38 1f 96 1c 13 23 9b | -90 CRC error
+00:01:02.409 | 0f 86 aa 30 15 db 1a 9b 21 c9 2d f2 16 73 26 24 | -90 CRC error
+00:01:02.534 | 0f 86 2a 48 17 2a 1e 2c 2d 97 24 00 26 e0 24 f1 | -92 CRC error
+00:01:02.599 | 0f 87 2a 54 16 bc 28 c1 23 ed 0a 0f 27 32 3e 1b | -89 CRC error
+00:01:02.665 | 0f 88 2a 60 26 7c 15 32 1f 5b 23 e0 23 95 16 f5 | -90 CRC error
+00:01:02.730 | 0f 89 2a 6c 26 bd 1e a6 21 2b 17 29 17 40 29 c6 | -90 CRC error
+00:01:02.796 | 0f 8a 2a 78 23 15 16 16 1a 47 25 c2 1d 8e 23 4c | -92 CRC error
+00:01:02.862 | 0f 8b 2a 84 1e 5e 1e 55 23 91 18 a0 24 75 24 c5 | -91 CRC error
+00:01:02.927 | 0f 8c 2e 90 1f 22 1c d2 24 4e 30 ae 28 24 1c 42 | -91 CRC error
+00:01:02.993 | 0f 9d 2a 9c 15 04 29 73 24 3c 13 14 15 8b 16 65 | -93 CRC error
+00:01:03.059 | 0f 8e 2a a8 38 48 19 05 23 f9 22 48 5d 77 2b 60 | -93 CRC error
+00:01:03.183 | 0f 90 2a c0 2f 77 2b b7 1c 4c 1c 4d 22 2c 24 09 | -98 CRC error
+00:01:03.307 | 0f 93 aa dc 18 c3 2f 9a 96 8d 21 dd 17 cc 1f bf | -95 CRC error
+00:01:03.373 | 0f 93 22 e4 1c a8 26 f1 28 a5 29 4a 2b b0 57 99 | -90 CRC error
+00:01:03.438 | 0f 94 2a f0 2e 7f 03 87 21 27 1e b0 1b 84 1d e3 | -91 CRC error
+00:01:03.504 | 0f 95 2a fc 1b 03 1b 4a 1f 07 26 27 66 ef 24 ab | -90 CRC error
+00:01:03.570 | 0f 96 2b 0c 23 09 09 06 12 3b 20 78 21 2b 1a 3c | -92 CRC error
+00:01:03.635 | 0f 97 2b 14 2f 37 1d 8c 24 52 25 82 3f 88 5d 74 | -90 CRC error
+00:01:03.701 | 0f 98 2b 21 1a 66 6a 5e 1f 00 1e 38 19 b1 2b bd | -91 CRC error
+00:01:03.766 | 0f 99 ab 2c 24 70 1f 75 1d 43 2a 86 21 66 1f e8 | -89 CRC error
+00:01:03.832 | 0f 9a 2b 70 1e 25 15 94 2f 40 23 b3 2b 79 1d b0 | -89 CRC error
+00:01:03.898 | 0f 9b 2b 44 1e b5 1e 67 23 71 9b 0f 16 be 14 9d | -92 CRC error
+00:01:03.963 | 0f 9c 2b 50 21 8f 17 3c 24 20 27 24 26 5d 1e ef | -94 CRC error
+00:01:04.029 | 0f 9d 2b 5c 1d 3a 0e 21 1e b1 1f 12 14 0c 19 c1 | -89 CRC error
+00:01:04.094 | 0f 9e 2b 68 14 6a 12 96 21 ec 1a 8c 2b 7f 22 fd | -87 CRC error
+00:01:04.160 | 0f 9f 2b 74 1f bd 1c 3c 1f cf 25 91 27 8d 1b a4 | -93 CRC error
+00:01:04.226 | 0f a0 2b 80 1f 3d 2c 29 28 26 16 8a 1c 78 21 63 | -93 CRC error
+00:01:04.291 | 0f e1 2b 8c 28 76 2b e0 25 9c 1d ee 2e 2a 22 d9 | -94 CRC error
+00:01:04.416 | 0f a3 2b a4 26 c8 37 40 17 6c 1e 2a 1b 4d 2e e8 | -89 CRC error
+00:01:04.481 | 0f a4 2b b0 27 e2 1c 95 24 b3 29 04 1e 97 22 02 | -89 CRC error
+00:01:04.547 | 0f a5 2b bc 23 b9 2b 4f 19 8a 20 8d 2d 83 22 bb | -92 CRC error
+00:01:04.671 | 2f a7 2b d4 21 2d 29 cb 1b 4c 26 aa 17 8c 14 cc 10 00 06 61 00 00 00 00 85 00 00 00 00 00 00 00 00 00 00 08 02 00 00 01 00 00 00 21 08 b7 1b 00 | -91 CRC error
+00:01:04.738 | 0f a8 2b e0 23 e7 0f 81 27 a9 37 95 1d 69 15 a6 | -95 CRC error
+00:01:04.804 | 0f a9 2b ec 1c 42 27 7d 23 0e 22 a6 1a 93 17 04 | -91 CRC error
+00:01:04.869 | 0f aa 2b b8 21 f9 27 ef 1a 41 27 44 22 a4 30 bf | -90 CRC error
+00:01:04.935 | 0f ab 2c 04 17 4b 17 7a 20 bf 2c cf 23 d5 25 b8 | -92 CRC error
+00:01:05.001 | 1f ac 2c 10 22 fc 21 73 22 9a 26 c0 2b d0 2f b3 10 00 06 61 00 00 00 00 21 21 00 00 00 00 00 00 | -88 CRC error
+00:01:05.067 | 0f ad 2c 1c 99 99 26 a6 25 3e 0c c3 22 20 15 e1 | -93 CRC error
+00:01:05.132 | 0f ae 2c 28 24 3d 1b b0 20 d5 1a de 1b 92 30 e3 | -92 CRC error

@@ -1,0 +1,59 @@
+Cmputed baseband settings: 
+- baudrate: 50000
+- Center offset: 4315475
+- deviation: 148811
+- RX Bandwidth: 347622
+set tx f_carrier [6175507 0 0 0] 2449999725
+started carrier
+set rx f_carrier [6186385 0 0 0] 2454315338
+set rx f_dev: [6 3] 152343
+set rx r_data: [10 248] 49987
+set rx bw: [1 0] 406250
+started listening
+00:00:06.695 | 2f 5a 01 78 21 7d 1f bd 5f 75 2a f7 1b cb 66 fd 50 1c 06 e9 00 00 00 20 11 00 02 00 00 11 00 06 88 a8 a0 00 00 00 00 00 5a 02 00 00 00 f7 1b 00 | -88 CRC error
+00:00:07.260 | 0f a3 11 a6 27 aa 23 0e 1f 2f 1f ff 13 d2 21 82 | -90 CRC error
+00:00:09.183 | packet overflow (possible length field corrupted) | CRC error
+00:00:10.734 | packet overflow (possible length field corrupted) | CRC error
+00:00:11.234 | 0f 6b 86 a6 17 ee 19 43 1e 7e 0a c4 db ed 2c af | -89 CRC error
+00:00:12.416 | 0f 76 05 88 39 9f 35 4e 1e d8 28 a0 24 8a 32 31 | -91 CRC error
+00:00:13.102 | 1f 91 06 4c 2d 5d 27 ba a6 fc 1f db 32 b8 66 41 50 00 06 63 b1 01 00 02 01 03 20 40 30 01 00 00 | -90 CRC error
+00:00:13.666 | packet overflow (possible length field corrupted) | CRC error
+00:00:15.155 | packet overflow (possible length field corrupted) | CRC error
+00:00:15.285 | 0f e4 47 b0 1f 9c 27 08 22 bf 2e c3 1f 17 1e aa | -90 CRC error
+00:00:15.478 | 0f b7 07 f4 56 bd 20 eb 29 7f a0 f1 1f a2 1c aa | -87 CRC error
+00:00:15.670 | 0f fa 87 f8 1f 48 a6 a7 67 5f 9f b5 b3 f0 1d 65 | -88 CRC error
+00:00:15.924 | 0f be 08 28 10 71 24 1f a2 cf e4 d4 2d be 2b bb | -88 CRC error
+00:00:16.240 | 1f b7 0d 64 16 4e 25 5b 5e fe 2b 6b 62 f8 1e f7 10 c2 06 61 4a 20 20 00 d1 40 00 00 01 28 04 00 | -91 CRC error
+00:00:16.495 | 0f 37 1a b0 14 c2 01 d7 a3 84 1c 7e 0c fc 20 9f | -88 CRC error
+00:00:17.738 | 0f cb 8b 84 77 c4 26 fe 25 2e 22 15 59 57 93 ab | -88 CRC error
+00:00:17.931 | 0f ce 1b a8 30 e3 21 75 1b 87 29 a9 db 4c 02 0d | -88 CRC error
+00:00:18.370 | 0f d5 09 fd 3e a5 25 d9 2d 67 1c fa 28 bd 1f 0f | -88 CRC error
+00:00:18.748 | 0f df 0a 44 1d 3e 1c 0f 3a b5 1e f6 34 7d 2d c7 | -90 CRC error
+00:00:19.929 | 0f fe 4b 29 3a fc 3e ee 1f f7 a2 ae 1e ed 15 7c | -87 CRC error
+00:00:20.183 | packet overflow (possible length field corrupted) | CRC error
+00:00:20.313 | packet overflow (possible length field corrupted) | CRC error
+00:00:20.628 | 0f fb 0b ac 23 55 2a 2f 6e ef 96 ce 22 ab 27 59 | -87 CRC error
+00:00:21.191 | 1f c2 0d 18 10 68 30 6e 24 9d 33 fd 27 f2 a9 43 10 00 a6 63 02 40 00 00 01 02 02 10 00 00 00 00 | -88 CRC error
+00:00:21.323 | 0f 44 0d 30 17 69 53 bb 1b ee 21 06 1f 0f 9c c8 | -86 CRC error
+00:00:21.762 | packet overflow (possible length field corrupted) | CRC error
+00:00:22.078 | 0f 3c 0e c0 25 a1 1d 9e 23 c0 2e 29 27 2f 28 04 | -87 CRC error
+00:00:22.641 | packet overflow (possible length field corrupted) | CRC error
+00:00:22.956 | packet overflow (possible length field corrupted) | CRC error
+00:00:23.518 | 0f 67 ad f4 2b 25 e3 f3 3e ca 74 50 28 ea 25 75 | -88 CRC error
+00:00:23.587 | packet overflow (possible length field corrupted) | CRC error
+00:00:23.717 | 0f 3a 8d f8 19 ef a0 4a 1f 62 28 3d 20 bd 9f d7 | -89 CRC error
+00:00:26.319 | 0f 54 4f f0 25 11 9d f4 19 40 34 ff 3c 6c 36 7f | -89 CRC error
+00:00:29.107 | packet overflow (possible length field corrupted) | CRC error
+00:00:31.029 | 0f a1 13 80 1e de 18 97 1b 55 db 33 b0 97 65 7d | -87 CRC error
+00:00:31.963 | packet overflow (possible length field corrupted) | CRC error
+00:00:32.093 | 0f b1 54 5c 1f 87 1f 57 0f 80 28 9f 15 aa ab b0 | -92 CRC error
+00:00:32.532 | 0f b8 14 a0 33 cc 28 77 1c 85 33 76 9e 4b 27 16 | -89 CRC error
+00:00:36.432 | 0f f3 97 d4 25 9a 9e 45 e7 98 36 57 b6 be 2f fb | -90 CRC error
+00:00:39.900 | 0f 6f 9a 34 67 7c ad 37 2e dc 14 bf 24 cb 1f e1 | -93 CRC error
+00:00:40.216 | 1e 38 0c 70 3f 9e 21 e2 3c 33 06 c0 bf d4 18 0f 34 88 06 c0 00 00 00 01 03 80 00 0c 00 00 40 | -94 CRC error
+00:00:40.409 | 1f 7f 1a d4 6a fa 5e f8 32 d9 21 62 25 f3 2a 2b 10 00 0e 61 41 02 42 10 61 00 22 48 08 06 00 04 | -89 CRC error
+00:00:45.669 | 0f dc 5e f7 aa be 1f 13 9e f9 14 6e 1f 7e 0c 11 | -95 CRC error
+00:00:47.283 | 0f ef 3f d8 2f f2 08 fd 41 f4 13 f9 5d 12 61 b6 | -90 CRC error
+00:00:50.318 | 0f df 6a 1c 1d e1 17 97 5e 88 a3 0b 9f fc 19 18 | -90 CRC error
+00:00:51.623 | packet overflow (possible length field corrupted) | CRC error
+00:01:03.246 | packet overflow (possible length field corrupted) | CRC error

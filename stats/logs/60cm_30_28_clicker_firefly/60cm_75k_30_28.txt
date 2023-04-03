@@ -1,0 +1,106 @@
+Computed baseband settings: 
+- baudrate: 74985
+- Center offset: 4315475
+- deviation: 148811
+- RX Bandwidth: 372607
+set tx f_carrier [6175507 0 0 0] 2449999725
+started carrier
+set rx f_carrier [6186385 0 0 0] 2454315338
+set rx f_dev: [6 3] 152343
+set rx r_data: [11 122] 74981
+set rx bw: [1 0] 406250
+started listening
+00:00:07.254 | 0f 65 01 bc 1c 41 13 af a0 61 21 60 11 14 16 d0 | -89 CRC error
+00:00:07.613 | 1f 2b 82 04 15 b4 27 49 3a f5 25 94 1a 07 21 5a 10 04 06 61 00 00 00 00 01 00 00 00 00 00 00 00 | -89 CRC error
+00:00:17.180 | packet overflow (possible length field corrupted) | CRC error
+00:00:17.421 | 0f d2 09 d8 1a 13 1f e1 08 15 1a 7c 2a bf 61 fe | -91 CRC error
+00:00:17.721 | 1f d7 0a 94 1f 3b 35 c0 0c 6b 20 c3 2f 6f 10 4e 10 00 06 61 00 00 00 00 01 00 00 00 40 40 00 00 | -90 CRC error
+00:00:18.608 | 0f e6 4a c8 1b e2 18 8f 2e 21 26 b1 0a fa 25 5f | -87 CRC error
+00:00:19.669 | 0f f8 0b a0 25 b4 1c 29 22 b1 23 4e 2e fb 17 6f | -87 CRC error
+00:00:20.321 | 0f 03 0c 24 16 2e 1b a3 23 dd 25 26 1a 21 a5 9b | -88 CRC error
+00:00:20.387 | 0f 04 0c 30 17 69 13 7f 1b ce 21 06 1d 0f 1c c8 | -87 CRC error
+00:00:21.507 | 0f 17 0d f4 1f b8 1d 2e 1c 2d 13 a2 9d eb 27 92 | -87 CRC error
+00:00:22.393 | 0f 66 0d c8 1e 96 63 20 1f ff 21 b9 2c 62 12 8b | -91 CRC error
+00:00:22.635 | 0f aa 0d f8 1b ff 20 48 1f 62 28 34 a0 3d 1e d7 | -87 CRC error
+00:00:23.228 | 0f 34 0f 70 1e 0c 1f 5b 24 54 23 6a 1a 5d 24 8e | -91 CRC error
+00:00:23.293 | 0f 75 0e 7c 1f 6f 1c d5 2d f8 1f 9d 21 e8 27 04 | -87 CRC error
+00:00:23.359 | 0f 76 0e 88 25 08 20 9b 07 99 22 50 26 81 25 b1 | -86 CRC error
+00:00:24.479 | 0f 49 0f 6d 23 1e 12 d1 1b a4 2b 56 1d bf 28 eb | -87 CRC error
+00:00:24.780 | 0f cf 0f a8 2d 10 1f c4 11 10 15 19 23 81 23 41 | -92 CRC error
+00:00:25.021 | 0f 52 0f d8 24 f2 26 5c 1c ba 1b ed 19 dd b5 0f | -92 CRC error
+00:00:25.380 | 0f 58 10 20 1a 99 20 1d 22 f0 24 9f 15 06 23 c5 | -91 CRC error
+00:00:25.504 | 0f 5b 10 38 36 88 29 bd 0f 5d 23 b7 23 41 1c 1b | -89 CRC error
+00:00:25.569 | 05 c9 00 44 02 d9 | -85 CRC error
+00:00:26.045 | 0f 63 10 a4 2b 36 13 fc 1e 7e 2b f9 28 1f 2d 52 | -91 CRC error
+00:00:26.403 | 0f 69 10 ec 1d 67 2d e8 1d 71 1e ca 12 c1 1e b4 | -90 CRC error
+00:00:27.055 | 0f f4 11 70 21 5a 15 ce 0d b9 2b d2 22 ed 18 ad | -91 CRC error
+00:00:27.238 | 0f 77 19 94 29 38 19 bc 27 6d 15 7e 26 c1 29 90 | -86 CRC error
+00:00:27.597 | 0f 7d 11 dc 24 e3 28 7b 21 81 2e fc 1b 45 17 f4 | -90 CRC error
+00:00:28.248 | 2f 88 12 60 32 58 32 0f 27 db 29 0d 25 17 2e 7b 50 00 06 61 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 b7 1b 20 | -86 CRC error
+00:00:28.374 | 0f 8a 12 7c 14 2b 2d 8a 28 fb 0e 0c 14 56 1d ca | -86 CRC error
+00:00:29.025 | 0f 95 12 fc 2e af 21 4d 1e 89 27 01 26 97 e8 29 | -85 CRC error
+00:00:29.091 | 0f 96 13 08 1f 9c 1f 33 1f 1c 2f cb 2a 5d 2b ec | -86 CRC error
+00:00:29.567 | 0f 9e 13 68 16 14 22 70 21 fe a5 9c a5 74 20 00 | -92 CRC error
+00:00:29.632 | 0f 9f 53 74 26 35 24 69 1e 86 1f 80 37 c7 2a a5 | -85 CRC error
+00:00:29.698 | 0f a0 13 80 18 de 98 11 1b 15 1b 73 30 97 25 2d | -91 CRC error
+00:00:30.291 | 0f ea 13 f8 39 7a 18 ce 1d f3 1e 22 16 2a 1e af | -86 CRC error
+00:00:30.357 | 0f ab 14 04 2a 2b 21 d6 19 92 33 7e 24 8b 25 79 | -86 CRC error
+00:00:30.774 | 0f b2 15 58 14 59 1a be 27 34 17 f7 14 46 2f 5c | -88 CRC error
+00:00:31.250 | 0f ba 14 bc 18 37 59 95 a1 6c 21 7e 24 ac 2e de | -85 CRC error
+00:00:31.374 | 0f bc 14 d8 18 18 17 d9 1b 89 27 15 2a 7b 20 99 | -85 CRC error
+00:00:31.498 | 0f be 34 e8 29 0b 1f cc 28 49 14 55 17 cb 28 21 | -86 CRC error
+00:00:32.677 | 0f d2 15 d8 21 ff 22 b6 2b fd 22 a3 68 53 24 fb | -86 CRC error
+00:00:33.095 | 0f d9 16 2c 22 c8 19 7f 1f 1f 1b 68 1e 29 18 9c | -91 CRC error
+00:00:33.629 | 0f e2 16 98 1e b9 3d 71 25 25 15 f1 17 95 1b 49 | -86 CRC error
+00:00:33.753 | 0f e4 16 b0 22 a2 26 b0 24 8b 1d 88 1e 75 19 70 | -86 CRC error
+00:00:34.405 | 0f ff 17 34 1e be 25 62 1e 71 2e 3b 26 92 1b 52 | -85 CRC error
+00:00:34.529 | 0f f9 17 4c 17 ec 24 8f 18 74 1e 37 30 2b 16 4b | -85 CRC error
+00:00:34.829 | 0f f6 17 88 15 5d 9f 43 59 e2 1c cb 25 db 14 0f | -88 CRC error
+00:00:35.071 | 0f fa 17 b9 2f 29 21 a1 1f b4 23 54 0c ff 1b 15 | -91 CRC error
+00:00:35.429 | 0f 00 18 00 27 e6 26 1b 23 05 23 d7 20 f5 15 83 | -91 CRC error
+00:00:35.729 | 0f 05 18 3c 27 05 0e c0 16 8c 24 66 20 6b 2b e2 | -91 CRC error
+00:00:35.795 | 0f 06 18 48 20 9e 13 84 22 c8 1e c7 1d 3f 1f 3b | -88 CRC error
+00:00:35.919 | 0f 08 1a 60 25 8f 24 7d 20 1f 1b 50 16 51 29 ca | -87 CRC error
+00:00:36.688 | 0f 95 18 fe 17 71 28 aa 1c 4d 19 21 24 95 1b f2 | -89 CRC error
+00:00:36.754 | 0f 16 19 08 23 ec 26 9a 16 1a 21 e0 19 3d 27 ce | -85 CRC error
+00:00:37.347 | 0f 20 19 80 1a 16 28 f7 27 ff 2b 3f 1f 5a 12 e9 | -85 CRC error
+00:00:37.412 | 0f 21 19 8c 22 74 1b dd 1e 76 19 46 25 36 15 35 | -84 CRC error
+00:00:37.595 | 0f a4 19 b0 1b 0d 18 9e 26 49 1e 49 1c 6b 28 5a | -85 CRC error
+00:00:37.778 | 0f 27 19 f4 1d 74 20 34 1b 2c 22 64 18 df 21 11 | -85 CRC error
+00:00:37.844 | 0f 28 1b e0 31 ac 15 db 15 13 30 99 13 9f 1f 52 | -86 CRC error
+00:00:37.909 | 0f 29 19 fc 1c 66 9e ed d8 c6 23 6d 1f 50 21 8f | -86 CRC error
+00:00:39.147 | 1f 7e db f8 3d f1 2e 6b 1d 37 3f 22 25 9e 1f bf 10 24 06 61 00 00 00 00 01 00 00 00 00 00 00 00 | -90 CRC error
+00:00:39.799 | 04 d8 17 b0 22 | -88 CRC error
+00:00:39.981 | 0f 4c 1b 90 24 12 1a 7b a3 0e 17 dd a2 61 26 38 | -89 CRC error
+00:00:40.106 | 0f ce 1b a8 14 fb 21 95 24 17 26 8c 1b 29 13 61 | -89 CRC error
+00:00:40.230 | 0f 50 1b c0 0c c3 32 05 33 56 2e 07 16 4f 24 97 | -88 CRC error
+00:00:40.413 | 0f 53 1b e4 19 bf 1c 93 17 0c 20 96 15 0a 22 17 | -86 CRC error
+00:00:40.654 | 0f 5f 1c 14 15 5b a3 6f 1f 0e 1b ac 2e 65 25 3e | -89 CRC error
+00:00:42.888 | 0f ff 1d fe a6 79 1b 3c 22 3b 23 5e 2e 58 21 8b | -96 CRC error
+00:00:43.657 | 0f 8a 5e 79 2f cd 33 fe 99 2a 17 30 1f fa 13 ed | -91 CRC error
+00:00:45.422 | 0f b8 38 a0 21 58 40 68 30 0b 30 84 02 96 27 94 | -91 CRC error
+00:00:45.839 | 0f af 30 34 61 de 22 5e a7 0f 23 f5 21 b2 1a 52 | -89 CRC error
+00:00:50.886 | 10 0a 48 3c 1a ef 28 56 64 dd 52 6a 57 a2 20 c0 20 | -93 CRC error
+00:00:53.999 | 0f 3a 66 b8 23 f2 21 77 30 63 1c fc 35 dc 13 f4 | -89 CRC error
+00:00:54.416 | 0f 41 27 4c 21 49 3d f6 5c 4d 1c 03 1a 77 15 df | -91 CRC error
+00:00:57.471 | 1b f7 29 7c 6e df aa f2 1f 58 1f 2d 1a 19 0e 7d 10 00 06 69 30 00 00 00 65 00 00 20 | -89 CRC error
+00:00:58.416 | 2f 95 ea 3c 21 28 22 3d 14 fe 27 88 2a e7 2d f3 18 00 16 69 02 00 00 80 81 20 10 01 00 09 10 04 00 00 04 00 00 20 03 00 00 02 00 00 42 e7 17 00 | -92 CRC error
+00:00:58.659 | 0b 89 3a 64 4e fd 3f e2 63 68 17 a9 | -89 CRC error
+00:00:59.896 | 0f de ab 68 14 6a 52 96 21 ec 1a 8c 2b 7f 62 fd | -90 CRC error
+00:00:59.962 | 0f 9f 2b 74 1f bf 1c 3c 9f cf a5 91 27 8d 1b a4 | -87 CRC error
+00:01:00.028 | 0f a0 2b c0 1f 3f 2c 29 28 26 16 8a 1d 78 21 63 | -87 CRC error
+00:01:00.679 | 0f af 6c 04 17 4b 17 7e 20 bf 28 cf 63 d5 25 ba | -88 CRC error
+00:01:01.038 | 0f b1 2c 4c 20 9f 1b 29 25 dd 18 e7 21 4f 21 a6 | -88 CRC error
+00:01:01.162 | 0f b3 2c 64 24 49 21 d3 17 92 19 38 19 53 61 08 | -88 CRC error
+00:01:01.228 | 0f f4 2c 70 24 d9 2b de 1c 26 2c 59 26 7b 1b f2 | -84 CRC error
+00:01:01.352 | 0f b6 2c 88 1a c8 21 52 15 b3 31 cf a2 cf 1d 2b | -84 CRC error
+00:01:01.417 | 0f b7 2c 94 26 af 20 15 1e d4 25 72 1e 57 27 a9 | -83 CRC error
+00:01:01.483 | 0f b8 2c a0 14 a3 1c 5e 1b 7b 1d d5 17 68 22 fb | -84 CRC error
+00:01:01.549 | 0f b9 2c ac 20 3b 2d fe 8c 66 1d fa 20 41 24 70 | -86 CRC error
+00:01:01.614 | 0f ba 2c b8 1e e7 29 ce 22 31 1d 48 1b 3d 2a 03 | -84 CRC error
+00:01:01.856 | 0f bf 2c e8 24 c6 29 8a 29 5f 2d 21 22 2e 22 1b | -89 CRC error
+00:01:01.921 | 0f bf 2c f4 18 60 1c 71 69 34 16 b8 23 8b 28 5f | -83 CRC error
+00:01:03.159 | 0f d4 2d f0 29 5c 20 2b 1a f4 20 df 28 97 20 5b | -88 CRC error
+00:01:03.225 | 0f d5 2d fc 33 73 11 1b 2c dd 2a 15 27 d1 1a 49 | -84 CRC error
+00:01:05.693 | 0f ff 6f f4 19 b2 1d 21 25 ad 20 66 98 6b 1e 9d | -89 CRC error
+00:01:06.052 | 0f 05 38 3c 14 35 28 32 27 27 64 6f 3f 80 96 35 | -95 CRC error
