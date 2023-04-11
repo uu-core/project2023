@@ -36,8 +36,8 @@
 #define RECEIVER 2500  // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
-#define CLOCK_DIV0 28 // larger
-#define CLOCK_DIV1 26 // smaller
+#define CLOCK_DIV0 50 // larger
+#define CLOCK_DIV1 48 // smaller
 #define DESIRED_BAUD 100000
 #define TWOANTENNAS true
 
