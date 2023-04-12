@@ -1,0 +1,2 @@
+00:00:24.360 | 02 26 23 | -96 CRC error
+00:04:24.554 | packet overflow (possible length field corrupted) | CRC error

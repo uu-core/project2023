@@ -53,6 +53,8 @@ void main() {
     uint8_t buffer[RX_BUFFER_SIZE];
     setupReceiver();
     RX_start_listen();
+
+    uint64_t time_us;
     
     while (true) {
         evt = get_event();
@@ -62,7 +64,7 @@ void main() {
             break;
             case rx_deassert_evt:
                 // finished receiving
-                uint64_t time_us = to_us_since_boot(get_absolute_time());
+                time_us = to_us_since_boot(get_absolute_time());
                 status = readPacket(buffer);
                 printPacket(buffer,status,time_us);
                 RX_start_listen();

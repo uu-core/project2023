@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <zlib.h>
 #include "pico/stdlib.h"
 
 #include "pico/util/queue.h"
@@ -34,7 +35,7 @@
 #define RADIO_SCK               18
 
 #define TX_DURATION 50 // send a packet every 50ms
-#define RECEIVER 2500 // define the receiver board either 2500 or 1352
+#define RECEIVER 1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1  6
 #define PIN_TX2 27
 
@@ -90,6 +91,8 @@ int main() {
     printf("started listening\n");
     bool rx_ready = true;
 
+    uint64_t time_us;
+
     /* loop */
     while (true) {
         evt = get_event();
@@ -100,7 +103,7 @@ int main() {
             break;
             case rx_deassert_evt:
                 // finished receiving
-                uint64_t time_us = to_us_since_boot(get_absolute_time());
+                time_us = to_us_since_boot(get_absolute_time());
                 status = readPacket(rx_buffer);
                 printPacket(rx_buffer,status,time_us);
                 RX_start_listen();
@@ -119,8 +122,13 @@ int main() {
                     
                     /* casting for 32-bit fifo */
                     for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
-                        buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
+                        buffer[i] = ((uint32_t)message[4*i+3]) |  
+                                    (((uint32_t)message[4*i+2]) << 8) | 
+                                    (((uint32_t)message[4*i+1]) << 16) | 
+                                    (((uint32_t)message[4*i]) << 24);
                     }
+                    // TODO: compress buffer
+
                     /*put the data to FIFO*/
                     backscatter_send(pio,sm,buffer,sizeof(buffer));
                     //printf("Backscattered packet\n");
