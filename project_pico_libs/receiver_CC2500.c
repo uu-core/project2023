@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h> // FIXME: added for exit when 1000 packages is received
 #include "pico/stdlib.h"
 #include "pico/util/queue.h"
 #include "pico/binary_info.h"
@@ -190,8 +191,10 @@ Packet_status readPacket(uint8_t *buffer){
     return status;
 }
 
+// FIXME: added a counter to stop when there is 1000 received
 void printPacket(uint8_t *packet, Packet_status status, uint64_t time_us){
     // generate timestamp since boot-up
+    static int count = 0;
     uint64_t time_rem;
     uint32_t hours    = (int32_t) (time_us  / ((uint64_t) 36 * (uint64_t) 100000000));
     time_rem          =           (time_us  % ((uint64_t) 36 * (uint64_t) 100000000));
@@ -214,6 +217,11 @@ void printPacket(uint8_t *packet, Packet_status status, uint64_t time_us){
         }else{
             printf("CRC error\n");
         }
+    }
+    count++;
+    if (count >= 1000) 
+    {
+        exit(0);
     }
 }
 

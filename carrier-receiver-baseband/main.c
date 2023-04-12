@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include <zlib.h>
+//#include <zlib.h>
 #include "pico/stdlib.h"
 
 #include "pico/util/queue.h"
