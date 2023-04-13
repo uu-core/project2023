@@ -22,7 +22,7 @@ pico_sdk_init()
 add_executable(carrier_receiver_baseband)
 
 # by default the header is generated into the build dir
-pico_generate_pio_header(carrier_receiver_baseband ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio)
+#pico_generate_pio_header(carrier_receiver_baseband ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio)
 # however, alternatively you can choose to generate it somewhere else (in this case in the source tree for check in)
 #pico_generate_pio_header(carrier_receiver_baseband ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR})
 
@@ -39,6 +39,7 @@ target_sources(carrier_receiver_baseband PRIVATE
         ../project_pico_libs/packet_generation.c
         ../project_pico_libs/receiver_CC2500.c
         ../project_pico_libs/carrier_CC2500.c
+        ../project_pico_libs/backscatter.c
 )
 include_directories(../project_pico_libs)
 

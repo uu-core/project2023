@@ -38,10 +38,15 @@
 #define SIDLE                 0x36
 #define   SRX                 0x34
 #define  SFRX                 0x3A
+#define  SRES                 0x30
 
 #define F_XOSC            26000000
 
+#ifndef MINMAX
+#define MINMAX
+#define max(x, y) (((x) > (y)) ? (x) : (y))
 #define min(x, y) (((x) < (y)) ? (x) : (y))
+#endif
 
 #ifndef RF_SETTING
 #define RF_SETTING
@@ -114,6 +119,8 @@ void RX_start_listen();
 
 // stop listening
 void RX_stop_listen();
+
+void print_registers_rx();
 
 Packet_status readPacket(uint8_t *buffer);
 
