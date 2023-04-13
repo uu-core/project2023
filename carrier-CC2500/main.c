@@ -19,7 +19,7 @@
 #include "hardware/spi.h"
 #include "carrier_CC2500.h"
 
-#define CARRIER_FEQ     2450000000
+#define CARRIER_FEQ     2500000000
 
 void main() {
     stdio_init_all();

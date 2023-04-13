@@ -34,7 +34,7 @@
 #define RADIO_SCK               18
 
 #define TX_DURATION             50 // send a packet every 50ms
-#define RECEIVER              2500 // define the receiver board either 2500 or 1352
+#define RECEIVER              1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1                  6
 #define PIN_TX2                 27
 #define CLOCK_DIV0              20 // larger
@@ -42,7 +42,7 @@
 #define DESIRED_BAUD        100000
 #define TWOANTENNAS          true
 
-#define CARRIER_FEQ     2450000000
+#define CARRIER_FEQ     2500000000
 
 int main() {
     /* setup SPI */
