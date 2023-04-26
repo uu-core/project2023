@@ -123,11 +123,12 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     packets = len(df)
+    total_transmitted_packets = df.seq[packets-1]+1
 
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {df.seq[packets-1]+1}.")
+    print(f"The total number of packets transmitted by the tag is {total_transmitted_packets}.")
     error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
@@ -139,7 +140,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
-        print(idx)
+        # print(idx)
         error_idx = error.index[error.seq == df.seq[idx]][0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])
@@ -167,7 +168,10 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # error = error.drop(columns='bit_error_tmp')
     print("Error statistics dataframe is:")
     print(error)
-    return counter / file_size, error, file_content
+
+    # Calculate etx
+    etx = total_transmitted_packets/packets
+    return counter / file_size, error, file_content, etx
 
 # plot radar chart
 def radar_plot(metrics):

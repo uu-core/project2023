@@ -33,12 +33,12 @@
 #define RADIO_SCK 18
 
 #define TX_DURATION 50 // send a packet every 50ms
-#define RECEIVER 2500  // define the receiver board either 2500 or 1352
+#define RECEIVER 1352  // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
 #define CLOCK_DIV0 50 // larger
 #define CLOCK_DIV1 48 // smaller
-#define DESIRED_BAUD 100000
+#define DESIRED_BAUD 90000
 #define TWOANTENNAS true
 
 #define CARRIER_FEQ 2450000000
