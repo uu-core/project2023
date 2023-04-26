@@ -1,0 +1,6 @@
+frequency devition = 347.22KHz
+frequency offset 0 6597.22KHz
+Receiver centtre frequency = 2506.597KHz
+Carrier frequency = 2.5GHz
+RX Filter BW = 783.6KHz
+Symbol rate = 100 
