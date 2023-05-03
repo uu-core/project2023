@@ -33,24 +33,14 @@
 #define RADIO_MOSI 19
 #define RADIO_SCK 18
 
-// Missing part from receiver
-/*
- * The following macros are defined in the generated PIO header file
- * We define them here manually here since this example does not require a PIO state machine.
- */
-#define PIO_BAUDRATE 100000
-#define PIO_CENTER_OFFSET 6597222
-#define PIO_DEVIATION 347222
-#define PIO_MIN_RX_BW 794444
-
 // Baseband setting
 #define TX_DURATION 50 // send a packet every 50ms
 #define RECEIVER 1352  // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
-#define CLOCK_DIV0 20 // larger
-#define CLOCK_DIV1 18 // smaller
-#define DESIRED_BAUD 100000
+#define CLOCK_DIV0 36 // larger
+#define CLOCK_DIV1 32 // smaller
+#define DESIRED_BAUD 70000
 #define TWOANTENNAS true
 
 // Carrier frequency setting @ 2450 Mhz
@@ -108,10 +98,10 @@ int main()
     uint8_t rx_buffer[RX_BUFFER_SIZE];
     uint64_t time_us;
     setupReceiver();
-    set_frecuency_rx(CARRIER_FEQ + PIO_CENTER_OFFSET);
-    set_frequency_deviation_rx(PIO_DEVIATION);
-    set_datarate_rx(PIO_BAUDRATE);
-    set_filter_bandwidth_rx(PIO_MIN_RX_BW);
+    set_frecuency_rx(CARRIER_FEQ + backscatter_conf.center_offset);
+    set_frequency_deviation_rx(backscatter_conf.deviation);
+    set_datarate_rx(backscatter_conf.baudrate);
+    set_filter_bandwidth_rx(backscatter_conf.minRxBw);
     sleep_ms(1);
     RX_start_listen();
     printf("started listening\n");
@@ -126,8 +116,6 @@ int main()
         case rx_assert_evt:
             // started receiving
             rx_ready = false;
-            printf("rx_assert_evt...\n");
-            // sleep_ms(10);
             break;
         case rx_deassert_evt:
             // finished receiving
@@ -157,13 +145,12 @@ int main()
                 /*put the data to FIFO*/
                 backscatter_send(pio, sm, buffer, sizeof(buffer));
                 // printf("Backscattered packet\n");
-
                 seq++;
             }
             sleep_ms(TX_DURATION);
             break;
         }
-        sleep_us(100);
+        sleep_ms(1);
     }
 
     /* stop carrier and receiver - never reached */
