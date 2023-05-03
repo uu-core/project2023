@@ -27,7 +27,6 @@
 #include "receiver_CC2500.h"
 #include "packet_generation.h"
 
-// Carrier GPIO define
 #define RADIO_SPI spi0
 #define RADIO_MISO 16
 #define RADIO_MOSI 19
