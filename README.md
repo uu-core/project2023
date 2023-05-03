@@ -2,7 +2,8 @@
 An educational project on backscatter using Raspberry Pi Pico
 
 ## --> Updates <--
-- 29.03.2022: We added a new library `project_pico_libs/backscatter.c`. The `baseband` example demonstrates how to generate a PIO-file (python script) and assemble it using `pioasm`. This has the disadvantage that testing different baseband settings require a re-compilation for each setting. Therefore, we implemented a automatic generation of the state-machine binary in C (`project_pico_libs/backscatter.c`) and demonstrate its use in `carrier-receiver-baseband`. This enables changing the baseband settings on-the-fly for a convenient automation of tests.
+- 27.04.2023: The Python script (generating the PIO) generated state machines which did not compile due to a mistake by splitting the required delay over a number of instructions. The issue has been resolved. The C-implementation was not affected by this issue.
+- 29.03.2023: We added a new library `project_pico_libs/backscatter.c`. The `baseband` example demonstrates how to generate a PIO-file (python script) and assemble it using `pioasm`. This has the disadvantage that testing different baseband settings require a re-compilation for each setting. Therefore, we implemented a automatic generation of the state-machine binary in C (`project_pico_libs/backscatter.c`) and demonstrate its use in `carrier-receiver-baseband`. This enables changing the baseband settings on-the-fly for a convenient automation of tests.
 
 ## Repo Organization
 - `hardware` contains the hardware design with further description and explanation (generating the PIO using the python script).

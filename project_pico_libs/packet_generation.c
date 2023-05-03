@@ -11,6 +11,9 @@
 #include "pico/stdlib.h"
 #include "packet_generation.h"
 
+#define DEFAULT_SEED 0xABCD
+uint32_t seed = DEFAULT_SEED;
+
 uint8_t packet_hdr_2500[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00};    // CC2500, the last two byte one for the payload length. and another is seq number
 uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51, 0xde, 0x00, 0x00};    // CC1352P7, the last two byte one for the payload length. and another is seq number
 
@@ -31,7 +34,6 @@ uint8_t *packet_hdr_template(uint16_t receiver){
  * generate of a uniform random number.
  */
 uint32_t rnd() {
-    static uint32_t seed = 0xABCD;
     const uint32_t A1 = 1664525;
     const uint32_t C1 = 1013904223;
     const uint32_t RAND_MAX1 = 0xFFFFFFFF;
@@ -45,6 +47,9 @@ uint32_t rnd() {
  */
 uint16_t file_position = 0;
 uint16_t generate_sample(){
+    if (file_position == 0) {
+        seed = DEFAULT_SEED; /* reset seed when exceeding uint16_t max */
+    }
     file_position = file_position + 2;
     double two_pi = 2.0 * M_PI;
     double u1, u2;
