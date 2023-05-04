@@ -19,7 +19,7 @@ uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51,
 
 /*
  * obtain the packet header template for the corresponding radio
- * buffer: array of size HEADER_LEN 
+ * buffer: array of size HEADER_LEN
  * receiver: radio number (2500 or 1352)
  */
 uint8_t *packet_hdr_template(uint16_t receiver){
@@ -75,10 +75,19 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
         buffer[1] = (uint8_t) (file_position & 0x00FF);
         data_start = 2;
     }
-    for (uint8_t i=data_start; i < length; i=i+2) {
+    for (uint8_t i=data_start; i < length; i=i+6) {
+        uint64_t extended = 0;
         uint16_t sample = generate_sample();
-        buffer[i]   = (uint8_t) (sample >> 8);
-        buffer[i+1] = (uint8_t) (sample & 0x00FF);
+
+        // stutter code SECC (3,1)
+        for (int i = 0; i < 16; i++) {
+            uint8_t bit = (sample & (1 << i)) >> i; // get the i:th bit of sample
+            for (uint8_t j = 0; j < 3; j++) {
+                extended |= (bit << (47 - ((i * 3) + j)));
+            }
+        }
+
+        memcpy(&buffer[i], &extended, 6); // 48 bits
     }
 }
 

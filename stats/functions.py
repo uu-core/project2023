@@ -51,9 +51,12 @@ def readfile(filename):
 
 # parse the hex payload, return a list with int numbers for each byte
 def parse_payload(payload_string):
-    tmp = map(lambda x: int(x, base=16), payload_string.split())
-    return list(tmp)
-
+    # yes
+    binary = list(map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
+    flat_binary = [item for sublist in binary for item in sublist]
+    bits = [flat_binary[i:i+3] for i in range(0, len(flat_binary), 3)]
+    tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
+    return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
 
 def popcount(n):
     return bin(n).count("1")
