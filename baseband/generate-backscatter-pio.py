@@ -35,7 +35,7 @@ TWOANTENNAS = args.twoAntennas
 assert d0 % 2 == 0 and d0 >= 2, 'd0 must be an even integer larger than 1'
 assert d1 % 2 == 0 and d1 >= 2, 'd1 must be an even integer larger than 1'
 assert b > 0, 'baud-rate can not be negative'
-splitNbit = lambda x,n: [(2**n)*(i+1) for i in range(0,x//(2**n))] + ([(x % (2**n))] if (x % (2**n)) != 0 else [])
+splitNbit = lambda x,n: [(2**n) for i in range(0,x//(2**n))] + ([(x % (2**n))] if (x % (2**n)) != 0 else [])
 split5bit = lambda x: splitNbit(x,5)
 split3bit = lambda x: splitNbit(x,3)
 sleeptime5bit = lambda x,subLast=0: [s-1 for s in lastMinus(split5bit(x),subLast)]
