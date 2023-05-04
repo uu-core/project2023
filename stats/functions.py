@@ -138,12 +138,17 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
     last_pseudoseq = 0 # record the previous pseudoseq
     # start count the error bits
-    for idx in range(packets):
+    for idx in range(error.seq.size):
+        packet_data = df.index[df.seq == error.seq[idx]]
+        if packet_data.size == 0:
+            # No packet with this sequence number was received.
+            continue
+
+        # A packet with this sequence was received, calculate the BER
         # return the matched row index for the specific seq number in log file
-        # print(idx)
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx])
-        pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
+        payload = parse_payload(df.payload[packet_data[0]])
+        pseudoseq = int(((payload[0] << 8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
         # compute the bit errors
@@ -153,11 +158,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
         # it is not possible to calculate the bit error for that specific packet.
         # Instead, if the packet with a specific sequence does not exist, we say that
         # all bits in the payload for that packet was incorrect.
-        error_data = error.index[error.seq == df.seq[idx]]
-        if error_data.size == 0:
-            error.bit_error_tmp[idx].append(PACKET_LEN) # all bits are incorrect
-        else:
-            error.bit_error_tmp[error_data[0]].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
+        error.bit_error_tmp[idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
         last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
@@ -176,7 +177,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     error['bit_error'] = bit_error
     # error = error.drop(columns='bit_error_tmp')
     print("Error statistics dataframe is:")
-    print(error)
+    print(error.to_string())
 
     # Calculate etx
     etx = total_transmitted_packets/packets
