@@ -141,14 +141,23 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
         # print(idx)
-        error_idx = error.index[error.seq == df.seq[idx]][0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
         # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
+        # The error dataframe contains the same number of rows as the total number of
+        # sequences between the first and last received packet(s). However, there is
+        # no guarantee that every packet was recevied correctly, which would mean that
+        # it is not possible to calculate the bit error for that specific packet.
+        # Instead, if the packet with a specific sequence does not exist, we say that
+        # all bits in the payload for that packet was incorrect.
+        error_data = error.index[error.seq == df.seq[idx]]
+        if error_data.size == 0:
+            error.bit_error_tmp[idx].append(PACKET_LEN) # all bits are incorrect
+        else:
+            error.bit_error_tmp[error_data[0]].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
         last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
