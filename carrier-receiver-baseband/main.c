@@ -43,6 +43,8 @@
 #define TWOANTENNAS          false
 
 #define CARRIER_FEQ     2470000000
+/*Modified payloadsize*/
+#define NEW_PAYLOAD 6
 
 int main() {
     /* setup SPI */
@@ -76,13 +78,15 @@ int main() {
     uint16_t instructionBuffer[32] = {0}; // maximal instruction size: 32
     backscatter_program_init(pio, sm, PIN_TX1, PIN_TX2, CLOCK_DIV0, CLOCK_DIV1, DESIRED_BAUD, &backscatter_conf, instructionBuffer, TWOANTENNAS);
 
-    static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
+    //static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
+    static uint8_t message[NEW_PAYLOAD + HEADER_LEN];  // include 10 header bytes                                    // MODIFIED PAYLOADSIZE
     //static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
-    static uint32_t buffer[10] = {0};
+    static uint32_t buffer[buffer_size(NEW_PAYLOAD, HEADER_LEN)] = {0}; // initialize the buffer                   // MODIFIED PAYLOADSIZE
+    //static uint32_t buffer[10] = {0};
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
-    uint8_t tx_payload_buffer[PAYLOADSIZE];
-
+    uint8_t tx_payload_buffer[NEW_PAYLOAD];                     // MODIFIED PAYLOADSIZE
+    //uint8_t tx_payload_buffer[PAYLOADSIZE];
     /* Start carrier */
     setupCarrier();
     set_frecuency_tx(CARRIER_FEQ);
@@ -125,16 +129,19 @@ int main() {
                 // backscatter new packet if receiver is listening
                 if (rx_ready){
                     /* generate new data */
-                    generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+                    //generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+                    generate_data(tx_payload_buffer, NEW_PAYLOAD, true);   //MODIFIED PAYLOADSIZE
 
                     /* add header (10 byte) to packet */
                     add_header(&message[0], seq, header_tmplate);
                     /* add payload to packet */
-                    memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
+                    //memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
+                    memcpy(&message[HEADER_LEN], tx_payload_buffer, NEW_PAYLOAD);  //MODIFIED PAYLOADSIZE
 
                     /* casting for 32-bit fifo */
                     //for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) 
-                    for (uint8_t i=0; i < 10; i++) {
+                    for (uint8_t i=0; i < buffer_size(NEW_PAYLOAD, HEADER_LEN); i++) {
+                    //for (uint8_t i=0; i < 10; i++) {
                         buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
                     }
                     /*put the data to FIFO*/
