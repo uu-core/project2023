@@ -77,7 +77,8 @@ int main() {
     backscatter_program_init(pio, sm, PIN_TX1, PIN_TX2, CLOCK_DIV0, CLOCK_DIV1, DESIRED_BAUD, &backscatter_conf, instructionBuffer, TWOANTENNAS);
 
     static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
-    static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
+    //static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
+    static uint32_t buffer[10] = {0};
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
@@ -132,7 +133,8 @@ int main() {
                     memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
 
                     /* casting for 32-bit fifo */
-                    for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
+                    //for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) 
+                    for (uint8_t i=0; i < 10; i++) {
                         buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
                     }
                     /*put the data to FIFO*/
