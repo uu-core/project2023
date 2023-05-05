@@ -36,88 +36,12 @@
 #define RECEIVER 2500  // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
-#define CLOCK_DIV0 54 // larger
-#define CLOCK_DIV1 40 // smaller
-#define DESIRED_BAUD 100000
+#define CLOCK_DIV0 46 // larger
+#define CLOCK_DIV1 38 // smaller
+#define DESIRED_BAUD 90000
 #define TWOANTENNAS true
 
 #define CARRIER_FEQ 2450000000
-
-// hamming part
-
-const uint8_t rows = 4;
-const uint8_t cols = 8;
-
-void print(uint32_t data_snd)
-{
-    for (uint8_t r = 0; r < rows; r++)
-    {
-        for (uint8_t c = 0; c < cols; c++)
-        {
-            printf("%d ", (data_snd & (1 << ((cols * r) + c))) >> ((cols * r) + c));
-        }
-        printf("\n");
-    }
-    printf("\n");
-}
-
-uint8_t calc_parity_col(uint8_t block, uint32_t data)
-{
-    uint8_t parity = 0;
-    uint8_t block_indx = 0;
-    for (uint8_t r = 0; r < rows; r++)
-    {
-        for (uint8_t c = block; c < cols; c++)
-        {
-            if ((uint8_t)(c / block) % 2 == 0)
-                continue;
-            parity = parity ^ ((data & (1 << ((cols * r) + c))) >> ((cols * r) + c));
-        }
-    }
-    return parity;
-}
-
-uint8_t calc_parity_row(uint8_t block, uint32_t data)
-{
-    uint8_t parity = 0;
-    uint8_t count = 0;
-    for (uint8_t r = block; r < rows; r++)
-    {
-        if ((uint8_t)(r / block) % 2 == 0)
-            continue;
-        for (uint8_t c = 0; c < cols; c++)
-        {
-            parity = parity ^ ((data & (1 << ((cols * r) + c))) >> ((cols * r) + c));
-        }
-    }
-    return parity;
-}
-
-// The first 6 bits should not be set
-uint32_t hamming_encode(uint32_t data)
-{
-    const uint8_t indx_data[26] = {3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-    const uint8_t indx_parity[6] = {0, 1, 2, 4, 8, 16}; // 0 is not a parity bit but is used for hamming extended
-    uint32_t data_snd = 0;
-
-    /* Start with the lowest bit, i.e. bit 6 in the 32-bit integer */
-    /* Insert the smallest number in the first position of the message */
-    for (int i = 6; i < 32; i++)
-    {
-        data_snd += (1 << indx_data[i - 6]) * ((data & (1 << i)) >> i);
-    }
-
-    // Calculate the parity bit and insert it to the data_snd
-    data_snd += (1 << indx_parity[1]) * calc_parity_col(1, data_snd);
-    data_snd += (1 << indx_parity[2]) * calc_parity_col(2, data_snd);
-    data_snd += (1 << indx_parity[3]) * calc_parity_col(4, data_snd);
-    data_snd += (1 << indx_parity[4]) * calc_parity_row(1, data_snd);
-    data_snd += (1 << indx_parity[5]) * calc_parity_row(2, data_snd);
-
-    return data_snd;
-}
-
-// end of hamming part
 
 int main()
 {
@@ -152,12 +76,11 @@ int main()
     uint16_t instructionBuffer[32] = {0}; // maximal instruction size: 32
     backscatter_program_init(pio, sm, PIN_TX1, PIN_TX2, CLOCK_DIV0, CLOCK_DIV1, DESIRED_BAUD, &backscatter_conf, instructionBuffer, TWOANTENNAS);
 
-    static uint8_t message[PAYLOADSIZE_ENC + HEADER_LEN];                   // include 10 header bytes
-    static uint32_t buffer[buffer_size(PAYLOADSIZE_ENC, HEADER_LEN)] = {0}; // initialize the buffer
+    static uint8_t message[PAYLOADSIZE + HEADER_LEN];                   // include 10 header bytes
+    static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
-    uint32_t tx_enc_payload_buffer[PAYLOADSIZE_ENC];
 
     /* Start carrier */
     setupCarrier();
@@ -206,51 +129,16 @@ int main()
                 /* generate new data */
                 generate_data(tx_payload_buffer, PAYLOADSIZE, true);
 
-                // int j = 0;
-                // printf("Generated data\n");
-
-                for (int i = 0; i < PAYLOADSIZE; i += 3)
-                {
-                    uint32_t tmp;
-                    if (i + 1 == PAYLOADSIZE)
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(0x0) << 16 |
-                                             (uint32_t)(0x0) << 8);
-                    }
-                    else if (i + 2 == PAYLOADSIZE)
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(tx_payload_buffer[i + 1]) << 16 |
-                                             (uint32_t)(0x0) << 8);
-                    }
-                    else
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(tx_payload_buffer[i + 1]) << 16 |
-                                             (uint32_t)(tx_payload_buffer[i + 2]) << 8);
-                    }
-                    tx_enc_payload_buffer[i] = (uint8_t)(tmp >> 24);
-                    tx_enc_payload_buffer[i + 1] = (uint8_t)(tmp >> 16);
-                    tx_enc_payload_buffer[i + 2] = (uint8_t)(tmp >> 8);
-                }
-                // printf("Done with encoding\n");
-
                 /* add header (10 byte) to packet */
                 add_header(&message[0], seq, header_tmplate);
                 /* add payload to packet */
-                memcpy(&message[HEADER_LEN], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
-
-                // printf("Copied tx_enc_payload_buffer to message\n");
+                memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
 
                 /* casting for 32-bit fifo */
-                for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE_ENC, HEADER_LEN); i++)
+                for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++)
                 {
                     buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
-                    // printf("buffer[%d] = %x\n", i, buffer[i]);
                 }
-                // printf("Buffer contains the right packages\n");
-
                 /*put the data to FIFO*/
                 backscatter_send(pio, sm, buffer, sizeof(buffer));
                 // printf("Backscattered packet\n");
