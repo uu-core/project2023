@@ -128,7 +128,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {total_transmitted_packets}.")
+    #print(f"The total number of packets transmitted by the tag is {total_transmitted_packets}.")
     error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
@@ -170,15 +170,15 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     # update the bit_error column
     error['bit_error'] = bit_error
     # error = error.drop(columns='bit_error_tmp')
-    print("Error statistics dataframe is:")
-    print(error)
+    #print("Error statistics dataframe is:")
+    #print(error)
 
     # Calculate etx
     etx = total_transmitted_packets/packets
     return counter / file_size, error, file_content, etx
 
 # plot radar chart
-def radar_plot(metrics):
+def radar_plot(metrics, title=None):
     categories = ['Time', 'Reliability', 'Distance']
     system_ref = [62.321888, 0.201875*100, 39.956474923886844]
     system = [metrics[0], metrics[1], metrics[2]]
@@ -193,7 +193,11 @@ def radar_plot(metrics):
 
     plt.plot(np.append(label_loc, (0.5 * np.pi)), system+[system[0]], label='Our system', color='#77A136')
     plt.fill(label_loc, system, color='#77A136', alpha=0.25)
-    plt.title('System Performance', size=20)
+
+    if title is None:
+        plt.title('System Performance', size=20)
+    else:
+        plt.title(title, size=20)
 
     lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories, fontsize=18)
     plt.legend(fontsize=18, loc='upper right')

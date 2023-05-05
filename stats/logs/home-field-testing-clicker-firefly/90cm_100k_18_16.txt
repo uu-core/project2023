@@ -1,5 +1,0 @@
-00:00:07.877 | packet overflow (possible length field corrupted) | CRC error
-00:00:17.688 | packet overflow (possible length field corrupted) | CRC error
-00:00:37.246 | packet overflow (possible length field corrupted) | CRC error
-00:00:54.639 | packet overflow (possible length field corrupted) | CRC error
-00:01:08.611 | packet overflow (possible length field corrupted) | CRC error
