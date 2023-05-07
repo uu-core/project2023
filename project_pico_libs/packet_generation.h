@@ -1,8 +1,8 @@
 /**
  * Tobias Mages & Wenqing Yan
- * 
+ *
  * support functions to generate payload data and function
- * 
+ *
  */
 
 #ifndef PACKET_GERNATION_LIB
@@ -14,7 +14,16 @@
 #include "pico/stdlib.h"
 #include "packet_generation.h"
 
+#ifndef USE_ECC
+#define USE_ECC 0
+#endif
+
+#if USE_ECC == 0
+#define PAYLOADSIZE 14
+#else
 #define PAYLOADSIZE 14 * 3
+#endif
+
 #define HEADER_LEN  10 // 8 header + length + seq
 #define buffer_size(x, y) (((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1)) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
 
@@ -29,12 +38,12 @@
  */
 uint8_t *packet_hdr_template(uint16_t receiver);
 
-/* 
+/*
  * generate of a uniform random number.
  */
 uint32_t rnd();
 
-/* 
+/*
  * generate compressible payload sample
  * file_position provides the index of the next data byte (increments by 2 each time the function is called)
  */

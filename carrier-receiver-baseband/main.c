@@ -24,7 +24,6 @@
 #include "carrier_CC2500.h"
 #include "hardware/clocks.h"
 #include "hardware/pio.h"
-#include "packet_generation.h"
 #include "receiver_CC2500.h"
 
 #define RADIO_SPI spi0
@@ -39,9 +38,13 @@
 #define CLOCK_DIV0 50 // larger
 #define CLOCK_DIV1 48 // smaller
 #define DESIRED_BAUD 90000
+#define USE_ECC 0
 #define TWOANTENNAS true
 
 #define CARRIER_FEQ 2450000000
+
+// Must include after to make sure that USE_ECC is respected
+#include "packet_generation.h"
 
 int main() {
   /* setup SPI */

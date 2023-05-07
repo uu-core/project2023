@@ -1,8 +1,8 @@
 /**
  * Tobias Mages & Wenqing Yan
- * 
+ *
  * support functions to generate payload data and function
- * 
+ *
  */
 
 #include <stdio.h>
@@ -30,7 +30,7 @@ uint8_t *packet_hdr_template(uint16_t receiver){
     }
 }
 
-/* 
+/*
  * generate of a uniform random number.
  */
 uint32_t rnd() {
@@ -41,7 +41,7 @@ uint32_t rnd() {
     return seed;
 }
 
-/* 
+/*
  * generate compressible payload sample
  * file_position provides the index of the next data byte (increments by 2 each time the function is called)
  */
@@ -76,9 +76,10 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
         data_start = 2;
     }
     for (uint8_t i=data_start; i < length; i=i+6) {
-        uint64_t extended = 0;
         uint16_t sample = generate_sample();
 
+#if USE_ECC == 1
+        uint64_t extended = 0;
         // stutter code SECC (3,1)
         for (int i = 0; i < 16; i++) {
             uint8_t bit = (sample & (1 << i)) >> i; // get the i:th bit of sample
@@ -88,6 +89,10 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
         }
 
         memcpy(&buffer[i], &extended, 6); // 48 bits
+#else
+        buffer[i] = (uint8_t) (sample >> 8);
+        buffer[i + 1] = (uint8_t) (sample & 0x00FF);
+#endif
     }
 }
 
