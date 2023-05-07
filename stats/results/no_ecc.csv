@@ -1,0 +1,2 @@
+file,d2,d1,a,b,baud,delta_fsk,file_delay_s,bit_reliability,dis_metric,etx,avg_rssi,ecc,samples,error
+100_5_56_54_96k.txt,100,5,56,54,96000,41.335978835978835,57.967,45.64773024594453,0.0025000000000000005,1.394,-88.123,False,1,False

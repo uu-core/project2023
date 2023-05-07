@@ -50,13 +50,17 @@ def readfile(filename):
     return df
 
 # parse the hex payload, return a list with int numbers for each byte
-def parse_payload(payload_string):
-    # yes
-    binary = list(map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
-    flat_binary = [item for sublist in binary for item in sublist]
-    bits = [flat_binary[i:i+3] for i in range(0, len(flat_binary), 3)]
-    tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
-    return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
+def parse_payload(payload_string, USE_ECC=False):
+    if USE_ECC:
+        # yes
+        binary = list(map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
+        flat_binary = [item for sublist in binary for item in sublist]
+        bits = [flat_binary[i:i+3] for i in range(0, len(flat_binary), 3)]
+        tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
+        return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
+    else:
+        tmp = map(lambda x: int(x, base=16), payload_string.split())
+        return list(tmp)
 
 def popcount(n):
     return bin(n).count("1")
@@ -124,7 +128,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
+def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False):
     packets = len(df)
     total_transmitted_packets = df.seq[packets-1]+1
 
@@ -150,7 +154,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
             continue
         error_idx = error_data[0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx])
+        payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC)
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
