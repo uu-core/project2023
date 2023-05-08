@@ -33,10 +33,10 @@
 #define RADIO_SCK 18
 
 #define TX_DURATION 50 // send a packet every 50ms
-#define RECEIVER 2500  // define the receiver board either 2500 or 1352
+#define RECEIVER 1352  // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
-#define CLOCK_DIV0 54 // larger
+#define CLOCK_DIV0 46 // larger
 #define CLOCK_DIV1 40 // smaller
 #define DESIRED_BAUD 100000
 #define TWOANTENNAS true
@@ -94,27 +94,46 @@ uint8_t calc_parity_row(uint8_t block, uint32_t data)
 }
 
 // The first 6 bits should not be set
-uint32_t hamming_encode(uint32_t data)
-{
-    const uint8_t indx_data[26] = {3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
-    const uint8_t indx_parity[6] = {0, 1, 2, 4, 8, 16}; // 0 is not a parity bit but is used for hamming extended
-    uint32_t data_snd = 0;
+uint32_t hamming_encode(uint32_t data) {
+	const uint8_t indx_data[26] = {3,5,6,7,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
+	const uint8_t indx_parity[6] = {0,1,2,4,8,16}; // 0 is not a parity bit but is used for hamming extended
+	uint32_t data_snd = 0;	
+	uint32_t bit_position = 0;
+	uint32_t data_bit_value = 0;
+	uint32_t data_at_position = 0;
 
-    /* Start with the lowest bit, i.e. bit 6 in the 32-bit integer */
-    /* Insert the smallest number in the first position of the message */
-    for (int i = 6; i < 32; i++)
-    {
-        data_snd += (1 << indx_data[i - 6]) * ((data & (1 << i)) >> i);
-    }
+	/* Start with the lowest bit, i.e. bit 6 in the 32-bit integer */
+	/* Insert the smallest number in the first position of the message */
+    for (int i = 0; i < 24; i++) {
+		bit_position = (1 << indx_data[i]); // 2^indx_data[i]
+		data_bit_value = data & (1 << i); // 2^i or 0
+		data_at_position = ((data_bit_value) >> i); // 0 or 1
+		data_snd += bit_position * data_at_position;
+	}
+		
+	// Calculate the parity bit and insert it to the data_snd
+	data_snd += (1 << indx_parity[1]) * calc_parity_col(1, data_snd);
+	data_snd += (1 << indx_parity[2]) * calc_parity_col(2, data_snd);
+	data_snd += (1 << indx_parity[3]) * calc_parity_col(4, data_snd);
+	data_snd += (1 << indx_parity[4]) * calc_parity_row(1, data_snd);
+	data_snd += (1 << indx_parity[5]) * calc_parity_row(2, data_snd);
 
-    // Calculate the parity bit and insert it to the data_snd
-    data_snd += (1 << indx_parity[1]) * calc_parity_col(1, data_snd);
-    data_snd += (1 << indx_parity[2]) * calc_parity_col(2, data_snd);
-    data_snd += (1 << indx_parity[3]) * calc_parity_col(4, data_snd);
-    data_snd += (1 << indx_parity[4]) * calc_parity_row(1, data_snd);
-    data_snd += (1 << indx_parity[5]) * calc_parity_row(2, data_snd);
+	return data_snd;
+}
 
-    return data_snd;
+uint32_t encode_3_uint8(uint8_t data8_1, uint8_t data8_2, uint8_t data8_3) {
+	uint8_t data8_dummy = 0b00000000;
+	uint32_t to_encode = (uint32_t)(data8_dummy << 24) |
+						 (uint32_t)(data8_1 << 16)     |
+						 (uint32_t)(data8_2 << 8)      |
+						 (uint32_t)(data8_3 << 0);  
+						 
+
+	printf("Before   : %x %x %x %x\n", data8_1, data8_2, data8_3, data8_dummy);
+	printf("To encode: %x\n", to_encode);
+    uint32_t encoded = hamming_encode(to_encode);
+    printf("Encoded: %x\n", encoded);
+	return encoded;
 }
 
 // end of hamming part
@@ -209,45 +228,43 @@ int main()
                 // int j = 0;
                 // printf("Generated data\n");
 
-                for (int i = 0; i < PAYLOADSIZE; i += 3)
+                for (int i = 0; i < PAYLOADSIZE/3; i++)
                 {
-                    uint32_t tmp;
-                    if (i + 1 == PAYLOADSIZE)
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(0x0) << 16 |
-                                             (uint32_t)(0x0) << 8);
-                    }
-                    else if (i + 2 == PAYLOADSIZE)
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(tx_payload_buffer[i + 1]) << 16 |
-                                             (uint32_t)(0x0) << 8);
-                    }
-                    else
-                    {
-                        tmp = hamming_encode((uint32_t)(tx_payload_buffer[i]) << 24 |
-                                             (uint32_t)(tx_payload_buffer[i + 1]) << 16 |
-                                             (uint32_t)(tx_payload_buffer[i + 2]) << 8);
-                    }
-                    tx_enc_payload_buffer[i] = (uint8_t)(tmp >> 24);
-                    tx_enc_payload_buffer[i + 1] = (uint8_t)(tmp >> 16);
-                    tx_enc_payload_buffer[i + 2] = (uint8_t)(tmp >> 8);
+                    uint32_t tmp = encode_3_uint8(tx_payload_buffer[3*i], tx_payload_buffer[3*i+1], tx_payload_buffer[3*i+2]);
+                    tx_enc_payload_buffer[4*i] = (uint8_t)(tmp >> 24);
+                    tx_enc_payload_buffer[4*i + 1] = (uint8_t)(tmp >> 16);
+                    tx_enc_payload_buffer[4*i + 2] = (uint8_t)(tmp >> 8);
+                    tx_enc_payload_buffer[4*i + 3] = (uint8_t)(tmp);
                 }
                 // printf("Done with encoding\n");
-
+                
+                printf("Printing tx_enc_payload_buffer:\n");
+                for (int i=0; i<PAYLOADSIZE_ENC; i++) {
+                    printf("%x ", tx_enc_payload_buffer[i]);
+                }
+                printf("\n");
                 /* add header (10 byte) to packet */
                 add_header(&message[0], seq, header_tmplate);
                 /* add payload to packet */
                 memcpy(&message[HEADER_LEN], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
 
+                printf("Printing message buffer:\n");
+                for (int i=0; i<PAYLOADSIZE_ENC+HEADER_LEN; i++) {
+                    printf("%x ", message[i]);
+                }
+                printf("\n");
+
                 // printf("Copied tx_enc_payload_buffer to message\n");
 
                 /* casting for 32-bit fifo */
+                printf("Sending:\n");
                 for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE_ENC, HEADER_LEN); i++)
                 {
-                    buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
-                    // printf("buffer[%d] = %x\n", i, buffer[i]);
+                    if (4*i+3 < PAYLOADSIZE_ENC + HEADER_LEN)
+                        buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
+                    else
+                        buffer[i] = ((uint32_t)0x0) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
+                    printf("buffer[%d] = %x\n", i, buffer[i]);
                 }
                 // printf("Buffer contains the right packages\n");
 

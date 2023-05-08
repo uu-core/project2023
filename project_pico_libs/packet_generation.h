@@ -14,7 +14,7 @@
 #include "pico/stdlib.h"
 #include "packet_generation.h"
 
-#define PAYLOADSIZE 14
+#define PAYLOADSIZE 12
 #define PAYLOADSIZE_ENC (PAYLOADSIZE + PAYLOADSIZE / 3)
 
 #define HEADER_LEN  10 // 8 header + length + seq
