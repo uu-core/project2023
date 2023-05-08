@@ -129,10 +129,10 @@ uint32_t encode_3_uint8(uint8_t data8_1, uint8_t data8_2, uint8_t data8_3) {
 						 (uint32_t)(data8_3 << 0);  
 						 
 
-	printf("Before   : %x %x %x %x\n", data8_1, data8_2, data8_3, data8_dummy);
-	printf("To encode: %x\n", to_encode);
+	//printf("Before   : %x %x %x %x\n", data8_1, data8_2, data8_3, data8_dummy);
+	//printf("To encode: %x\n", to_encode);
     uint32_t encoded = hamming_encode(to_encode);
-    printf("Encoded: %x\n", encoded);
+    //printf("Encoded: %x\n", encoded);
 	return encoded;
 }
 
@@ -176,7 +176,7 @@ int main()
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
-    uint32_t tx_enc_payload_buffer[PAYLOADSIZE_ENC];
+    uint8_t tx_enc_payload_buffer[PAYLOADSIZE_ENC];
 
     /* Start carrier */
     setupCarrier();
@@ -225,9 +225,6 @@ int main()
                 /* generate new data */
                 generate_data(tx_payload_buffer, PAYLOADSIZE, true);
 
-                // int j = 0;
-                // printf("Generated data\n");
-
                 for (int i = 0; i < PAYLOADSIZE/3; i++)
                 {
                     uint32_t tmp = encode_3_uint8(tx_payload_buffer[3*i], tx_payload_buffer[3*i+1], tx_payload_buffer[3*i+2]);
@@ -236,37 +233,31 @@ int main()
                     tx_enc_payload_buffer[4*i + 2] = (uint8_t)(tmp >> 8);
                     tx_enc_payload_buffer[4*i + 3] = (uint8_t)(tmp);
                 }
-                // printf("Done with encoding\n");
                 
-                printf("Printing tx_enc_payload_buffer:\n");
-                for (int i=0; i<PAYLOADSIZE_ENC; i++) {
-                    printf("%x ", tx_enc_payload_buffer[i]);
-                }
-                printf("\n");
+
                 /* add header (10 byte) to packet */
                 add_header(&message[0], seq, header_tmplate);
                 /* add payload to packet */
                 memcpy(&message[HEADER_LEN], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
 
-                printf("Printing message buffer:\n");
+                /*
+                printf("Sending message:\n");
                 for (int i=0; i<PAYLOADSIZE_ENC+HEADER_LEN; i++) {
                     printf("%x ", message[i]);
                 }
-                printf("\n");
+                printf("\n"); */
 
-                // printf("Copied tx_enc_payload_buffer to message\n");
 
                 /* casting for 32-bit fifo */
-                printf("Sending:\n");
+                //printf("Sending:\n");
                 for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE_ENC, HEADER_LEN); i++)
                 {
                     if (4*i+3 < PAYLOADSIZE_ENC + HEADER_LEN)
                         buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
                     else
                         buffer[i] = ((uint32_t)0x0) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
-                    printf("buffer[%d] = %x\n", i, buffer[i]);
+                    //printf("buffer[%d] = %x\n", i, buffer[i]);
                 }
-                // printf("Buffer contains the right packages\n");
 
                 /*put the data to FIFO*/
                 backscatter_send(pio, sm, buffer, sizeof(buffer));
