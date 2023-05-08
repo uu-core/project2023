@@ -12,7 +12,7 @@
 #include "backscatter.pio.h"
 #include "packet_generation.h"
 
-#define TX_DURATION 50 // send a packet every 50ms
+#define TX_DURATION 250 // send a packet every 250ms (when changing baud-rate, ensure that the TX delay is larger than the transmission time)
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
@@ -44,7 +44,7 @@ int main() {
             buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
         }
         /* put the data to FIFO */
-        backscatter_send(pio,sm,buffer,sizeof(buffer));
+        backscatter_send(pio,sm,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
         seq++;
         sleep_ms(TX_DURATION);
     }
