@@ -1,0 +1,5 @@
+14:20:33.133 | ae bd 55 dc 9a fa 27 d2 a5 55 4d af a6 42 0a ac  | -101 CRC error
+14:20:33.524 | 2f 84 56 b4 34 5d 9e 82 a2 9a 98 b5 a2 55 68 b6  | -106 CRC error
+14:20:35.011 | 0d 9a 47 68 db 5d 5a 6a a5 45 28 56 27 91 27 6b  | -106 CRC error
+14:20:35.121 | 8f a2 4d 88 4e b4 57 bb 2c bf 56 16 aa c4 69 65  | -107 CRC error
+14:20:37.920 | 0d d1 49 cc 25 6d 54 c5 2a e0 25 8f 2d eb 51 af  | -107 CRC error
