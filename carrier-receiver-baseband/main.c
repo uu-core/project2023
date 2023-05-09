@@ -39,11 +39,11 @@
 #define PIN_TX2                 27
 #define CLOCK_DIV0              40 // larger
 #define CLOCK_DIV1              36 // smaller
-#define DESIRED_BAUD        100000
+#define DESIRED_BAUD            89990
 #define TWOANTENNAS          false
 
 #define CARRIER_FEQ     2470000000
-/*Modified payloadsize*/
+    /*Modified payloadsize*/
 #define NEW_PAYLOAD 6
 
 int main() {
