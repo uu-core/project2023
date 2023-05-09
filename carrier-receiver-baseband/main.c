@@ -31,8 +31,8 @@
 #define RADIO_MOSI 19
 #define RADIO_SCK 18
 
-#define TX_DURATION 50 // send a packet every 50ms
-#define RECEIVER 1352  // define the receiver board either 2500 or 1352
+#define TX_DURATION 250 // send a packet every 50ms
+#define RECEIVER 1352   // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
 #define CLOCK_DIV0 50 // larger
@@ -46,7 +46,8 @@
 // Must include after to make sure that USE_ECC is respected
 #include "packet_generation.h"
 
-int main() {
+int main()
+{
   /* setup SPI */
   stdio_init_all();
   spi_init(RADIO_SPI, 5 * 1000000); // SPI0 at 5MHz.
@@ -80,9 +81,8 @@ int main() {
                            DESIRED_BAUD, &backscatter_conf, instructionBuffer,
                            TWOANTENNAS);
 
-  static uint8_t message[PAYLOADSIZE + HEADER_LEN]; // include 10 header bytes
-  static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {
-      0}; // initialize the buffer
+  static message[buffer_size(PAYLOADSIZE + 2, HEADER_LEN) * 4] = {0}; // include 10 header bytes
+  static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
   static uint8_t seq = 0;
   uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
   uint8_t tx_payload_buffer[PAYLOADSIZE];
@@ -110,9 +110,11 @@ int main() {
   bool rx_ready = true;
 
   /* loop */
-  while (true) {
+  while (true)
+  {
     evt = get_event();
-    switch (evt) {
+    switch (evt)
+    {
     case rx_assert_evt:
       // started receiving
       rx_ready = false;
@@ -127,7 +129,8 @@ int main() {
       break;
     case no_evt:
       // backscatter new packet if receiver is listening
-      if (rx_ready) {
+      if (rx_ready)
+      {
         /* generate new data */
         generate_data(tx_payload_buffer, PAYLOADSIZE, true);
 
@@ -137,14 +140,12 @@ int main() {
         memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
 
         /* casting for 32-bit fifo */
-        for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
-          buffer[i] = ((uint32_t)message[4 * i + 3]) |
-                      (((uint32_t)message[4 * i + 2]) << 8) |
-                      (((uint32_t)message[4 * i + 1]) << 16) |
-                      (((uint32_t)message[4 * i]) << 24);
+        for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++)
+        {
+          buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
         }
         /*put the data to FIFO*/
-        backscatter_send(pio, sm, buffer, sizeof(buffer));
+        backscatter_send(pio, sm, buffer, buffer_size(PAYLOADSIZE, HEADER_LEN));
         // printf("Backscattered packet\n");
         seq++;
       }
