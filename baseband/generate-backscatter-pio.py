@@ -135,7 +135,7 @@ with open(out_path, 'w') as out_file:
     out_file.write(pio_file)
 
 # print radio settings and warnings
-print('\nGenerated Radio seetings:\n' + '\n'.join([f'  - frequency 0 shift: {(CLKFREQ/d0):.3f} MHz       (1 period = {d0} cycles @ {CLKFREQ} MHz clock)',
+print('\nGenerated Radio settings:\n' + '\n'.join([f'  - frequency 0 shift: {(CLKFREQ/d0):.3f} MHz       (1 period = {d0} cycles @ {CLKFREQ} MHz clock)',
 f'  - frequency 1 shift: {(CLKFREQ/d1):.3f} Mhz       (1 period = {d1} cycles @ {CLKFREQ} MHz clock)',
 f'  - center frequency shift: {(fcenter/1000):.3f} MHz',
 f'  - deviation from center : {fdeviation:.2f} kHz',
