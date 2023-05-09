@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE configuration SYSTEM "C:/Program Files (x86)/Texas Instruments/SmartRF Tools/SmartRF Studio 7/config/xml/configdata.dtd"[]>
 <dcpanelconfiguration>
-    <Devicename>CC1352P7_PROP_PG11</Devicename>
+    <Devicename>CC1352P_PROP_PG21</Devicename>
     <Description>Saved configuration data</Description>
     <Patch>
         <Define>RF_MODE_PROPRIETARY_2_4</Define>
@@ -108,7 +108,7 @@
         </Command>
         <Command name="CMD_PROP_TX">
             <Field name="commandNo">0x00003801</Field>
-            <Field name="status">0x00000000</Field>
+            <Field name="status">0x00003800</Field>
             <Field name="pNextOp">0x00000000</Field>
             <Field name="startTime">0x00000000</Field>
             <Field name="startTrigger">0x00000000</Field>
@@ -237,15 +237,15 @@
             <Field name="startTime">0x00000000</Field>
             <Field name="startTrigger">0x00000000</Field>
             <Field name="condition">0x00000001</Field>
-            <Field name="modulation">0x00001d91</Field>
-            <Field name="symbolRate">0x00028f0f</Field>
-            <Field name="rxBw">0x0000005b</Field>
+            <Field name="modulation">0x00000681</Field>
+            <Field name="symbolRate">0x0a88899e</Field>
+            <Field name="rxBw">0x00000060</Field>
             <Field name="preamConf">0x00000004</Field>
             <Field name="formatConf">0x000000a0</Field>
             <Field name="config">0x00000008</Field>
-            <Field name="txPower">0x0000762e</Field>
+            <Field name="txPower">0x00007217</Field>
             <Field name="pRegOverride">0x00000000</Field>
-            <Field name="centerFreq">0x00000997</Field>
+            <Field name="centerFreq">0x00000998</Field>
             <Field name="intFreq">0x00000800</Field>
             <Field name="loDivider">0x00000000</Field>
             <Field name="pRegOverrideTxStd">0x00000000</Field>
@@ -332,8 +332,8 @@
             <Field name="startTime">0x00000000</Field>
             <Field name="startTrigger">0x00000000</Field>
             <Field name="condition">0x00000001</Field>
-            <Field name="frequency">0x00000997</Field>
-            <Field name="fractFreq">0x00007200</Field>
+            <Field name="frequency">0x00000998</Field>
+            <Field name="fractFreq">0x0000199a</Field>
             <Field name="synthConf">0x00000000</Field>
         </Command>
         <Command name="CMD_COUNT_BRANCH">
@@ -362,7 +362,7 @@
     <dcpanel>
         <Property name="m_chkCmdView" role="44">0</Property>
         <Property name="m_chkRfParameters" role="44">2</Property>
-        <Property name="m_typicalSettings" role="33">Settings for 2400 - 2480 MHz band;250 kpbs, 125 kHz Deviation, 2-GFSK, 471 kHz RX Bandwidth (Preview settings)</Property>
+        <Property name="m_typicalSettings" role="33">Settings for 2400 - 2480 MHz band;100 kbps, 50 kHz Deviation, 2-GFSK, 311 kHz RX Bandwidth</Property>
         <Property name="m_testFuncPanel" role="37">3</Property>
     </dcpanel>
     <targetconfig>
@@ -385,9 +385,9 @@
         <Property name="m_chkAutoScroll" role="44">2</Property>
     </contrx>
     <packettx>
-        <Property name="m_edtPacketCount" role="42">100</Property>
-        <Property name="m_edtFixedPktLength" role="42">20</Property>
-        <Property name="m_edtPacketData" role="42">ef dd c2 fd bb a0 43 52 71 9d 30 24 70 8a f1 8d 74 ff </Property>
+        <Property name="m_edtPacketCount" role="42">0</Property>
+        <Property name="m_edtFixedPktLength" role="42">0</Property>
+        <Property name="m_edtPacketData" role="42"></Property>
         <Property name="m_edtAccessAddress" role="42"></Property>
         <Property name="m_chkAddSeqNbr" role="44">2</Property>
         <Property name="m_chkInfinite" role="44">0</Property>
@@ -395,10 +395,10 @@
         <Property name="m_rbtText" role="45">0</Property>
         <Property name="m_rbtHex" role="45">0</Property>
         <Property name="m_chkAdvanced" role="44">0</Property>
-        <Property name="m_cmbLengthConfig" role="46">1</Property>
-        <Property name="m_edtFixedPktLength" role="42">20</Property>
+        <Property name="m_cmbLengthConfig" role="46">0</Property>
+        <Property name="m_edtFixedPktLength" role="42">0</Property>
         <Property name="m_grp802154g" role="20">0</Property>
-        <Property name="m_edt802154gPktLength" role="42">20</Property>
+        <Property name="m_edt802154gPktLength" role="42">0</Property>
         <Property name="m_rbt802154g2BCrc" role="45">1</Property>
         <Property name="m_rbt802154g4BCrc" role="45">0</Property>
         <Property name="m_chk802154gWhitening" role="44">2</Property>
@@ -408,9 +408,9 @@
         <Property name="m_cmbSyncMode" role="46">24</Property>
     </packettx>
     <packetview>
-        <Property name="m_edtPktLength" role="42">20</Property>
+        <Property name="m_edtPktLength" role="42">0</Property>
         <Property name="m_edtAddress" role="42"></Property>
-        <Property name="m_lblFrmPayload" role="41">ef dd c2 fd bb a0 43 52 71 9d 30 24 70 8a f1 8d 74 ff </Property>
+        <Property name="m_lblFrmPayload" role="41"></Property>
     </packetview>
     <packetrx>
         <Property name="m_edtPacketCount" role="42">500</Property>
@@ -418,7 +418,7 @@
         <Property name="m_chkInfinite" role="44">0</Property>
         <Property name="m_cmbViewFormat" role="46">0</Property>
         <Property name="m_chkSeqNbrIncluded" role="44">0</Property>
-        <Property name="m_edtDumpFile" role="42"></Property>
+        <Property name="m_edtDumpFile" role="42">/Users/fadde/Projects/wcnes-project2023/stats/configs/20_18_100k.xml</Property>
         <Property name="m_chkAdvanced" role="44">0</Property>
         <Property name="m_chk802154gMode" role="44">0</Property>
     </packetrx>

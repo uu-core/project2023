@@ -5,12 +5,15 @@ from pathlib import Path
 from xml.dom.minidom import parse, parseString
 
 CLKFREQ = 125  # MHz
-CARRIER_FREQ = 2450
-RF_STUDIO_VALUE_LENGTH_HEX = 8
+CARRIER_FREQ = 2450  # MHz
 RF_STUDIO_SYMBOL_RATE_RATIO = 176720286/100000  # RF-studio does weird things
+RF_STUDIO_FREQUENCY_FRAC_RATIO = 39117/5972
+RF_STUDIO_BANDWIDTH_INDEX_OFFSET = 64
+
 
 def to_rf_hex(value):
     return f"0x{format(value, '08x')}"
+
 
 parser = argparse.ArgumentParser(prog="RF-config XML generator",
                                  description="G3 WCNES rf studio config generator\nusage example: python3 generate-rf_config.py 20 18 100000")
@@ -38,9 +41,63 @@ assert b > 0, "baud-rate can not be negative"
 out_path = os.path.abspath(f"../stats/configs/{d0}_{d1}_{int(b / 1000)}k.xml")
 
 fcenter = (CLKFREQ*1000/d0 + CLKFREQ*1000/d1)/2
-frequency = CARRIER_FREQ + (fcenter / 1000)
 fdeviation = abs(CLKFREQ*1000/d1 - fcenter)
+frequency = CARRIER_FREQ + (fcenter / 1000)
 bandwidth = (b/1000 + 2*fdeviation)
+bandwidth_index = 0
+
+available_bandwidths = [
+    4.3,  # 64
+    4.9,
+    6.1,
+    7.4,
+    8.5,
+    9.7,
+    12.2,
+    14.7,
+    17.1,
+    19.4,
+    24.5,
+    29.4,
+    34.1,
+    38.9,
+    49.0,
+    58.9,
+    68.3,
+    77.7,
+    98.0,
+    117.7,
+    136.6,
+    155.4,
+    195.9,
+    235.5,
+    273.1,
+    310.8,
+    391.8,
+    470.9,
+    546.3,
+    621.6,
+    783.6,
+    941.8,  # 95
+    1092.5,  # 96
+    1243.2,
+    1567.2,
+    1883.7,
+    2185.1,
+    2486.5,
+    3134.4,
+    3767.4
+]
+
+# RF Studio only accepts specific bandwidths
+for idx, x in enumerate(available_bandwidths):
+    if x > bandwidth:
+        rf_bandwidth = RF_STUDIO_BANDWIDTH_INDEX_OFFSET + idx
+        break
+
+if rf_bandwidth == 0:
+    print(f"Bandwidth of {bandwidth} is too large!")
+    exit(1)
 
 print("\nGenerated RF config settings:\n" + "\n".join([
     f"  - frequency 0 shift: {(CLKFREQ/d0):.3f} MHz       (1 period = {d0} cycles @ {CLKFREQ} MHz clock)",
@@ -53,15 +110,14 @@ print("\nGenerated RF config settings:\n" + "\n".join([
     f"Saved settings to {out_path}",
 ]), end="\n\n")
 
-print(to_rf_hex(int(b * RF_STUDIO_SYMBOL_RATE_RATIO)))
 replacements = {
     "DUMP_FILE": out_path,
-    "BANDWIDTH": to_rf_hex(int(bandwidth)),
+    "BANDWIDTH": to_rf_hex(rf_bandwidth),
     "BAUDRATE": to_rf_hex(int(b * RF_STUDIO_SYMBOL_RATE_RATIO)),
     "FREQUENCY": to_rf_hex(math.floor(frequency)),
-    "FREQUENCY_FRAC": to_rf_hex(int((frequency % 1) * 10000)),
+    "FREQUENCY_FRAC": to_rf_hex(int((frequency % 1) * 10000 * RF_STUDIO_FREQUENCY_FRAC_RATIO)),
     "CENTER_FREQUENCY": to_rf_hex(math.floor(frequency)),
-    "PACKET_COUNT": 100,
+    "PACKET_COUNT": 500,
 }
 
 with open("./template_rf_config.xml", "r") as infile, open(out_path, "w") as outfile:

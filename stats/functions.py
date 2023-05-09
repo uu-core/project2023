@@ -147,7 +147,6 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False):
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    print(file_content)
     last_pseudoseq = 0  # record the previous pseudoseq
     # start count the error bits
     for idx in range(packets):
