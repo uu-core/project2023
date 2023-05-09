@@ -41,6 +41,7 @@ assert d1 % 2 == 0 and d1 >= 2, "d1 must be an even integer larger than 1"
 assert b > 0, "baud-rate can not be negative"
 
 out_path = os.path.abspath(f"../stats/configs/{d0}_{d1}_{int(b / 1000)}k.xml")
+dump_file_path = os.path.abspath(f"../stats/logs")
 
 fcenter = (CLKFREQ*1000/d0 + CLKFREQ*1000/d1)/2
 fdeviation = abs(CLKFREQ*1000/d1 - fcenter)
@@ -117,7 +118,7 @@ print("\nGenerated RF config settings:\n" + "\n".join([
 ]), end="\n\n")
 
 replacements = {
-    "DUMP_FILE": out_path,
+    "DUMP_FILE": dump_file_path,
     "BANDWIDTH": to_rf_hex(rf_bandwidth),
     "BAUDRATE": to_rf_hex(int(b * RF_STUDIO_SYMBOL_RATE_RATIO)),
     "FREQUENCY": to_rf_hex(math.floor(frequency)),
