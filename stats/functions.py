@@ -115,7 +115,7 @@ def data(seed):
 
 # generate the transmitted file for comparison
 # generate a 40MB file, in case transmit too many data (larger than required 2MB)
-TOTAL_NUM_16RND = 512*40
+TOTAL_NUM_16RND = 512*40*100
 def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     LOW_BYTE = (1 << 8) - 1
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
