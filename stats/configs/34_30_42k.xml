@@ -238,15 +238,15 @@
             <Field name="startTime">0x00000000</Field>
             <Field name="startTrigger">0x00000000</Field>
             <Field name="condition">0x00000001</Field>
-            <Field name="modulation">0x0000052b</Field>
+            <Field name="modulation">0x00001ea5</Field>
             <Field name="symbolRate">0x046ca06d</Field> <!-- 0x0100000f 100k baud -->
-            <Field name="rxBw">0x00000054</Field>
+            <Field name="rxBw">0x0000005c</Field>
             <Field name="preamConf">0x00000004</Field>
             <Field name="formatConf">0x000000a0</Field>
             <Field name="config">0x00000008</Field>
             <Field name="txPower">0x00007217</Field>
             <Field name="pRegOverride">0x00000000</Field>
-            <Field name="centerFreq">0x00000994</Field>
+            <Field name="centerFreq">0x00000995</Field>
             <Field name="intFreq">0x00000800</Field>
             <Field name="loDivider">0x00000000</Field>
             <Field name="pRegOverrideTxStd">0x00000000</Field>
@@ -334,8 +334,8 @@
             <Field name="startTime">0x00000000</Field>
             <Field name="startTrigger">0x00000000</Field>
             <Field name="condition">0x00000001</Field>
-            <Field name="frequency">0x00000994</Field>
-            <Field name="fractFreq">0x000045f9</Field>
+            <Field name="frequency">0x00000995</Field>
+            <Field name="fractFreq">0x0000ebcb</Field>
             <Field name="synthConf">0x00000000</Field>
         </Command>
         <Command name="CMD_COUNT_BRANCH">
