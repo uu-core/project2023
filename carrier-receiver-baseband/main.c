@@ -82,12 +82,10 @@ int main() {
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
 
-    /* Start carrier */
+    /* Setup carrier */
     setupCarrier();
     set_frecuency_tx(CARRIER_FEQ);
     sleep_ms(1);
-    startCarrier();
-    printf("started carrier\n");
 
     /* Start Receiver */
     event_t evt = no_evt;
@@ -135,9 +133,13 @@ int main() {
                     for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
                         buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
                     }
-                    /*put the data to FIFO*/
+                    /* put the data to FIFO (start backscattering) */
+                    startCarrier();
+                    sleep_ms(1); // wait for carrier to start
                     backscatter_send(pio,sm,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
-                    //printf("Backscattered packet\n");
+                    sleep_ms(ceil((((double) buffer_size(PAYLOADSIZE, HEADER_LEN))*8000.0)/((double) DESIRED_BAUD))); // wait transmission duration
+                    stopCarrier();
+                    /* increase seq number*/ 
                     seq++;
                 }
                 sleep_ms(TX_DURATION);
