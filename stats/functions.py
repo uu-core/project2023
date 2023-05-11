@@ -124,22 +124,25 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     packets = len(df)
 
-    # dataframe records the bit error for each packet
-    error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
+    # dataframe records the bit error for each packet, use the seq number as index
+    error = pd.DataFrame(index=range(df.seq[0], df.seq[packets-1]+1), columns=['bit_error_tmp'])
     # seq number initialization
     print(f"The total number of packets transmitted by the tag is {df.seq[packets-1]+1}.")
-    error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
+    print(file_content)
     last_pseudoseq = 0 # record the previous pseudoseq
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
-        error_idx = error.index[error.seq == df.seq[idx]][0]
+        error_idx = df.seq[idx]
+        # No packet with this sequence was received, the entire packet payload being considered as error (see below)
+        if error_idx not in error.index:
+            continue
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])

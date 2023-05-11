@@ -78,7 +78,7 @@ int main()
     uint16_t instructionBuffer[32] = {0}; // maximal instruction size: 32
     backscatter_program_init(pio, sm, PIN_TX1, PIN_TX2, CLOCK_DIV0, CLOCK_DIV1, DESIRED_BAUD, &backscatter_conf, instructionBuffer, TWOANTENNAS);
 
-    static uint8_t message[PAYLOADSIZE + HEADER_LEN];                   // include 10 header bytes
+    static message[buffer_size(PAYLOADSIZE + 2, HEADER_LEN) * 4] = {0}; // include 10 header bytes
     static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
@@ -142,7 +142,7 @@ int main()
                     buffer[i] = ((uint32_t)message[4 * i + 3]) | (((uint32_t)message[4 * i + 2]) << 8) | (((uint32_t)message[4 * i + 1]) << 16) | (((uint32_t)message[4 * i]) << 24);
                 }
                 /*put the data to FIFO*/
-                backscatter_send(pio, sm, buffer, sizeof(buffer));
+                backscatter_send(pio, sm, buffer, buffer_size(PAYLOADSIZE, HEADER_LEN));
                 // printf("Backscattered packet\n");
                 seq++;
             }
