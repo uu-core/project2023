@@ -4,4 +4,5 @@
 **/.ipynb_checkpoints/*
 **/.DS_Store
 /stats/figure
-/stats/log
+/stats/logs
+
