@@ -159,10 +159,8 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
+def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     packets = len(df)
-    #print("Packets: " + str(packets))
-    #print(df)
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
@@ -181,30 +179,22 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
         error_idx = error.index[error.seq == df.seq[idx]][0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
        
-
         #payload = get_data(parse_payload(df.payload[idx]))
         undecoded_payload = parse_payload(df.payload[idx])
-        #print(undecoded_payload)
         payload = []
-        #print("Length of undecoded payload: " + str(len(undecoded_payload)))
         for i in range (0,len(undecoded_payload),4):
             load = undecoded_payload[i] << 24
             load |= undecoded_payload[i+1] << 16
             load |= undecoded_payload[i+2] << 8
             load |= undecoded_payload[i+3]
-            #print("trying to decode {:x}".format(load))
             data8_1, data8_2, data8_3 = get_data(generate_array(load))
             payload.append(data8_1)
             payload.append(data8_2)
             payload.append(data8_3)
-            #print("decoded {:x}{:x}{:x}".format(payload[-3], payload[-2], payload[-1]))
-        #print(payload)
-        print('seq {}: [{}]'.format(df.seq[idx], ', '.join(hex(x) for x in payload)))
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
         should_be = file_content.loc[pseudoseq, 'data']
-        print("should be: [{}]".format(', '.join(hex(x) for x in should_be)))
         # compute the bit errors
         error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
         last_pseudoseq = pseudoseq
