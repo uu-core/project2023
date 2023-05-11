@@ -110,10 +110,16 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
     index = [NUM_16RND*i*2 for i in range(length)]
     df = pd.DataFrame(index=index, columns=['data'])
-    seed  = 0xabcd # initial seed
+    initial_seed = 0xabcd # initial seed
+    pseudo_seq = 0 # (16-bit)
+    seed  = initial_seed
     for i in index:
         payload_data = []
         for j in range(NUM_16RND):
+            if pseudo_seq > 0xffff:
+                pseudo_seq = 0
+                seed = initial_seed
+            pseudo_seq = pseudo_seq + 2
             number, seed = data(seed)
             payload_data.append((int(number) >> 8) - 0)
             payload_data.append(int(number) & LOW_BYTE)
