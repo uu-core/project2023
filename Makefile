@@ -2,6 +2,7 @@ D0=
 D1=
 BAUD=
 ECC=
+FEC=
 MOUNT_PATH=/Volumes/RPI-RP2
 
 ifdef ECC
@@ -10,14 +11,14 @@ else
 ECC=OFF
 endif
 
-tag:
-	@if [ "$(ECC)" == "ON" ]; then \
-		cd baseband; python3 generate-rf-config.py $(D0) $(D1) $(BAUD) --ecc; \
-	else \
-		cd baseband; python3 generate-rf-config.py $(D0) $(D1) $(BAUD); \
-	fi
+ifdef FEC
+FEC=ON
+else
+FEC=OFF
+endif
 
+tag:
 	cd baseband; python3 generate-backscatter-pio.py $(D0) $(D1) $(BAUD) ./backscatter.pio --twoAntennas
 	mkdir -p ./baseband/build
-	cd baseband/build; cmake .. -D USE_ECC=$(ECC); make
+	cd baseband/build; cmake .. -D USE_ECC=$(ECC) -D USE_FEC=$(FEC); make
 	cp baseband/build/pio_backscatter.uf2 $(MOUNT_PATH)

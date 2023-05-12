@@ -128,7 +128,7 @@
             <Field name="pktConf">0x00000000</Field>
             <Field name="rxConf">0x00000000</Field>
             <Field name="syncWord">0x00000000</Field>
-            <Field name="maxPktLen">0x0000002c</Field>
+            <Field name="maxPktLen">0x00000010</Field>
             <Field name="address0">0x00000000</Field>
             <Field name="address1">0x00000000</Field>
             <Field name="endTrigger">0x00000000</Field>
@@ -155,7 +155,7 @@
             <Field name="rxConf">0x00000000</Field>
             <Field name="syncWord0">0x00000000</Field>
             <Field name="syncWord1">0x00000000</Field>
-            <Field name="maxPktLen">0x0000002c</Field>
+            <Field name="maxPktLen">0x00000010</Field>
             <Field name="hdrConf">0x00000000</Field>
             <Field name="addrConf">0x00000000</Field>
             <Field name="lenOffset">0x00000000</Field>
@@ -184,7 +184,7 @@
             <Field name="rxConf">0x00000000</Field>
             <Field name="syncWord0">0x930b51de</Field>
             <Field name="syncWord1">0x00000000</Field>
-            <Field name="maxPktLen">0x0000002c</Field>
+            <Field name="maxPktLen">0x00000010</Field>
             <Field name="hdrConf">0x00000000</Field>
             <Field name="addrConf">0x00000000</Field>
             <Field name="lenOffset">0x00000000</Field>
@@ -204,7 +204,7 @@
             <Field name="pktConf">0x00000008</Field>
             <Field name="rxConf">0x00000088</Field>
             <Field name="syncWord">0x930b51de</Field>
-            <Field name="maxPktLen">0x0000002c</Field>
+            <Field name="maxPktLen">0x00000010</Field>
             <Field name="address0">0x000000aa</Field>
             <Field name="address1">0x000000bb</Field>
             <Field name="endTrigger">0x00000001</Field>
@@ -422,7 +422,7 @@
         <Property role="44" name="m_chkInfinite">0</Property>
         <Property role="46" name="m_cmbViewFormat">0</Property>
         <Property role="44" name="m_chkSeqNbrIncluded">0</Property>
-        <Property role="42" name="m_edtDumpFile">C:\Users\Fahad\projects\wcnes-project2023\stats\logs</Property>
+        <Property role="42" name="m_edtDumpFile">/Users/fadde/Projects/wcnes-project2023/stats/logs</Property>
         <Property role="44" name="m_chkAdvanced">0</Property>
         <Property role="44" name="m_chk802154gMode">0</Property>
     </packetrx>

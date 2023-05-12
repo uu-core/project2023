@@ -422,7 +422,7 @@
         <Property role="44" name="m_chkInfinite">0</Property>
         <Property role="46" name="m_cmbViewFormat">0</Property>
         <Property role="44" name="m_chkSeqNbrIncluded">0</Property>
-        <Property role="42" name="m_edtDumpFile">C:\Users\Fahad\projects\wcnes-project2023\stats\logs</Property>
+        <Property role="42" name="m_edtDumpFile">/Users/fadde/Projects/wcnes-project2023/stats/logs</Property>
         <Property role="44" name="m_chkAdvanced">0</Property>
         <Property role="44" name="m_chk802154gMode">0</Property>
     </packetrx>
