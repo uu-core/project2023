@@ -37,25 +37,6 @@ void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes])
             }
         }
 
-        printf("[");
-        for (uint8_t j = 0; j < num_codes; j++)
-        {
-            if (j != 0)
-                printf(" ");
-            printf("[");
-            for (uint8_t k = 0; k < num_codes; k++)
-            {
-                if (k != num_codes - 1)
-                    printf("%d,", matrix[j][k]);
-                else
-                    printf("%d", matrix[j][k]);
-            }
-            printf("]");
-            if (j != num_codes - 1)
-                printf("\n");
-        }
-        printf("]\n");
-
         /* Copy over the temporary matrix so that we can do the next step. */
         memcpy(tmp_matrix, matrix, sizeof(matrix));
     }
