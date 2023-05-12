@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Allow flag during compilation for enabling ECC
 option(USE_ECC "Enable ECC for payload" OFF)
+option(USE_FEC "Enable FEC for payload" OFF)
 
 if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
     message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.3.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
@@ -53,4 +54,6 @@ add_compile_options(-Wall
 
 if(USE_ECC)
     add_compile_options(-DUSE_ECC=1)
+elseif(USE_FEC)
+    add_compile_options(-DUSE_FEC=1)
 endif()

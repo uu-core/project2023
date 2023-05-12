@@ -18,13 +18,41 @@
 #define USE_ECC 0
 #endif
 
-#if USE_ECC == 0
-#define PAYLOADSIZE 14
-#else
-#define PAYLOADSIZE 14 * 3
+#ifndef USE_FEC
+#define USE_FEC 0
 #endif
 
-#define HEADER_LEN  10 // 8 header + length + seq
+#if USE_ECC == 1
+#define PAYLOADSIZE 14 * 3
+#elif USE_FEC == 1
+#define PAYLOADSIZE 2
+#define NUM_CODES 16
+#define DATA_BITS 4
+static uint8_t walsh_combinations[NUM_CODES] = {
+    0b0000,
+    0b0001,
+    0b0010,
+    0b0011,
+    0b0100,
+    0b0101,
+    0b0110,
+    0b0111,
+    0b1000,
+    0b1001,
+    0b1010,
+    0b1011,
+    0b1100,
+    0b1101,
+    0b1110,
+    0b1111,
+};
+extern uint64_t walsh_codes[NUM_CODES];
+void init_walsh();
+#else
+#define PAYLOADSIZE 14
+#endif
+
+#define HEADER_LEN 10                                                              // 8 header + length + seq
 #define buffer_size(x, y) (((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1)) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
 
 #ifndef MINMAX
@@ -54,9 +82,8 @@ uint16_t generate_sample();
  * fill packet with 16-bit samples
  * include_index: shall the file index be included at the first two byte?
  * length: the length of the buffer which can be filled with data
-*/
+ */
 void generate_data(uint8_t *buffer, uint8_t length, bool include_index);
-
 
 /* including a header to the packet:
  * - 8B header sequence

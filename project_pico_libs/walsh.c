@@ -3,10 +3,10 @@
 #include <string.h>
 #include <assert.h>
 
-
-void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes]) {
+void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes])
+{
     /* Check if num_codes is a power of two */
-    assert ((num_codes != 0) && ((num_codes & (num_codes - 1)) == 0) || num_codes > 64);
+    assert((num_codes != 0) && ((num_codes & (num_codes - 1)) == 0) || num_codes > 64);
 
     uint8_t matrix[num_codes][num_codes];
     uint8_t tmp_matrix[num_codes][num_codes];
@@ -22,24 +22,29 @@ void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes]) {
     tmp_matrix[1][0] = 0;
     tmp_matrix[1][1] = 1;
 
-    for (uint8_t size = 2; size < num_codes; size *= 2) {
+    for (uint8_t size = 2; size < num_codes; size *= 2)
+    {
         /* XOR the initial walsh matrix values with another initial walsh matrix
         to spread the values */
-        for (uint8_t j = 0; j < size; j++) {
-            for (uint8_t k = 0; k < size; k++) {
-                matrix[j][k]                = tmp_matrix[j][k] ^ 0;
-                matrix[j + size][k]         = tmp_matrix[j][k] ^ 0;
-                matrix[j][k+size]           = tmp_matrix[j][k] ^ 0;
-                matrix[j + size][k + size]  = tmp_matrix[j][k] ^ 1;
+        for (uint8_t j = 0; j < size; j++)
+        {
+            for (uint8_t k = 0; k < size; k++)
+            {
+                matrix[j][k] = tmp_matrix[j][k] ^ 0;
+                matrix[j + size][k] = tmp_matrix[j][k] ^ 0;
+                matrix[j][k + size] = tmp_matrix[j][k] ^ 0;
+                matrix[j + size][k + size] = tmp_matrix[j][k] ^ 1;
             }
         }
 
         printf("[");
-        for (uint8_t j = 0; j < num_codes; j++) {
+        for (uint8_t j = 0; j < num_codes; j++)
+        {
             if (j != 0)
                 printf(" ");
             printf("[");
-            for (uint8_t k = 0; k < num_codes; k++) {
+            for (uint8_t k = 0; k < num_codes; k++)
+            {
                 if (k != num_codes - 1)
                     printf("%d,", matrix[j][k]);
                 else
@@ -57,20 +62,11 @@ void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes]) {
 
     /* We pad the 2 dimensional matrix onto a one dimensional array to be used
     instead. Each element repreesent a walsh code. */
-    for (uint8_t i = 0; i < num_codes; i++) {
-        for (uint8_t j = 0; j < num_codes; j++) {
+    for (uint8_t i = 0; i < num_codes; i++)
+    {
+        for (uint8_t j = 0; j < num_codes; j++)
+        {
             buf[i] |= (matrix[i][j] << (num_codes - j));
         }
     }
-}
-
-int main(int argc, char **argv) {
-    uint8_t num_codes = atoi(argv[1]);
-    uint64_t codes[num_codes];
-    get_walsh_codes(num_codes, codes);
-
-    for (int i = 0; i < num_codes; i++) {
-        printf("R: %llu\n", codes[i]);
-    }
-    return 0;
 }
