@@ -1,0 +1,3 @@
+file,d2,d1,a,b,baud,delta_fsk,file_delay_s,bit_reliability,dis_metric,etx,avg_rssi,ecc,fec,samples,error
+50_5_54_52_42k_fec.txt,50,5,54,52,42000,44.51566951566943,0,0,0,0,0,False,True,1,True
+50_5_54_52_42k.txt,50,5,54,52,42000,44.51566951566943,55.368,52.782265728948865,0.0006250000000000001,1.1004,-79.656,False,False,1,False
