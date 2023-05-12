@@ -13,6 +13,35 @@ from numpy import NaN
 from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 
+# NOTE: This order is based on the C code, DO NOT CHANGE!
+walsh_combinations = [
+    [0,0,0,0],
+    [0,0,0,1],
+    [0,0,1,0],
+    [0,0,1,1],
+    [0,1,0,0],
+    [0,1,0,1],
+    [0,1,1,0],
+    [0,1,1,1],
+    [1,0,0,0],
+    [1,0,0,1],
+    [1,0,1,0],
+    [1,0,1,1],
+    [1,1,0,0],
+    [1,1,0,1],
+    [1,1,1,0],
+    [1,1,1,1],
+]
+
+def get_walsh_codes(order):
+    #basic element(seed) of walsh code generator
+    W = np.array([0])
+    for i in range(order):
+        W = np.tile(W, (2, 2))
+        half = 2**i
+        W[half:, half:] = np.logical_not(W[half:, half:])
+    return W
+
 # read the log file
 def readfile(filename):
     types = {
@@ -49,7 +78,7 @@ def readfile(filename):
     return df
 
 # parse the hex payload, return a list with int numbers for each byte
-def parse_payload(payload_string, USE_ECC=False):
+def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
     if USE_ECC:
         # yes
         binary = list(
@@ -58,6 +87,22 @@ def parse_payload(payload_string, USE_ECC=False):
         bits = [flat_binary[i:i+3] for i in range(0, len(flat_binary), 3)]
         tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
         return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
+    elif USE_FEC:
+        walsh_codes = get_walsh_codes(16)
+        binary = list(
+            map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
+        flat_binary = [item for sublist in binary for item in sublist]
+        diffs = np.array([])
+        for code in walsh_codes:
+            diff = 0
+            for idx, bit in enumerate(flat_binary):
+                if code[idx] != bit:
+                    diff += 1
+            diffs.append(diff)
+        # Get the Walsh code that is closest to the received bits
+        code_idx = np.argmin(diffs)
+        # Get the underlying data bits that correspond to this code
+        return walsh_combinations[code_idx]
     else:
         tmp = map(lambda x: int(x, base=16), payload_string.split())
         return list(tmp)
@@ -132,7 +177,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False):
+def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     packets = len(df)
     total_transmitted_packets = df.seq[packets-1]+1
 
@@ -158,7 +203,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False):
             continue
         error_idx = error_data[0]
         # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC)
+        payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC)
         pseudoseq = int(((payload[0] << 8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index:

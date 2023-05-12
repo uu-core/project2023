@@ -41,25 +41,6 @@ void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes])
         memcpy(tmp_matrix, matrix, sizeof(matrix));
     }
 
-    printf("[");
-    for (uint8_t j = 0; j < num_codes; j++)
-    {
-        if (j != 0)
-            printf(" ");
-        printf("[");
-        for (uint8_t k = 0; k < num_codes; k++)
-        {
-            if (k != num_codes - 1)
-                printf("%d,", matrix[j][k]);
-            else
-                printf("%d", matrix[j][k]);
-        }
-        printf("]");
-        if (j != num_codes - 1)
-            printf("\n");
-    }
-    printf("]\n");
-
     /* We pad the 2 dimensional matrix onto a one dimensional array to be used
     instead. Each element repreesent a walsh code. */
     for (uint8_t i = 0; i < num_codes; i++)
@@ -69,14 +50,4 @@ void get_walsh_codes(uint8_t num_codes, uint64_t buf[num_codes])
             buf[i] |= (matrix[i][j] << (num_codes - j - 1));
         }
     }
-}
-int main(int argc, char **argv) {
-    uint8_t num_codes = atoi(argv[1]);
-    uint64_t codes[num_codes];
-    get_walsh_codes(num_codes, codes);
-
-    for (int i = 0; i < num_codes; i++) {
-        printf("R: %llu\n", codes[i]);
-    }
-    return 0;
 }
