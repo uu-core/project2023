@@ -76,6 +76,15 @@ uint16_t generate_sample()
  * include_index: shall the file index be included at the first two byte?
  * length: the length of the buffer which can be filled with data
  */
+#if USE_FEC == 1
+/* Only 4 bits of data is transmitted in each packet, which means that we
+   should only generate a new sample and update the file position every
+   4th call of generate_data(). Since the sequence number is increased with
+   every packet, we will be able to reconstruct the entire 16-bit sample
+   on the receiving end using both the file position and sequence. */
+static uint16_t prev_sample;
+static uint8_t sample_position = 0;
+#endif
 void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
 {
     if (length % 2 != 0)
@@ -83,58 +92,76 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         printf("WARNING: generate_data has been used with an odd length.");
     }
 
+    if (sample_position > 3) {
+        sample_position = 0;
+    }
+
     uint8_t data_start = 0;
     if (include_index)
     {
         buffer[0] = (uint8_t)(file_position >> 8);
         buffer[1] = (uint8_t)(file_position & 0x00FF);
+#if USE_FEC == 1
+        // TODO: Repeat sample position bits (2 bits) 4 times to make
+        // use of all available bits.
+        buffer[2] = sample_position;
+        data_start = 3;
+#else
         data_start = 2;
+#endif
     }
 
 #if USE_ECC == 1
-    for (uint8_t i = data_start; i < length; i = i + 6)
+    for (uint8_t i = data_start; i < length; i = i + 6) {
         uint16_t sample = generate_sample();
-    uint64_t extended = 0;
-    // stutter code SECC (3,1)
-    for (int i = 0; i < 16; i++)
-    {
-        uint8_t bit = (sample & (1 << i)) >> i; // get the i:th bit of sample
-        for (uint8_t j = 0; j < 3; j++)
-        {
-            extended |= (bit << (47 - ((i * 3) + j)));
-        }
-    }
+        uint64_t extended = 0;
 
-    memcpy(&buffer[i], &extended, 6); // 48 bits
-#elif USE_FEC == 1
-    for (uint8_t i = data_start; i < length; i = i + (NUM_CODES / data_bits))
-    {
-        uint16_t sample = generate_sample();
-        uint8_t code = 0;
-        for (int i = 0; i < NUM_CODES / DATA_BITS; i++)
+        // stutter code SECC (3,1)
+        for (int i = 0; i < 16; i++)
         {
-            uint8_t data = sample >> (i * DATA_BITS);
-            data &= 0x000F; /* Only keep 4 LSB bits. */
-            for (int j = 0; j < walsh_combinations; j++)
+            uint8_t bit = (sample & (1 << i)) >> i; // get the i:th bit of sample
+            for (uint8_t j = 0; j < 3; j++)
             {
-                if (data == (walsh_combinations[j] & 0x0F))
-                {
-                    code = i;
-                    break;
-                }
+                extended |= (bit << (47 - ((i * 3) + j)));
             }
-
-            buffer[i] = (uint8_t)(walsh_codes[code] >> 8);
-            buffer[i + 1] = (uint8_t)(walsh_codes[code] & 0x00FF);
         }
+
+        memcpy(&buffer[i], &extended, 6);
+    }
+#elif USE_FEC == 1
+    for (uint8_t i = data_start; i < length; i = i + 2)
+    {
+        uint16_t sample = prev_sample;
+        /* It takes 4 calls to this function to fully transmit the entire
+           16-bit sample. */
+        if (sample_position == 0) {
+            sample = generate_sample();
+        }
+
+        uint16_t code = 0;
+        /* Get the 4-bits of data based on the current sample position. */
+        uint8_t data = sample >> (((3 - sample_position) * DATA_BITS) & 0x0F );
+        for (int j = 0; j < walsh_combinations; j++)
+        {
+            if (data == (walsh_combinations[j] & 0x0F))
+            {
+                code = walsh_codes[j];
+                break;
+            }
+        }
+
+        buffer[i] = (uint8_t)(code >> 8);
+        buffer[i + 1] = (uint8_t)(code & 0x00FF);
+        sample_position++;
+    }
 #else
     for (uint8_t i = data_start; i < length; i = i + 6)
     {
         uint16_t sample = generate_sample();
         buffer[i] = (uint8_t)(sample >> 8);
         buffer[i + 1] = (uint8_t)(sample & 0x00FF);
+    }
 #endif
-}
 }
 
 /* including a header to the packet:

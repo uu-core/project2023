@@ -23,7 +23,7 @@
 #endif
 
 #if USE_ECC == 1
-#define PAYLOADSIZE 14 * 3
+#define PAYLOADSIZE 12 * 3
 #elif USE_FEC == 1
 #define PAYLOADSIZE 2
 #define NUM_CODES 16
@@ -49,10 +49,10 @@ static uint8_t walsh_combinations[NUM_CODES] = {
 extern uint64_t walsh_codes[NUM_CODES];
 void init_walsh();
 #else
-#define PAYLOADSIZE 14
+#define PAYLOADSIZE 12
 #endif
 
-#define HEADER_LEN 10                                                              // 8 header + length + seq
+#define HEADER_LEN 10 // 8 header + length + seq
 #define buffer_size(x, y) (((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1)) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
 
 #ifndef MINMAX
