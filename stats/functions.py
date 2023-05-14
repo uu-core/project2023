@@ -13,6 +13,15 @@ from numpy import NaN
 from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 
+def get_walsh_codes(order):
+    #basic element(seed) of walsh code generator
+    W = np.array([0])
+    for i in range(order):
+        W = np.tile(W, (2, 2))
+        half = 2**i
+        W[half:, half:] = np.logical_not(W[half:, half:])
+    return W
+
 # NOTE: This order is based on the C code, DO NOT CHANGE!
 walsh_combinations = [
     [0,0,0,0],
@@ -33,19 +42,12 @@ walsh_combinations = [
     [1,1,1,1],
 ]
 
+walsh_codes = get_walsh_codes(4)
+
 # Generating large comparision files takes a lot time.
 # Since they only depend on the packet length, we can
 # cache the output in a dict with the length as key.
 cached_comparison_files = {}
-
-def get_walsh_codes(order):
-    #basic element(seed) of walsh code generator
-    W = np.array([0])
-    for i in range(order):
-        W = np.tile(W, (2, 2))
-        half = 2**i
-        W[half:, half:] = np.logical_not(W[half:, half:])
-    return W
 
 # read the log file
 def readfile(filename):
@@ -73,6 +75,7 @@ def readfile(filename):
     # parse the payload to seq and payload
     df.frame = df.frame.str.rstrip().str.lstrip()
     df = df[df.frame.str.contains("packet overflow") == False]
+    df['file_pos'] = df.frame.apply(lambda x: int(x[0:2], base=16))
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
     df['payload'] = df.frame.apply(lambda x: x[6:])
     # parse the rssi data
@@ -93,7 +96,6 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
         return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
     elif USE_FEC:
-        walsh_codes = get_walsh_codes(4)
         binary = list(
             map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
         flat_binary = [item for sublist in binary for item in sublist]
@@ -136,7 +138,7 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
-    sample_data = (sample_byte >> (4 if (sample_position % 2) else 0)) & 0x0F
+    sample_data = (sample_byte >> (0 if (sample_position % 2) else 4)) & 0x0F
     return bin(data ^ sample_data).count("1")
 
 # deal with seq field overflow problem, generate ground-truth sequence number
@@ -207,12 +209,13 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     # compute in total transmitted file size
     file_size = len(error) * PACKET_LEN * 8
     # The number of samples we need in the comparision files
+    #samples_in_file = int((((df.file_pos[packets-1] << 8) - 0) + df.seq[packets-1]+1)/PACKET_LEN)
     samples_in_file = (df.seq[packets-1]+1)*(PACKET_LEN/2)
 
     # generate the correct file
     file_content = None
     cached_file = cached_comparison_files.get(PACKET_LEN)
-    if cached_file is None or cached_file[1] < samples_in_file:
+    if cached_file is None or cached_file[0] < samples_in_file:
         file_content = generate_data(int(PACKET_LEN/2), samples_in_file)
         cached_comparison_files[PACKET_LEN] = (samples_in_file, file_content)
     else:
@@ -220,6 +223,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
         file_content = cached_file[1]
 
     last_pseudoseq = 0  # record the previous pseudoseq
+
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
@@ -232,30 +236,25 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
         # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC)
 
-        # TODO: What is this? The payload does not contain the first 2 bytes containing the sequence, etc.
-        pseudoseq = int(((payload[0] << 8) - 0) + payload[1])
+        # TODO: Keep track of sample_position relative to pseudoseq in order to correct
+        #       potential errors in the sample position byte.
+        pseudoseq = df.seq[idx]
         sample_index = pseudoseq
         if USE_FEC:
             # 4 packets need to be received in order to get a full sample
-            sample_index = pseudoseq // 4
-
-        # deal with bit error in pseudoseq
-        if sample_index not in file_content.index:
-            if USE_FEC:
-                # Only go to the next sample in the generated data if the last received
-                # packet was the last packet for the current sample.
-                if (last_pseudoseq % 4) == 3:
-                    pseudoseq = last_pseudoseq + PACKET_LEN
-                    sample_index = pseudoseq // 4
+            if pseudoseq % 4 != 0:
+                sample_index = ((pseudoseq - (pseudoseq % 4)) / 4) * 2
             else:
+                sample_index = (pseudoseq / 4) * 2 # file indexed by multiples of 2 (bytes)
+        else:
+            # deal with bit error in pseudoseq.
+            # This can never occur with FEC, since we always cap it to a index divisible by 4.
+            if sample_index not in file_content.index:
                 pseudoseq = last_pseudoseq + PACKET_LEN
                 sample_index = pseudoseq
 
-        # TODO: Keep track of sample_position relative to pseudoseq in order to correct
-        #       potential errors in the sample position byte.
-
         # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[sample_index, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload, file_content.loc[sample_index, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
         last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
