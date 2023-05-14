@@ -150,8 +150,7 @@ def replace_seq(df, MAX_SEQ):
         if df.seq[idx] < df.seq[idx-1] - 50:
             count += 1
             # for the counter reset scanrio, replace the seq value with order
-        df.iloc[idx, df.columns.get_loc(
-            'new_seq')] = MAX_SEQ*count + df.seq[idx]
+        df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
     return df
 
 # a 8-bit random number generator with uniform distribution
@@ -238,7 +237,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
 
         # TODO: Keep track of sample_position relative to pseudoseq in order to correct
         #       potential errors in the sample position byte.
-        pseudoseq = df.seq[idx]
+        pseudoseq = df.seq[idx] * PACKET_LEN
         sample_index = pseudoseq
         if USE_FEC:
             # 4 packets need to be received in order to get a full sample
