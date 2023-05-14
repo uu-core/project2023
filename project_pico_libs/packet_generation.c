@@ -92,9 +92,11 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         printf("WARNING: generate_data has been used with an odd length.");
     }
 
+#if USE_ECC == 1
     if (sample_position > 3) {
         sample_position = 0;
     }
+#endif
 
     uint8_t data_start = 0;
     if (include_index)
