@@ -86,6 +86,10 @@ uint16_t generate_sample();
  * include_index: shall the file index be included at the first two byte?
  * length: the length of the buffer which can be filled with data
  */
+#if USE_FEC == 1
+extern uint8_t sample_position;
+extern uint16_t prev_sample;
+#endif
 void generate_data(uint8_t *buffer, uint8_t length, bool include_index);
 
 /* including a header to the packet:
