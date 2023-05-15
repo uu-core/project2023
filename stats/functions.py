@@ -140,7 +140,11 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
     sample_data = (sample_byte >> (0 if (sample_position % 2) else 4)) & 0x0F
-    return bin(data ^ sample_data).count("1")
+    errors = bin(data ^ sample_data).count("1")
+    if errors > 0:
+        seq_bin = format((sequence[0] << 8) + sequence[1], "0>16b")
+        print(f"payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
+    return errors
 
 # deal with seq field overflow problem, generate ground-truth sequence number
 def replace_seq(df, MAX_SEQ):
@@ -233,6 +237,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
             # This will result in the entire packet payload being considered as error (see below)
             continue
         error_idx = error_data[0]
+        #print(df.payload[idx])
         # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC)
 

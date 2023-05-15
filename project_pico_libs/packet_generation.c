@@ -140,11 +140,12 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         if (sample_position == 0)
         {
             sample = generate_sample();
+            prev_sample = sample;
         }
 
         uint16_t code = 0;
         /* Get the 4-bits of data based on the current sample position. */
-        uint8_t data = sample >> (((3 - sample_position) * DATA_BITS) & 0x0F);
+        uint8_t data = (sample >> ((3 - sample_position) * DATA_BITS)) & 0x0F;
         for (int j = 0; j < NUM_CODES; j++)
         {
             if (data == (walsh_combinations[j] & 0x0F))
