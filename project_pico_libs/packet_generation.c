@@ -12,7 +12,6 @@
 #include "packet_generation.h"
 #include "walsh.h"
 
-#define DEFAULT_SEED 0xABCD
 uint32_t seed = DEFAULT_SEED;
 
 #if USE_FEC == 1

@@ -14,6 +14,8 @@
 #include "pico/stdlib.h"
 #include "packet_generation.h"
 
+#define DEFAULT_SEED 0xABCD
+
 #ifndef USE_ECC
 #define USE_ECC 0
 #endif
@@ -69,6 +71,7 @@ uint8_t *packet_hdr_template(uint16_t receiver);
 /*
  * generate of a uniform random number.
  */
+extern uint32_t seed;
 uint32_t rnd();
 
 /*

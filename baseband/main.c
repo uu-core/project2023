@@ -25,7 +25,7 @@
 #endif
 
 #if USE_RETRANSMISSION == 1
-#define RETRANSMISSION_INTERVAL 500
+#define RETRANSMISSION_INTERVAL 127
 #endif
 
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
@@ -39,6 +39,7 @@ int main()
 #if USE_RETRANSMISSION == 1
   uint16_t saved_file_pos = 0;
   uint8_t saved_seq = 0;
+  uint32_t saved_seed = DEFAULT_SEED;
 #endif
   uint offset = pio_add_program(pio, &backscatter_program);
   backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
@@ -57,16 +58,19 @@ int main()
   while (true)
   {
 #if USE_RETRANSMISSION == 1
-    if (seq >= (saved_seq + RETRANSMISSION_INTERVAL))
+    if (seq > 0 && (seq % RETRANSMISSION_INTERVAL) == 0)
     {
       uint8_t tmp_seq = seq;
       uint16_t tmp_file_pos = file_position;
+      uint32_t tmp_seed = seed;
 
       seq = saved_seq;
       file_position = saved_file_pos;
+      seed = saved_seed;
 
       saved_seq = tmp_seq;
       saved_file_pos = tmp_file_pos;
+      saved_seed = tmp_seed;
     }
 #endif
 
