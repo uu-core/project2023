@@ -217,7 +217,10 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
-    file_size = len(error) * PACKET_LEN * 8
+    file_size = (len(error) - 1) * PACKET_LEN * 8
+    if USE_FEC:
+        # When using FEC, the packet is actually smaller than the packet length.
+        file_size = (len(error) - 1) * 4
 
     # generate the correct file
     file_content = cached_comparison_files.get(PACKET_LEN)
@@ -237,7 +240,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
             # This will result in the entire packet payload being considered as error (see below)
             continue
         error_idx = error_data[0]
-        #print(df.payload[idx])
+
         # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC)
 
@@ -266,9 +269,11 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     for l in error.bit_error_tmp:
         if l == []:
             if USE_FEC:
-                counter += 4 # 4-bits of data transmitted per packet payload
+                tmp = 4
+                counter += tmp # 4-bits of data transmitted per packet payload
             else:
-                counter += PACKET_LEN*8  # when the seq number is lost, consider the entire packet payload as error
+                tmp = PACKET_LEN * 8
+                counter += tmp  # when the seq number is lost, consider the entire packet payload as error
         else:
             tmp = min(l)
             counter += tmp  # when the seq number received several times, consider the minimum error
@@ -278,10 +283,11 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     # error = error.drop(columns='bit_error_tmp')
     # print("Error statistics dataframe is:")
     # print(error)
+    #print(counter)
 
     # Calculate etx
     etx = total_transmitted_packets/packets
-    return counter / file_size, error, etx, misses/total_transmitted_packets
+    return counter / file_size, error, etx, misses / total_transmitted_packets
 
 # plot radar chart
 def radar_plot(metrics, title=None):
