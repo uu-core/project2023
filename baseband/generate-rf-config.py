@@ -59,7 +59,7 @@ if ecc:
     packet_len = 40
 elif fec:
     packet_len = 7
-else
+else:
     packet_len = 16
 
 available_bandwidths = [
