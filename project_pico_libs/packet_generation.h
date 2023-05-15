@@ -29,6 +29,7 @@
 #elif USE_FEC == 1
 #define PAYLOADSIZE 5
 #define NUM_CODES 16
+#define NUM_SAMPLE_POS_CODES 8
 #define DATA_BITS 4
 static uint8_t walsh_combinations[NUM_CODES] = {
     0b0000,
@@ -47,6 +48,17 @@ static uint8_t walsh_combinations[NUM_CODES] = {
     0b1101,
     0b1110,
     0b1111,
+};
+static uint8_t sample_pos_walsh_combinations[NUM_SAMPLE_POS_CODES] = {
+    0b00,
+    0b01,
+    0b10,
+    0b11,
+    /* Not used below */
+    0b00,
+    0b00,
+    0b00,
+    0b00,
 };
 extern uint64_t walsh_codes[NUM_CODES];
 void init_walsh();
