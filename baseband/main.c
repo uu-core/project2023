@@ -40,6 +40,10 @@ int main()
   uint16_t saved_file_pos = 0;
   uint8_t saved_seq = 0;
   uint32_t saved_seed = DEFAULT_SEED;
+#if USE_FEC ==  1
+  uint8_t saved_sample_pos = 0;
+  uint16_t saved_prev_sample = 0;
+#endif
 #endif
   uint offset = pio_add_program(pio, &backscatter_program);
   backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
@@ -53,6 +57,16 @@ int main()
 
 #if USE_FEC == 1
   init_walsh();
+
+#if USE_RETRANSMISSION == 1
+  /* Get the first sample so that we can set the correct saved_prev_sample
+     that is used during retransmission. This is only needed for the first
+     iteration of the retransmission loop. */
+  saved_prev_sample = generate_sample();
+  /* Reset the seed again so that the next call to generate_data uses the
+     correct sample. */
+  seed = DEFAULT_SEED;
+#endif
 #endif
 
   while (true)
@@ -71,6 +85,17 @@ int main()
       saved_seq = tmp_seq;
       saved_file_pos = tmp_file_pos;
       saved_seed = tmp_seed;
+
+#if USE_FEC == 1
+      uint8_t tmp_sample_pos = sample_position;
+      uint16_t tmp_prev_sample = prev_sample;
+
+      sample_position = saved_sample_pos;
+      prev_sample = saved_prev_sample;
+
+      saved_sample_pos = tmp_sample_pos;
+      saved_prev_sample = tmp_prev_sample;
+#endif
     }
 #endif
 

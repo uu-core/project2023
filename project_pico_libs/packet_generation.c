@@ -61,7 +61,11 @@ uint16_t generate_sample()
     {
         seed = DEFAULT_SEED; /* reset seed when exceeding uint16_t max */
     }
+#if USE_FEC == 0
+    /* When using FEC, increase it manually, since it takes 4 calls to generate_data
+       for the entire sample to be sent. */
     file_position = file_position + 2;
+#endif
     double two_pi = 2.0 * M_PI;
     double u1, u2;
     u1 = ((double)rnd()) / ((double)0xFFFFFFFF);
@@ -81,8 +85,8 @@ uint16_t generate_sample()
    4th call of generate_data(). Since the sequence number is increased with
    every packet, we will be able to reconstruct the entire 16-bit sample
    on the receiving end using both the file position and sequence. */
-static uint16_t prev_sample;
-static uint8_t sample_position = 0;
+uint16_t prev_sample;
+uint8_t sample_position = 0;
 #endif
 void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
 {
@@ -94,6 +98,7 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
 #if USE_FEC == 1
     if (sample_position > 3)
     {
+        file_position += 2;
         sample_position = 0;
     }
 #endif
@@ -180,7 +185,7 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
  */
 void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template)
 {
-    /* fill in the header sequence*/
+    /* fill in the header sequence */
     for (int loop = 0; loop < HEADER_LEN - 2; loop++)
     {
         packet[loop] = header_template[loop];
