@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 #ifndef USE_RETRANSMISSION
-#define USE_RETRANSMISSION 1
+#define USE_RETRANSMISSION 0
 #endif
 
 #if USE_ECC == 1
