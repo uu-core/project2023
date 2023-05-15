@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Allow flag during compilation for enabling ECC
 option(USE_ECC "Enable ECC for payload" OFF)
 option(USE_FEC "Enable FEC for payload" OFF)
+option(USE_RETRANSMISSION "Enable RETRANSMISSION for payload" OFF)
 
 if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
     message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.3.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
@@ -52,6 +53,10 @@ add_compile_options(-Wall
     -Wno-unused-function # we have some for the docs that aren't called
     -Wno-maybe-uninitialized
 )
+
+if (USE_RETRANSMISSION)
+    add_definitions(-DUSE_RETRANSMISSION=1)
+endif()
 
 if(USE_ECC)
     add_definitions(-DUSE_ECC=1)
