@@ -128,6 +128,7 @@ print("\nGenerated RF config settings:\n" + "\n".join([
 ]), end="\n\n")
 
 replacements = {
+    "DUMP_FILE": "",
     "BANDWIDTH": to_rf_hex(rf_bandwidth),
     "BAUDRATE": to_rf_hex(int(b * RF_STUDIO_SYMBOL_RATE_RATIO)),
     "FREQUENCY": to_rf_hex(math.floor(frequency)),

@@ -178,7 +178,7 @@ def data(seed):
 
 # generate the transmitted file for comparison
 # generate a 40MB file, in case transmit too many data (larger than required 2MB)
-TOTAL_NUM_16RND = 512*40*64
+TOTAL_NUM_16RND = 512*128 # Maximum size
 def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     LOW_BYTE = (1 << 8) - 1
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
@@ -221,6 +221,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
         file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
         cached_comparison_files[PACKET_LEN] = file_content
 
+    misses = 0
     last_pseudoseq = 0  # record the previous pseudoseq
 
     # start count the error bits
@@ -237,14 +238,17 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
 
         # TODO: Keep track of sample_position relative to pseudoseq in order to correct
         #       potential errors in the sample position byte.
-        pseudoseq = int(((payload[0] << 8) - 0) + payload[1])
+        pseudoseq = (int(((payload[0] << 8) - 0) + payload[1]) % TOTAL_NUM_16RND)
         # deal with bit error in pseudoseq.
-        # This can never occur with FEC, since we always cap it to a index divisible by 4.
         if pseudoseq not in file_content.index:
             # TODO: Can also check with the sample index when using FEC in case
             # seq is corrupt as well.
             if (not USE_FEC) or (USE_FEC and (df.seq[idx] % 4) == 0):
                 pseudoseq = last_pseudoseq + PACKET_LEN
+            else:
+                misses += 1
+                # Assume seq not corrupted
+                pseudoseq = (df.seq[idx] // 4) * 2
 
         # compute the bit errors
         error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
@@ -272,7 +276,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
 
     # Calculate etx
     etx = total_transmitted_packets/packets
-    return counter / file_size, error, etx
+    return counter / file_size, error, etx, misses/total_transmitted_packets
 
 # plot radar chart
 def radar_plot(metrics, title=None):
