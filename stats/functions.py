@@ -13,6 +13,7 @@ from numpy import NaN
 from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 
+## WALSH GENERATION AND CODE ###################
 def get_walsh_codes(order):
     #basic element(seed) of walsh code generator
     W = np.array([0])
@@ -22,7 +23,7 @@ def get_walsh_codes(order):
         W[half:, half:] = np.logical_not(W[half:, half:])
     return W
 
-# NOTE: This order is based on the C code, DO NOT CHANGE!
+# NOTE: These orders are based on the C code, DO NOT CHANGE!
 walsh_combinations = [
     [0,0,0,0],
     [0,0,0,1],
@@ -41,8 +42,21 @@ walsh_combinations = [
     [1,1,1,0],
     [1,1,1,1],
 ]
+walsh_sample_pos_combinations = [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+    # Not used below
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0]
+]
 
 walsh_codes = get_walsh_codes(4)
+sample_pos_walsh_codes = get_walsh_codes(3)
+################################################
 
 # Generating large comparision files takes a lot time.
 # Since they only depend on the packet length, we can
@@ -98,21 +112,29 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         binary = list(
             map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
         flat_binary = [item for sublist in binary for item in sublist]
-        # TODO: We can repeat the sample position 4 times on the transmitter. This way, we
-        #       can be more certain that the position is correct, even if we have bit errors.
-        sample_position = "".join(str(b) for b in flat_binary[22:24]) # Sample position is between 0-3, i.e. 2 bits of data
-        data = [int(bit) for bit in flat_binary[24:]]
         values = []
+
+        # Get sample data from walsh code
+        data = [int(bit) for bit in flat_binary[24:]]
         # Multiply each code with the received data (dot product).
-        # The with the largest value will
         for code in walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         # Get the Walsh code that is closest to the received bits
         bits = walsh_combinations[np.argmax(np.array(values))]
-        # Need to pad to get a full byte (2 bit sample position + 4 bit data)
-        file_pos_ovf = int("".join([str(b) for b in flat_binary[0:8]]), base=2)
-        file_pos_byte = int("".join([str(b) for b in flat_binary[8:16]]), base=2)
-        return [file_pos_ovf, file_pos_byte, int("00" + sample_position + "".join(str(b) for b in bits), base=2)]
+
+        # Do the same thing for the sample position
+        values = []
+        data = [int(bit) for bit in flat_binary[16:24]]
+        for code in sample_pos_walsh_codes:
+            values.append(np.dot(np.array(data), np.array(code)))
+        sample_position = walsh_sample_pos_combinations[np.argmax(np.array(values))]
+
+        return [
+            int("".join([str(b) for b in flat_binary[0:8]]), base=2),
+            int("".join([str(b) for b in flat_binary[8:16]]), base=2),
+            int("".join([str(b) for b in sample_position]), base=2),
+            int("".join([str(b) for b in bits]), base=2)
+        ]
     else:
         tmp = map(lambda x: int(x, base=16), payload_string.split())
         return list(tmp)
@@ -134,8 +156,8 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
         )
 
     # Payload is only 1 byte once parsed
-    sample_position = (payload[0] >> 4) & 0x03
-    data = payload[0] & 0x0F
+    sample_position = payload[0]
+    data = payload[1]
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]

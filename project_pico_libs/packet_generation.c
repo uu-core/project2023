@@ -16,6 +16,7 @@ uint32_t seed = DEFAULT_SEED;
 
 #if USE_FEC == 1
 uint64_t walsh_codes[NUM_CODES];
+uint64_t sample_pos_walsh_codes[NUM_SAMPLE_POS_CODES];
 #endif
 
 uint8_t packet_hdr_2500[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00}; // CC2500, the last two byte one for the payload length. and another is seq number
@@ -109,9 +110,16 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         buffer[0] = (uint8_t)(file_position >> 8);
         buffer[1] = (uint8_t)(file_position & 0x00FF);
 #if USE_FEC == 1
-        // TODO: Repeat sample position bits (2 bits) 4 times to make
-        // use of all available bits.
-        buffer[2] = sample_position;
+        uint8_t code = 0;
+        for (int i = 0; i < NUM_SAMPLE_POS_CODES; i++)
+        {
+            if (sample_position == (sample_pos_walsh_combinations[i] & 0x03))
+            {
+                code = sample_pos_walsh_codes[i];
+                break;
+            }
+        }
+        buffer[2] = code;
         data_start = 3;
 #else
         data_start = 2;
@@ -201,5 +209,6 @@ void init_walsh()
 {
     /* prepare the walsh codes for use */
     get_walsh_codes(NUM_CODES, walsh_codes);
+    get_walsh_codes(NUM_SAMPLE_POS_CODES, sample_pos_walsh_codes);
 }
 #endif
