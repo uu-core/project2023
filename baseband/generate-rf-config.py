@@ -57,7 +57,7 @@ bandwidth = (b/1000 + 2*fdeviation)
 bandwidth_index = 0
 if ecc:
     packet_len = 40
-else if fec:
+elif fec:
     packet_len = 7
 else
     packet_len = 16
