@@ -75,7 +75,6 @@ def readfile(filename):
     # parse the payload to seq and payload
     df.frame = df.frame.str.rstrip().str.lstrip()
     df = df[df.frame.str.contains("packet overflow") == False]
-    df['file_pos'] = df.frame.apply(lambda x: int(x[0:2], base=16))
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
     df['payload'] = df.frame.apply(lambda x: x[6:])
     # parse the rssi data
@@ -101,8 +100,8 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         flat_binary = [item for sublist in binary for item in sublist]
         # TODO: We can repeat the sample position 4 times on the transmitter. This way, we
         #       can be more certain that the position is correct, even if we have bit errors.
-        sample_position = "".join(str(b) for b in flat_binary[6:8]) # Sample position is between 0-3, i.e. 2 bits of data
-        data = [int(bit) for bit in flat_binary[8:]]
+        sample_position = "".join(str(b) for b in flat_binary[22:24]) # Sample position is between 0-3, i.e. 2 bits of data
+        data = [int(bit) for bit in flat_binary[24:]]
         values = []
         # Multiply each code with the received data (dot product).
         # The with the largest value will
@@ -111,7 +110,9 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         # Get the Walsh code that is closest to the received bits
         bits = walsh_combinations[np.argmax(np.array(values))]
         # Need to pad to get a full byte (2 bit sample position + 4 bit data)
-        return [int("00" + sample_position + "".join(str(b) for b in bits), base=2)]
+        file_pos_ovf = int("".join([str(b) for b in flat_binary[0:8]]), base=2)
+        file_pos_byte = int("".join([str(b) for b in flat_binary[8:16]]), base=2)
+        return [file_pos_ovf, file_pos_byte, int("00" + sample_position + "".join(str(b) for b in bits), base=2)]
     else:
         tmp = map(lambda x: int(x, base=16), payload_string.split())
         return list(tmp)
@@ -135,6 +136,9 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
     # Payload is only 1 byte once parsed
     sample_position = (payload[0] >> 4) & 0x03
     data = payload[0] & 0x0F
+    print(f"data: {data}")
+    print(f"sample_pos: {sample_position}")
+    print(f"seq: {bin((sequence[0] << 8) + sequence[1])}")
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
@@ -183,10 +187,16 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
     index = [NUM_16RND*i*2 for i in range(length)]
     df = pd.DataFrame(index=index, columns=['data'])
-    seed = 0xabcd  # initial seed
+    initial_seed = 0xabcd # initial seed
+    pseudo_seq = 0 # (16-bit)
+    seed  = initial_seed
     for i in index:
         payload_data = []
         for j in range(NUM_16RND):
+            if pseudo_seq > 0xffff:
+                pseudo_seq = 0
+                seed = initial_seed
+            pseudo_seq = pseudo_seq + 2
             number, seed = data(seed)
             payload_data.append((int(number) >> 8) - 0)
             payload_data.append(int(number) & LOW_BYTE)
@@ -207,19 +217,17 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
     file_size = len(error) * PACKET_LEN * 8
-    # The number of samples we need in the comparision files
-    #samples_in_file = int((((df.file_pos[packets-1] << 8) - 0) + df.seq[packets-1]+1)/PACKET_LEN)
-    samples_in_file = (df.seq[packets-1]+1)*(PACKET_LEN/2)
 
     # generate the correct file
-    file_content = None
-    cached_file = cached_comparison_files.get(PACKET_LEN)
-    if cached_file is None or cached_file[0] < samples_in_file:
-        file_content = generate_data(int(PACKET_LEN/2), samples_in_file)
-        cached_comparison_files[PACKET_LEN] = (samples_in_file, file_content)
-    else:
-        # The file has been generated, and the size is large enough
-        file_content = cached_file[1]
+    file_content = cached_comparison_files.get(PACKET_LEN)
+    if file_content is None:
+        file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
+        cached_comparison_files[PACKET_LEN] = file_content
+
+    print([format(byte, "02X") for byte in file_content.loc[0, 'data']])
+    print([format(byte, "02X") for byte in file_content.loc[12, 'data']])
+    print([format(byte, "02X") for byte in file_content.loc[24, 'data']])
+
 
     last_pseudoseq = 0  # record the previous pseudoseq
 
@@ -237,23 +245,17 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
 
         # TODO: Keep track of sample_position relative to pseudoseq in order to correct
         #       potential errors in the sample position byte.
-        pseudoseq = df.seq[idx] * PACKET_LEN
-        sample_index = pseudoseq
-        if USE_FEC:
-            # 4 packets need to be received in order to get a full sample
-            if pseudoseq % 4 != 0:
-                sample_index = ((pseudoseq - (pseudoseq % 4)) / 4) * 2
-            else:
-                sample_index = (pseudoseq / 4) * 2 # file indexed by multiples of 2 (bytes)
-        else:
-            # deal with bit error in pseudoseq.
-            # This can never occur with FEC, since we always cap it to a index divisible by 4.
-            if sample_index not in file_content.index:
+        pseudoseq = int(((payload[0] << 8) - 0) + payload[1])
+        # deal with bit error in pseudoseq.
+        # This can never occur with FEC, since we always cap it to a index divisible by 4.
+        if pseudoseq not in file_content.index:
+            # TODO: Can also check with the sample index when using FEC in case
+            # seq is corrupt as well.
+            if (not USE_FEC) or (USE_FEC and (df.seq[idx] % 4) == 0):
                 pseudoseq = last_pseudoseq + PACKET_LEN
-                sample_index = pseudoseq
 
         # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload, file_content.loc[sample_index, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
         last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file

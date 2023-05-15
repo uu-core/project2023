@@ -24,12 +24,15 @@ parser.add_argument("baudrate", type=int,
                     help="baud-rate [baud] e.g. 100000 for 100kBaud")
 parser.add_argument("--ecc", action='store_true', default=False,
                     help="If you are using Error Code Correction")
+parser.add_argument("--fec", action='store_true', default=False,
+                    help="If you are using Walsh code Error Correction")
 
 args = parser.parse_args()
 d0 = args.divider0
 d1 = args.divider1
 b = args.baudrate
 ecc = args.ecc
+fec = args.fec
 
 if (CLKFREQ*(10**6)) % args.baudrate != 0:
     b = round((CLKFREQ*(10**6)) / round((CLKFREQ*(10**6)) / args.baudrate))
@@ -40,8 +43,12 @@ assert d0 % 2 == 0 and d0 >= 2, "d0 must be an even integer larger than 1"
 assert d1 % 2 == 0 and d1 >= 2, "d1 must be an even integer larger than 1"
 assert b > 0, "baud-rate can not be negative"
 
-out_path = os.path.abspath(f"../stats/configs/{d0}_{d1}_{int(b / 1000)}k.xml")
-dump_file_path = os.path.abspath(f"../stats/logs")
+suffix = ""
+if ecc:
+    suffix = "_ecc"
+elif fec:
+    suffix = "_fec"
+out_path = os.path.abspath(f"../stats/configs/{d0}_{d1}_{int(b / 1000)}k{suffix}.xml")
 
 fcenter = (CLKFREQ*1000/d0 + CLKFREQ*1000/d1)/2
 fdeviation = abs(CLKFREQ*1000/d1 - fcenter)
@@ -50,7 +57,7 @@ bandwidth = (b/1000 + 2*fdeviation)
 bandwidth_index = 0
 packet_len = 16
 if ecc:
-    packet_len = 44
+    packet_len = 12*3+4
 
 available_bandwidths = [
     4.3,  # 64
@@ -118,7 +125,6 @@ print("\nGenerated RF config settings:\n" + "\n".join([
 ]), end="\n\n")
 
 replacements = {
-    "DUMP_FILE": dump_file_path,
     "BANDWIDTH": to_rf_hex(rf_bandwidth),
     "BAUDRATE": to_rf_hex(int(b * RF_STUDIO_SYMBOL_RATE_RATIO)),
     "FREQUENCY": to_rf_hex(math.floor(frequency)),

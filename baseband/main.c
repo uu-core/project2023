@@ -12,12 +12,12 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 
-#if USE_ECC
-#define TX_DURATION 180
-#elif USE_FEC
-#define TX_DURATION 20
+#if USE_ECC == 1
+#define TX_DURATION 30
+#elif USE_FEC == 1
+#define TX_DURATION 6
 #else
-#define TX_DURATION 60
+#define TX_DURATION 10
 #endif
 
 #define RECEIVER 1352  // define the receiver board either 2500 or 1352
