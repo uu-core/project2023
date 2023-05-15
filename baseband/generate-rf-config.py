@@ -55,9 +55,12 @@ fdeviation = abs(CLKFREQ*1000/d1 - fcenter)
 frequency = CARRIER_FREQ + (fcenter / 1000)
 bandwidth = (b/1000 + 2*fdeviation)
 bandwidth_index = 0
-packet_len = 16
 if ecc:
-    packet_len = 12*3+4
+    packet_len = 40
+else if fec:
+    packet_len = 7
+else
+    packet_len = 16
 
 available_bandwidths = [
     4.3,  # 64

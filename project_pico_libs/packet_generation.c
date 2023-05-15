@@ -92,8 +92,9 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         printf("WARNING: generate_data has been used with an odd length.");
     }
 
-#if USE_ECC == 1
-    if (sample_position > 3) {
+#if USE_FEC == 1
+    if (sample_position > 3)
+    {
         sample_position = 0;
     }
 #endif
@@ -114,7 +115,8 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
     }
 
 #if USE_ECC == 1
-    for (uint8_t i = data_start; i < length; i = i + 6) {
+    for (uint8_t i = data_start; i < length; i = i + 6)
+    {
         uint16_t sample = generate_sample();
         uint64_t extended = 0;
 
@@ -136,14 +138,15 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
         uint16_t sample = prev_sample;
         /* It takes 4 calls to this function to fully transmit the entire
            16-bit sample. */
-        if (sample_position == 0) {
+        if (sample_position == 0)
+        {
             sample = generate_sample();
         }
 
         uint16_t code = 0;
         /* Get the 4-bits of data based on the current sample position. */
-        uint8_t data = sample >> (((3 - sample_position) * DATA_BITS) & 0x0F );
-        for (int j = 0; j < walsh_combinations; j++)
+        uint8_t data = sample >> (((3 - sample_position) * DATA_BITS) & 0x0F);
+        for (int j = 0; j < NUM_CODES; j++)
         {
             if (data == (walsh_combinations[j] & 0x0F))
             {
@@ -192,6 +195,6 @@ void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template)
 void init_walsh()
 {
     /* prepare the walsh codes for use */
-    get_walsh_codes(NUM_CODES, walsh_codes[NUM_CODES]);
+    get_walsh_codes(NUM_CODES, walsh_codes);
 }
 #endif

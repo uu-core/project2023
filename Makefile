@@ -22,3 +22,6 @@ tag:
 	mkdir -p ./baseband/build
 	cd baseband/build; cmake .. -D USE_ECC=$(ECC) -D USE_FEC=$(FEC); make
 	cp baseband/build/pio_backscatter.uf2 $(MOUNT_PATH)
+
+clean:
+	rm -rf baseband/build/*

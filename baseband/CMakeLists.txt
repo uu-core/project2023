@@ -33,6 +33,7 @@ pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.p
 target_sources(pio_backscatter PRIVATE
     main.c
     ../project_pico_libs/packet_generation.c
+    ../project_pico_libs/walsh.c
 )
 include_directories(../project_pico_libs)
 target_link_libraries(pio_backscatter PRIVATE pico_stdlib hardware_pio)
@@ -53,7 +54,7 @@ add_compile_options(-Wall
 )
 
 if(USE_ECC)
-    add_compile_options(-DUSE_ECC=1)
+    add_definitions(-DUSE_ECC=1)
 elseif(USE_FEC)
-    add_compile_options(-DUSE_FEC=1)
+    add_definitions(-DUSE_FEC=1)
 endif()

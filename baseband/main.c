@@ -32,11 +32,7 @@ int main()
   backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
   // backscatter_program_init(pio, sm, offset, PIN_TX1); // one antenna setup
 
-#if USE_FEC == 1
-  static uint8_t message[buffer_size(PAYLOADSIZE + 3, HEADER_LEN) * 4] = {0}; // include 10 header bytes
-#else
   static uint8_t message[buffer_size(PAYLOADSIZE + 2, HEADER_LEN) * 4] = {0}; // include 10 header bytes
-#endif
   static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0};         // initialize the buffer
   static uint8_t seq = 0;
   uint8_t *header_tmplate = packet_hdr_template(RECEIVER);

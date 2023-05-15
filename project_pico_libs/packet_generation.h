@@ -25,7 +25,7 @@
 #if USE_ECC == 1
 #define PAYLOADSIZE 12 * 3 + 2
 #elif USE_FEC == 1
-#define PAYLOADSIZE 4
+#define PAYLOADSIZE 5
 #define NUM_CODES 16
 #define DATA_BITS 4
 static uint8_t walsh_combinations[NUM_CODES] = {

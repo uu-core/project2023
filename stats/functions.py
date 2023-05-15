@@ -136,9 +136,6 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
     # Payload is only 1 byte once parsed
     sample_position = (payload[0] >> 4) & 0x03
     data = payload[0] & 0x0F
-    print(f"data: {data}")
-    print(f"sample_pos: {sample_position}")
-    print(f"seq: {bin((sequence[0] << 8) + sequence[1])}")
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
@@ -223,11 +220,6 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
     if file_content is None:
         file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
         cached_comparison_files[PACKET_LEN] = file_content
-
-    print([format(byte, "02X") for byte in file_content.loc[0, 'data']])
-    print([format(byte, "02X") for byte in file_content.loc[12, 'data']])
-    print([format(byte, "02X") for byte in file_content.loc[24, 'data']])
-
 
     last_pseudoseq = 0  # record the previous pseudoseq
 
