@@ -170,21 +170,23 @@ def compute_bit_errors(seq, payload, sequence, PACKET_LEN=32, USE_FEC=False):
     errors = bin(data ^ sample_data).count("1")
     if errors > 0:
         seq_bin = format((sequence[0] << 8) + sequence[1], "0>16b")
-        print(f"seq: {seq}, payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
+        #print(f"seq: {seq}, payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
     return errors
 
 # deal with seq field overflow problem, generate ground-truth sequence number
 def replace_seq(df, MAX_SEQ):
+    df['new_seq'] = None
     df_rtx = df[df["rtx"] == True]
     df = df[df["rtx"] == False]
 
+    # Reset the indexing such that we dont get a mismatch between regular and rtx
+    df_rtx.index = range(0, len(df_rtx))
+    df.index = range(0, len(df))
+
     for x in [df, df_rtx]:
-        x['new_seq'] = None
         count = 0
-
-        if len(x) == 0:
+        if len(x) == 0 or len(x.seq) == 0:
             continue
-
         x.iloc[0, x.columns.get_loc('new_seq')] = x.seq[0]
         for idx in range(1, len(x)):
             if x.seq[idx] < x.seq[idx-1] - 50:
@@ -245,6 +247,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     # Get a complete list of sequences received.
     # The idea is to fill in any gaps using the retransmitted packets (if any).
     seqs = df.merge(df_rtx, how="outer", sort=True, on="seq")["seq"]
+    seqs = seqs.apply(lambda x: int(x))
     packets = len(seqs)
     first_seq = seqs[0]+1
     last_seq = seqs[packets-1]+1
@@ -284,7 +287,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
         if idx < len(df_rtx.seq):
             error_data_rtx = error.index[error.seq == df_rtx.seq[idx]]
             if error_data_rtx.size != 0:
-                error_idxs.append((df_rtx, error_data[0]))
+                error_idxs.append((df_rtx, error_data_rtx[0]))
 
         # Packet was not found in neither normal packets, nor RTX
         if len(error_idxs) == 0:
