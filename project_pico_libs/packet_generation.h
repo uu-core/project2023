@@ -24,10 +24,14 @@
 #define USE_FEC 0
 #endif
 
+#if USE_RETRANSMISSION == 1
+extern uint8_t rtx_enabled;
+#endif
+
 #if USE_ECC == 1
 #define PAYLOADSIZE 12 * 3 + 2
 #elif USE_FEC == 1
-#define PAYLOADSIZE 5
+#define PAYLOADSIZE 6
 #define NUM_CODES 16
 #define NUM_SAMPLE_POS_CODES 8
 #define DATA_BITS 4

@@ -25,7 +25,7 @@
 #endif
 
 #if USE_RETRANSMISSION == 1
-#define RETRANSMISSION_INTERVAL 127
+#define RETRANSMISSION_INTERVAL 255
 #endif
 
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
@@ -74,6 +74,8 @@ int main()
 #if USE_RETRANSMISSION == 1
     if (seq > 0 && (seq % RETRANSMISSION_INTERVAL) == 0)
     {
+      rtx_enabled = !rtx_enabled;
+
       uint8_t tmp_seq = seq;
       uint16_t tmp_file_pos = file_position;
       uint32_t tmp_seed = seed;

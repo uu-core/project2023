@@ -19,6 +19,10 @@ uint64_t walsh_codes[NUM_CODES];
 uint64_t sample_pos_walsh_codes[NUM_SAMPLE_POS_CODES];
 #endif
 
+#if USE_RETRANSMISSION == 1
+uint8_t rtx_enabled = 0;
+#endif
+
 uint8_t packet_hdr_2500[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00}; // CC2500, the last two byte one for the payload length. and another is seq number
 uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51, 0xde, 0x00, 0x00}; // CC1352P7, the last two byte one for the payload length. and another is seq number
 
@@ -119,8 +123,14 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
                 break;
             }
         }
+#if USE_RETRANSMISSION == 1
+        buffer[2] = rtx_enabled ? 0xFF : 0x00;
+        buffer[3] = code;
+        data_start = 4;
+#else
         buffer[2] = code;
         data_start = 3;
+#endif
 #else
         data_start = 2;
 #endif

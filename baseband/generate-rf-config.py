@@ -58,7 +58,7 @@ bandwidth_index = 0
 if ecc:
     packet_len = 40
 elif fec:
-    packet_len = 7
+    packet_len = 8
 else:
     packet_len = 16
 
