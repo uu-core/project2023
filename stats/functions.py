@@ -91,11 +91,10 @@ def readfile(filename, USE_RETRANSMISSION=False):
     df = df[df.frame.str.contains("packet overflow") == False]
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
     if USE_RETRANSMISSION:
-        df['rtx'] = df.frame.apply(lambda x: bin(int(x[6:8], base=16)).count("1") >= 4)
-        df['payload'] = df.frame.apply(lambda x: x[9:])
+        df['rtx'] = df.frame.apply(lambda x: bin(int(x[12:14], base=16)).count("1") >= 4)
     else:
         df['rtx'] = df.frame.apply(lambda x: False)
-        df['payload'] = df.frame.apply(lambda x: x[6:])
+    df['payload'] = df.frame.apply(lambda x: x[6:])
     # parse the rssi data
     df.rssi = df.rssi.str.lstrip().str.split(" ", expand=True).iloc[:, 0]
     df.rssi = df.rssi.astype('int')
@@ -117,26 +116,25 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         binary = list(
             map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
         flat_binary = [item for sublist in binary for item in sublist]
-        values = []
 
-        # Get sample data from walsh code
-        data = [int(bit) for bit in flat_binary[24:]]
         # Multiply each code with the received data (dot product).
-        for code in walsh_codes:
-            values.append(np.dot(np.array(data), np.array(code)))
         # Get the Walsh code that is closest to the received bits
-        bits = walsh_combinations[np.argmax(np.array(values))]
-
-        # Do the same thing for the sample position
         values = []
-        data = [int(bit) for bit in flat_binary[16:24]]
+        data = [int(bit) for bit in flat_binary[24:32]]
         for code in sample_pos_walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         sample_position = walsh_sample_pos_combinations[np.argmax(np.array(values))]
 
+        values = []
+        data = [int(bit) for bit in flat_binary[32:]]
+        for code in walsh_codes:
+            values.append(np.dot(np.array(data), np.array(code)))
+        bits = walsh_combinations[np.argmax(np.array(values))]
+
         return [
             int("".join([str(b) for b in flat_binary[0:8]]), base=2),
             int("".join([str(b) for b in flat_binary[8:16]]), base=2),
+            int("".join([str(b) for b in flat_binary[16:24]]), base=2),
             int("".join([str(b) for b in sample_position]), base=2),
             int("".join([str(b) for b in bits]), base=2)
         ]
@@ -161,8 +159,8 @@ def compute_bit_errors(seq, payload, sequence, PACKET_LEN=32, USE_FEC=False):
         )
 
     # Payload is only 1 byte once parsed
-    sample_position = payload[0]
-    data = payload[1]
+    sample_position = payload[1]
+    data = payload[2]
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
@@ -248,6 +246,9 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     # The idea is to fill in any gaps using the retransmitted packets (if any).
     seqs = df.merge(df_rtx, how="outer", sort=True, on="seq")["seq"]
     seqs = seqs.apply(lambda x: int(x))
+    print(len(seqs))
+    print(len(df))
+    print(len(df_rtx))
     packets = len(seqs)
     first_seq = seqs[0]+1
     last_seq = seqs[packets-1]+1
