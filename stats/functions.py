@@ -168,7 +168,7 @@ def compute_bit_errors(seq, payload, sequence, PACKET_LEN=32, USE_FEC=False):
     errors = bin(data ^ sample_data).count("1")
     if errors > 0:
         seq_bin = format((sequence[0] << 8) + sequence[1], "0>16b")
-        #print(f"seq: {seq}, payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
+        print(f"seq: {seq}, payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
     return errors
 
 # deal with seq field overflow problem, generate ground-truth sequence number
@@ -250,7 +250,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     print(len(df))
     print(len(df_rtx))
     packets = len(seqs)
-    first_seq = seqs[0]+1
+    first_seq = seqs[0]
     last_seq = seqs[packets-1]+1
     total_transmitted_packets = last_seq - first_seq
 
@@ -261,6 +261,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     error.seq = range(first_seq, last_seq)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
+    print(len(error))
     # compute in total transmitted file size
     file_size = (len(error) - 1) * PACKET_LEN * 8
     if USE_FEC:
@@ -292,6 +293,8 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
 
         # Packet was not found in neither normal packets, nor RTX
         if len(error_idxs) == 0:
+            misses += 1
+            print(f"Missed packet {idx}")
             continue
 
         for (df, error_idx) in error_idxs:
@@ -340,7 +343,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     error['bit_error'] = bit_error
     # error = error.drop(columns='bit_error_tmp')
     # print("Error statistics dataframe is:")
-    # print(error)
+    print(error.to_string())
     #print(counter)
 
     # Calculate etx
