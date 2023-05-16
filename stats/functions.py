@@ -92,9 +92,10 @@ def readfile(filename, USE_RETRANSMISSION=False):
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
     if USE_RETRANSMISSION:
         df['rtx'] = df.frame.apply(lambda x: bin(int(x[12:14], base=16)).count("1") >= 4)
+        df['payload'] = df.frame.apply(lambda x: x[6:12] + x[15:])
     else:
         df['rtx'] = df.frame.apply(lambda x: False)
-    df['payload'] = df.frame.apply(lambda x: x[6:])
+        df['payload'] = df.frame.apply(lambda x: x[6:])
     # parse the rssi data
     df.rssi = df.rssi.str.lstrip().str.split(" ", expand=True).iloc[:, 0]
     df.rssi = df.rssi.astype('int')
@@ -120,13 +121,13 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         # Multiply each code with the received data (dot product).
         # Get the Walsh code that is closest to the received bits
         values = []
-        data = [int(bit) for bit in flat_binary[24:32]]
+        data = [int(bit) for bit in flat_binary[16:24]]
         for code in sample_pos_walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         sample_position = walsh_sample_pos_combinations[np.argmax(np.array(values))]
 
         values = []
-        data = [int(bit) for bit in flat_binary[32:]]
+        data = [int(bit) for bit in flat_binary[24:]]
         for code in walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         bits = walsh_combinations[np.argmax(np.array(values))]
@@ -134,7 +135,6 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         return [
             int("".join([str(b) for b in flat_binary[0:8]]), base=2),
             int("".join([str(b) for b in flat_binary[8:16]]), base=2),
-            int("".join([str(b) for b in flat_binary[16:24]]), base=2),
             int("".join([str(b) for b in sample_position]), base=2),
             int("".join([str(b) for b in bits]), base=2)
         ]
@@ -159,8 +159,8 @@ def compute_bit_errors(seq, payload, sequence, PACKET_LEN=32, USE_FEC=False):
         )
 
     # Payload is only 1 byte once parsed
-    sample_position = payload[1]
-    data = payload[2]
+    sample_position = payload[0]
+    data = payload[1]
     # Sequence is a list of 2 bytes for FEC (1 sample),
     # get the correct one based on the sample position (0-1 is left byte, 2-3 is right byte)
     sample_byte = sequence[0 if sample_position < 2 else 1]
@@ -343,7 +343,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
 
     # Calculate etx
     etx = total_transmitted_packets/packets
-    return counter / file_size, error, etx, misses / total_transmitted_packets
+    return counter / file_size, error, etx, misses
 
 # plot radar chart
 def radar_plot(metrics, title=None):
