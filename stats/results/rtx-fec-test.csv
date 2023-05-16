@@ -1,0 +1,2 @@
+file,d2,d1,a,b,baud,delta_fsk,file_delay_s,bit_reliability,dis_metric,etx,misses,avg_rssi,ecc,fec,retransmission,samples,error
+50_5_54_52_42k_fec_rtx,50,5,54,52,42000,44.51566951566943,18.0,56.352619233776394,0.0006250000000000001,0.999609375,0.37514654161781946,-71.2359375,False,True,True,4,True
