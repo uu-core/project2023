@@ -169,7 +169,7 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32, USE_FEC=False):
     return errors
 
 # deal with seq field overflow problem, generate ground-truth sequence number
-def replace_seq(df, MAX_SEQ):
+def replace_seq(df, MAX_SEQ, RETRANSMISSION_INTERVAL=0):
     df['new_seq'] = None
     count = 0
     df.iloc[0, df.columns.get_loc('new_seq')] = df.seq[0]
@@ -178,6 +178,15 @@ def replace_seq(df, MAX_SEQ):
             count += 1
             # for the counter reset scanrio, replace the seq value with order
         df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
+
+    if RETRANSMISSION_INTERVAL > 0:
+        # If we have enabled retransmission, the number of unique sequences
+        # is decreased. We need to change the sequence number of each packet
+        # to account for the retransmissions.
+        for idx in range(1, len(df)):
+            seq = df["new_seq"][idx]
+            df.iloc[idx, df.columns.get_loc("new_seq")] = ((seq // 255) * 127) + (seq % 255)
+
     return df
 
 # a 8-bit random number generator with uniform distribution
@@ -271,17 +280,15 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
         pseudoseq = (int(((payload[0] << 8) - 0) + payload[1]) % TOTAL_NUM_16RND)
         # deal with bit error in pseudoseq.
         if pseudoseq not in file_content.index:
-            # TODO: Can also check with the sample index when using FEC in case
-            # seq is corrupt as well.
+            misses += 1
             if (not USE_FEC) or (USE_FEC and (df.seq[idx] % 4) == 0):
                 pseudoseq = last_pseudoseq + PACKET_LEN
             else:
-                misses += 1
                 # Assume seq not corrupted
                 pseudoseq = (df.seq[idx] // 4) * 2
 
         # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, "data"], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
         last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
