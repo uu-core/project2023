@@ -113,28 +113,29 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index)
     {
         buffer[0] = (uint8_t)(file_position >> 8);
         buffer[1] = (uint8_t)(file_position & 0x00FF);
-#if USE_FEC == 1
-        uint8_t code = 0;
-        for (int i = 0; i < NUM_SAMPLE_POS_CODES; i++)
-        {
-            if (sample_position == (sample_pos_walsh_combinations[i] & 0x03))
-            {
-                code = sample_pos_walsh_codes[i];
-                break;
-            }
-        }
-#if USE_RETRANSMISSION == 1
-        buffer[2] = rtx_enabled ? 0xFF : 0x00;
-        buffer[3] = code;
-        data_start = 4;
-#else
-        buffer[2] = code;
-        data_start = 3;
-#endif
-#else
         data_start = 2;
-#endif
     }
+
+#if USE_FEC == 1
+    uint8_t code = 0;
+    for (int i = 0; i < NUM_SAMPLE_POS_CODES; i++)
+    {
+        if (sample_position == (sample_pos_walsh_combinations[i] & 0x03))
+        {
+            code = sample_pos_walsh_codes[i];
+            break;
+        }
+    }
+
+    #if USE_RETRANSMISSION == 1
+        buffer[data_start] = rtx_enabled ? 0xFF : 0x00;
+        buffer[data_start+1] = code;
+        data_start += 2;
+    #else
+        buffer[data_start] = code;
+        data_start += 1;
+    #endif
+#endif
 
 #if USE_ECC == 1
     for (uint8_t i = data_start; i < length; i = i + 6)

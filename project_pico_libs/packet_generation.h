@@ -24,14 +24,18 @@
 #define USE_FEC 0
 #endif
 
+#ifndef USE_COMPRESSION
+#define USE_COMPRESSION 0
+#endif
+
 #if USE_RETRANSMISSION == 1
 extern uint8_t rtx_enabled;
 #endif
 
 #if USE_ECC == 1
-#define PAYLOADSIZE 12 * 3 + 2
+#define PAYLOADSIZE (USE_COMPRESSION == 0 ? (12 * 3 + 2) : (12*3))
 #elif USE_FEC == 1
-#define PAYLOADSIZE 6
+#define PAYLOADSIZE (USE_COMPRESSION == 0 ? 6 : 4)
 #define NUM_CODES 16
 #define NUM_SAMPLE_POS_CODES 8
 #define DATA_BITS 4
@@ -67,7 +71,7 @@ static uint8_t sample_pos_walsh_combinations[NUM_SAMPLE_POS_CODES] = {
 extern uint64_t walsh_codes[NUM_CODES];
 void init_walsh();
 #else
-#define PAYLOADSIZE 14
+#define PAYLOADSIZE (USE_COMPRESSION == 0 ? 14 : 12)
 #endif
 
 #define HEADER_LEN 10 // 8 header + length + seq

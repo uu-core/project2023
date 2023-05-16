@@ -38,13 +38,13 @@ int main()
   uint sm = 0;
 #if USE_RETRANSMISSION == 1
   uint16_t saved_file_pos = 0;
-  uint8_t saved_seq = 0;
   uint32_t saved_seed = DEFAULT_SEED;
-#if USE_FEC ==  1
+  #if USE_FEC ==  1
   uint8_t saved_sample_pos = 0;
   uint16_t saved_prev_sample = 0;
+  #endif
 #endif
-#endif
+  bool include_index = USE_COMPRESSION != 1;
   uint offset = pio_add_program(pio, &backscatter_program);
   backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
                                                                // backscatter_program_init(pio, sm, offset, PIN_TX1); // one antenna setup
@@ -72,7 +72,7 @@ int main()
   while (true)
   {
     /* generate new data */
-    generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+    generate_data(tx_payload_buffer, PAYLOADSIZE, include_index);
 
     /* add header (10 byte) to packet */
     add_header(&message[0], seq, header_tmplate);
@@ -97,15 +97,15 @@ int main()
     {
       rtx_enabled = !rtx_enabled;
 
-      uint8_t tmp_seq = seq;
+      /* No need to save the sequence number, since it will automatically
+         wrap around to 0. We need it to reset to 0 in order for the
+         RTX to be done correctly. */
       uint16_t tmp_file_pos = file_position;
       uint32_t tmp_seed = seed;
 
-      seq = saved_seq;
       file_position = saved_file_pos;
       seed = saved_seed;
 
-      saved_seq = tmp_seq;
       saved_file_pos = tmp_file_pos;
       saved_seed = tmp_seed;
 

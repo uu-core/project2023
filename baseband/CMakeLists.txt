@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 option(USE_ECC "Enable ECC for payload" OFF)
 option(USE_FEC "Enable FEC for payload" OFF)
 option(USE_RETRANSMISSION "Enable RETRANSMISSION for payload" OFF)
+option(USE_COMPRESSION "Enable COMPRESSION of payload by removing the two file position bytes" OFF)
 
 if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
     message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.3.0 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
@@ -56,6 +57,10 @@ add_compile_options(-Wall
 
 if (USE_RETRANSMISSION)
     add_definitions(-DUSE_RETRANSMISSION=1)
+endif()
+
+if (USE_COMPRESSION)
+    add_definitions(-DUSE_COMPRESSION=1)
 endif()
 
 if(USE_ECC)

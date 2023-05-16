@@ -64,7 +64,7 @@ sample_pos_walsh_codes = get_walsh_codes(3)
 cached_comparison_files = {}
 
 # read the log file
-def readfile(filename, USE_RETRANSMISSION=False):
+def readfile(filename, USE_RETRANSMISSION=False, USE_COMPRESSION=False):
     types = {
         "time_rx": str,
         "frame": str,
@@ -91,8 +91,12 @@ def readfile(filename, USE_RETRANSMISSION=False):
     df = df[df.frame.str.contains("packet overflow") == False]
     df['seq'] = df.frame.apply(lambda x: int(x[3:5], base=16))
     if USE_RETRANSMISSION:
-        df['rtx'] = df.frame.apply(lambda x: bin(int(x[12:14], base=16)).count("1") >= 4)
-        df['payload'] = df.frame.apply(lambda x: x[6:12] + x[15:])
+        if USE_COMPRESSION:
+            df['rtx'] = df.frame.apply(lambda x: bin(int(x[6:8], base=16)).count("1") >= 4)
+            df['payload'] = df.frame.apply(lambda x: x[9:])
+        else:
+            df['rtx'] = df.frame.apply(lambda x: bin(int(x[12:14], base=16)).count("1") >= 4)
+            df['payload'] = df.frame.apply(lambda x: x[6:12] + x[15:])
     else:
         df['rtx'] = df.frame.apply(lambda x: False)
         df['payload'] = df.frame.apply(lambda x: x[6:])
@@ -104,9 +108,10 @@ def readfile(filename, USE_RETRANSMISSION=False):
     return df
 
 # parse the hex payload, return a list with int numbers for each byte
-def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
+def parse_payload(payload_string, USE_ECC=False, USE_FEC=False, USE_COMPRESSION=False):
     if USE_ECC:
-        # yes
+        # TODO: This tries to parse the file position using ECC as well,
+        #       but we are not using it, so we don't care.
         binary = list(
             map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
         flat_binary = [item for sublist in binary for item in sublist]
@@ -114,6 +119,11 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         tmp = list(map(lambda x: 0 if x.count("0") > 1 else 1, bits))
         return list(map(lambda x: int("".join(str(c) for c in x), base=2), [tmp[i:i+8] for i in range(0, len(tmp), 8)]))
     elif USE_FEC:
+        # No file position bytes when using compression
+        data_start = 16
+        if USE_COMPRESSION:
+            data_start = 0
+
         binary = list(
             map(lambda x: list(format(int(x, base=16), "0>8b")), payload_string.split()))
         flat_binary = [item for sublist in binary for item in sublist]
@@ -121,23 +131,29 @@ def parse_payload(payload_string, USE_ECC=False, USE_FEC=False):
         # Multiply each code with the received data (dot product).
         # Get the Walsh code that is closest to the received bits
         values = []
-        data = [int(bit) for bit in flat_binary[16:24]]
+        data = [int(bit) for bit in flat_binary[data_start:data_start+8]]
         for code in sample_pos_walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         sample_position = walsh_sample_pos_combinations[np.argmax(np.array(values))]
 
         values = []
-        data = [int(bit) for bit in flat_binary[24:]]
+        data = [int(bit) for bit in flat_binary[data_start+8:]]
         for code in walsh_codes:
             values.append(np.dot(np.array(data), np.array(code)))
         bits = walsh_combinations[np.argmax(np.array(values))]
 
-        return [
-            int("".join([str(b) for b in flat_binary[0:8]]), base=2),
-            int("".join([str(b) for b in flat_binary[8:16]]), base=2),
-            int("".join([str(b) for b in sample_position]), base=2),
-            int("".join([str(b) for b in bits]), base=2)
-        ]
+        if USE_COMPRESSION:
+            return [
+                int("".join([str(b) for b in sample_position]), base=2),
+                int("".join([str(b) for b in bits]), base=2)
+            ]
+        else:
+            return [
+                int("".join([str(b) for b in flat_binary[0:8]]), base=2),
+                int("".join([str(b) for b in flat_binary[8:16]]), base=2),
+                int("".join([str(b) for b in sample_position]), base=2),
+                int("".join([str(b) for b in bits]), base=2)
+            ]
     else:
         tmp = map(lambda x: int(x, base=16), payload_string.split())
         return list(tmp)
@@ -168,31 +184,31 @@ def compute_bit_errors(seq, payload, sequence, PACKET_LEN=32, USE_FEC=False):
     errors = bin(data ^ sample_data).count("1")
     if errors > 0:
         seq_bin = format((sequence[0] << 8) + sequence[1], "0>16b")
-        print(f"seq: {seq}, payload[0]: {payload[0]}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
+        #print(f"seq: {seq}, sequence: {seq_bin}, Data: {data}, sample_pos: {sample_position}, errors: {errors}")
     return errors
 
 # deal with seq field overflow problem, generate ground-truth sequence number
 def replace_seq(df, MAX_SEQ):
     df['new_seq'] = None
-    df_rtx = df[df["rtx"] == True]
-    df = df[df["rtx"] == False]
+    has_rtx = len(df[df.rtx == True]) > 0
+    count = 0
 
-    # Reset the indexing such that we dont get a mismatch between regular and rtx
-    df_rtx.index = range(0, len(df_rtx))
-    df.index = range(0, len(df))
-
-    for x in [df, df_rtx]:
-        count = 0
-        if len(x) == 0 or len(x.seq) == 0:
-            continue
-        x.iloc[0, x.columns.get_loc('new_seq')] = x.seq[0]
-        for idx in range(1, len(x)):
-            if x.seq[idx] < x.seq[idx-1] - 50:
+    df.iloc[0, df.columns.get_loc('new_seq')] = df.seq[0]
+    for idx in range(1, len(df)):
+        if has_rtx:
+            # When RTX is enabled, retransmissions will indiciate a wrap of the
+            # sequence number. There is no need to rely on magic constants to attempt
+            # to figure out where we wrap. This only applies when not all RTX packets
+            # are lost, but at that point the reliability is down the shitter anyway.
+            if df.rtx[idx-1] != df.rtx[idx]:
                 count += 1
-                # for the counter reset scanrio, replace the seq value with order
-            x.iloc[idx, x.columns.get_loc('new_seq')] = MAX_SEQ*count + x.seq[idx]
+        else:
+            if df.seq[idx] < df.seq[idx-1] - 50:
+                count += 1
+        # for the counter reset scanrio, replace the seq value with order
+        df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
 
-    return (df, df_rtx)
+    return df
 
 # a 8-bit random number generator with uniform distribution
 def rnd(seed):
@@ -241,14 +257,10 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False):
-    # Get a complete list of sequences received.
-    # The idea is to fill in any gaps using the retransmitted packets (if any).
-    seqs = df.merge(df_rtx, how="outer", sort=True, on="seq")["seq"]
-    seqs = seqs.apply(lambda x: int(x))
-    packets = len(seqs)
-    first_seq = seqs[0]
-    last_seq = seqs[packets-1]+1
+def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False, USE_COMPRESSION=False):
+    packets = len(df)
+    first_seq = df.seq[0]
+    last_seq = df.seq[packets-1]+1
     total_transmitted_packets = last_seq - first_seq
 
     # dataframe records the bit error for each packet, use the seq number as index
@@ -272,32 +284,26 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
 
     misses = 0
     last_pseudoseq = 0  # record the previous pseudoseq
+    data_start = 0 if USE_COMPRESSION else 2
 
     # start counting the error bits
     for idx in range(packets):
-        error_idxs = []
-        if idx < len(df.seq):
-            # return the matched row index for the specific seq number in log file
-            error_data = error.index[error.seq == df.seq[idx]]
-            if error_data.size != 0:
-                error_idxs.append((df, error_data[0]))
-
-        if idx < len(df_rtx.seq):
-            error_data_rtx = error.index[error.seq == df_rtx.seq[idx]]
-            if error_data_rtx.size != 0:
-                error_idxs.append((df_rtx, error_data_rtx[0]))
-
-        # Packet was not found in neither normal packets, nor RTX
-        if len(error_idxs) == 0:
+        # return the matched row index for the specific seq number in log file
+        error_data = error.index[error.seq == df.seq[idx]]
+        if error_data.size == 0:
             misses += 1
             continue
+        error_idx = error_data[0]
 
-        for (df, error_idx) in error_idxs:
-            # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-            payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC)
+        # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
+        payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC, USE_COMPRESSION=USE_COMPRESSION)
 
-            # TODO: Keep track of sample_position relative to pseudoseq in order to correct
-            #       potential errors in the sample position byte.
+        pseudoseq = 0
+        if USE_COMPRESSION:
+            # TODO: Do some additional processing here to fix potential errors
+            seq = df.seq[idx]
+            pseudoseq = (seq // 4) * 2
+        else:
             pseudoseq = (int(((payload[0] << 8) - 0) + payload[1]) % TOTAL_NUM_16RND)
             # deal with bit error in pseudoseq.
             if pseudoseq not in file_content.index:
@@ -310,13 +316,9 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
                     # Assume seq not corrupted
                     pseudoseq = (df.seq[idx] // 4) * 2
 
-            # TODO: Attempt to fix the pseudoseq if corrupted
-            #expected_seq = file_content.loc[(df.seq[idx] // 4)*2, 'data']
-            #print(f"Expected sequence for {df.seq[idx]}: {format((expected_seq[0] << 8) + expected_seq[1], '0>16b')}")
-
-            # compute the bit errors
-            error.bit_error_tmp[error_idx].append(compute_bit_errors(df.seq[idx], payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
-            last_pseudoseq = pseudoseq
+        # compute the bit errors
+        error.bit_error_tmp[error_idx].append(compute_bit_errors(df.seq[idx], payload[data_start:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+        last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
     counter = 0
