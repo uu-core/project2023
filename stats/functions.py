@@ -246,9 +246,6 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     # The idea is to fill in any gaps using the retransmitted packets (if any).
     seqs = df.merge(df_rtx, how="outer", sort=True, on="seq")["seq"]
     seqs = seqs.apply(lambda x: int(x))
-    print(len(seqs))
-    print(len(df))
-    print(len(df_rtx))
     packets = len(seqs)
     first_seq = seqs[0]
     last_seq = seqs[packets-1]+1
@@ -261,7 +258,6 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     error.seq = range(first_seq, last_seq)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
-    print(len(error))
     # compute in total transmitted file size
     file_size = (len(error) - 1) * PACKET_LEN * 8
     if USE_FEC:
@@ -294,7 +290,6 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
         # Packet was not found in neither normal packets, nor RTX
         if len(error_idxs) == 0:
             misses += 1
-            print(f"Missed packet {idx}")
             continue
 
         for (df, error_idx) in error_idxs:
@@ -343,7 +338,7 @@ def compute_ber(df, df_rtx, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=F
     error['bit_error'] = bit_error
     # error = error.drop(columns='bit_error_tmp')
     # print("Error statistics dataframe is:")
-    print(error.to_string())
+    #print(error.to_string())
     #print(counter)
 
     # Calculate etx
