@@ -178,10 +178,12 @@ int main()
     static uint8_t message[PAYLOADSIZE_ENC + HEADER_LEN];                   // include 10 header bytes
     static uint32_t buffer[buffer_size(PAYLOADSIZE_ENC, HEADER_LEN)] = {0}; // initialize the buffer
     static uint8_t seq = 0;
+    static bool retransmit = false;
+    static uint8_t retransmission_counter = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
     uint8_t tx_enc_payload_buffer[PAYLOADSIZE_ENC];
-    uint8_t tx_enc_payload_buffer_buffer[RETRANSMISSION_INTERVALL][PAYLOADSIZE_ENC];
+    uint8_t retransmission_buffer[RETRANSMISSION_INTERVALL][PAYLOADSIZE_ENC + HEADER_LEN];
 
     /* Start carrier */
     setupCarrier();
@@ -227,9 +229,8 @@ int main()
             // backscatter new packet if receiver is listening
             if (rx_ready)
             {
-                if ((seq % (RETRANSMISSION_INTERVALL * 2)) < RETRANSMISSION_INTERVALL)
+                if (!retransmit)
                 {
-                    printf("if %d\n", seq);
                     /* generate new data */
                     generate_data(tx_payload_buffer, PAYLOADSIZE, true);
 
@@ -242,19 +243,33 @@ int main()
                         tx_enc_payload_buffer[4 * i + 3] = (uint8_t)(tmp);
                     }
 
-                    memcpy(&tx_enc_payload_buffer_buffer[seq % RETRANSMISSION_INTERVALL], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
+                    /* add header (10 byte) to packet */
+                    add_header(&message[0], seq, header_tmplate);
+                    /* add payload to packet */
+                    memcpy(&message[HEADER_LEN], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
+
+                    memcpy(&retransmission_buffer[seq % RETRANSMISSION_INTERVALL], message, PAYLOADSIZE_ENC + HEADER_LEN);
+                    seq++;
+                    if (seq % RETRANSMISSION_INTERVALL == 0)
+                    {
+                        retransmit = true;
+                    }
                 }
                 else
                 {
-                    printf("else %d\n", seq);
-                    memcpy(&tx_enc_payload_buffer, tx_enc_payload_buffer_buffer[seq % RETRANSMISSION_INTERVALL], PAYLOADSIZE_ENC);
+                    memcpy(&message, retransmission_buffer[retransmission_counter], PAYLOADSIZE_ENC + HEADER_LEN);
+                    if (retransmission_counter == RETRANSMISSION_INTERVALL - 1)
+
+                    {
+                        retransmit = false;
+                        retransmission_counter = 0;
+                    }
+
+                    else
+                    {
+                        retransmission_counter++;
+                    }
                 }
-
-                /* add header (10 byte) to packet */
-                add_header(&message[0], seq, header_tmplate);
-                /* add payload to packet */
-                memcpy(&message[HEADER_LEN], tx_enc_payload_buffer, PAYLOADSIZE_ENC);
-
                 /*
                 printf("Sending message:\n");
                 for (int i=0; i<PAYLOADSIZE_ENC+HEADER_LEN; i++) {
@@ -276,7 +291,6 @@ int main()
                 /*put the data to FIFO*/
                 backscatter_send(pio, sm, buffer, sizeof(buffer));
                 // printf("Backscattered packet\n");
-                seq++;
             }
             sleep_ms(TX_DURATION);
             break;

@@ -239,3 +239,10 @@ def radar_plot(metrics):
     lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories, fontsize=18)
     plt.legend(fontsize=18, loc='upper right')
     plt.show()
+
+
+def getSeqNum(line):
+    seq1 = line[19]
+    seq2 = line[20]
+    seq = int(seq1 + seq2, 16)
+    return seq
