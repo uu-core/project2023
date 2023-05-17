@@ -320,8 +320,8 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
                     rtx_corrections += 1
                 error_idxs.append((df_rtx, error_data[0]))
 
+        # No packet with the expected seq exists
         if len(error_idxs) == 0:
-            misses += 1
             continue
 
         for (df, error_idx) in error_idxs:
@@ -356,11 +356,13 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
             last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
+    misses = 0
     counter = 0
     bit_error = []
     # for the lost packet
     for l in error.bit_error_tmp:
         if l == []:
+            misses += 1
             if USE_FEC:
                 tmp = 4
                 counter += tmp # 4-bits of data transmitted per packet payload
