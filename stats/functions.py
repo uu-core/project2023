@@ -200,7 +200,7 @@ def replace_seq(df, MAX_SEQ):
             # sequence number. There is no need to rely on magic constants to attempt
             # to figure out where we wrap. This only applies when not all RTX packets
             # are lost, but at that point the reliability is down the shitter anyway.
-            if df.rtx[idx-1] != df.rtx[idx]:
+            if df.rtx[idx-1] == True and df.rtx[idx-1] != df.rtx[idx]:
                 count += 1
         else:
             if df.seq[idx] < df.seq[idx-1] - 50:
@@ -257,10 +257,25 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False, USE_COMPRESSION=False):
-    packets = len(df)
-    first_seq = df.seq[0]
-    last_seq = df.seq[packets-1]+1
+def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False, USE_COMPRESSION=False):
+    df_rtx = df_full[df_full.rtx == True]
+    df_def = df_full[df_full.rtx == False]
+    df_def.index = range(0, len(df_def))
+    df_rtx.index = range(0, len(df_rtx))
+    packets = max(len(df_rtx), len(df_def))
+
+    # There is no guarantee that we have any normal or RTX packets
+    first_seq = 0
+    if len(df_rtx) == 0:
+        first_seq = df_def.seq[0]
+        last_seq = df_def.seq[len(df_def)-1]+1
+    elif len(df_def) == 0:
+        first_seq = df_rtx.seq[0]
+        last_seq = df_rtx.seq[len(df_rtx)-1]+1
+    else:
+        first_seq = min(df_def.seq[0], df_rtx.seq[0])
+        last_seq = max(df_def.seq[len(df_def)-1], df_rtx.seq[len(df_rtx)-1])+1
+
     total_transmitted_packets = last_seq - first_seq
 
     # dataframe records the bit error for each packet, use the seq number as index
@@ -283,42 +298,62 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False, US
         cached_comparison_files[PACKET_LEN] = file_content
 
     misses = 0
+    rtx_corrections = 0
     last_pseudoseq = 0  # record the previous pseudoseq
     data_start = 0 if USE_COMPRESSION else 2
 
     # start counting the error bits
     for idx in range(packets):
-        # return the matched row index for the specific seq number in log file
-        error_data = error.index[error.seq == df.seq[idx]]
-        if error_data.size == 0:
+        error_idxs = []
+
+        if idx < len(df_def):
+            error_data = error.index[error.seq == df_def.seq[idx]]
+            if error_data.size != 0:
+                error_idxs.append((df_def, error_data[0]))
+
+        if idx < len(df_rtx):
+            error_data = error.index[error.seq == df_rtx.seq[idx]]
+            if error_data.size != 0:
+                # If we get a packet with a specific seq only as an RTX packet,
+                # we consider it a correction.
+                if len(error_idxs) == 0:
+                    rtx_corrections += 1
+                error_idxs.append((df_rtx, error_data[0]))
+
+        if len(error_idxs) == 0:
             misses += 1
             continue
-        error_idx = error_data[0]
 
-        # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC, USE_COMPRESSION=USE_COMPRESSION)
+        for (df, error_idx) in error_idxs:
+            # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
+            payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC, USE_COMPRESSION=USE_COMPRESSION)
 
-        pseudoseq = 0
-        if USE_COMPRESSION:
-            # TODO: Do some additional processing here to fix potential errors
-            seq = df.seq[idx]
-            pseudoseq = (seq // 4) * 2
-        else:
-            pseudoseq = (int(((payload[0] << 8) - 0) + payload[1]) % TOTAL_NUM_16RND)
-            # deal with bit error in pseudoseq.
-            if pseudoseq not in file_content.index:
-                # TODO: Can also check with the sample index when using FEC in case
-                # seq is corrupt as well.
-                if (not USE_FEC) or (USE_FEC and (df.seq[idx] % 4) == 0):
-                    pseudoseq = last_pseudoseq + PACKET_LEN
-                else:
-                    misses += 1
-                    # Assume seq not corrupted
-                    pseudoseq = (df.seq[idx] // 4) * 2
+            pseudoseq = 0
+            if USE_COMPRESSION:
+                seq = df.seq[idx]
+                # Can only check prev and next if we are not at the first or last index
+                if idx != 0 and idx < packets:
+                    # If the seq is smaller than the prev and the next, the likelyhood
+                    # of it being erroneous is very high, attempt to fix it.
+                    if seq <= df.seq[idx-1] and seq < df.seq[idx+1]:
+                        seq = df.seq[idx-1] + 1
+                pseudoseq = (seq // 4) * 2
+            else:
+                pseudoseq = (int(((payload[0] << 8) - 0) + payload[1]) % TOTAL_NUM_16RND)
+                # deal with bit error in pseudoseq.
+                if pseudoseq not in file_content.index:
+                    # TODO: Can also check with the sample index when using FEC in case
+                    # seq is corrupt as well.
+                    if (not USE_FEC) or (USE_FEC and (df.seq[idx] % 4) == 0):
+                        pseudoseq = last_pseudoseq + PACKET_LEN
+                    else:
+                        misses += 1
+                        # Assume seq not corrupted
+                        pseudoseq = (df.seq[idx] // 4) * 2
 
-        # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(df.seq[idx], payload[data_start:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
-        last_pseudoseq = pseudoseq
+            # compute the bit errors
+            error.bit_error_tmp[error_idx].append(compute_bit_errors(df.seq[idx], payload[data_start:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+            last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
     counter = 0
@@ -345,7 +380,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=False, US
 
     # Calculate etx
     etx = total_transmitted_packets/packets
-    return counter / file_size, error, etx, misses
+    return counter / file_size, error, etx, misses, rtx_corrections, total_transmitted_packets
 
 # plot radar chart
 def radar_plot(metrics, title=None):
