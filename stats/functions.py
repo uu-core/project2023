@@ -309,7 +309,7 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
         if idx < len(df_def):
             error_data = error.index[error.seq == df_def.seq[idx]]
             if error_data.size != 0:
-                error_idxs.append((df_def, error_data[0]))
+                error_idxs.append((df_def, error_data[0], False))
 
         if idx < len(df_rtx):
             error_data = error.index[error.seq == df_rtx.seq[idx]]
@@ -318,13 +318,13 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
                 # we consider it a correction.
                 if len(error_idxs) == 0:
                     rtx_corrections += 1
-                error_idxs.append((df_rtx, error_data[0]))
+                error_idxs.append((df_rtx, error_data[0], True))
 
         # No packet with the expected seq exists
         if len(error_idxs) == 0:
             continue
 
-        for (df, error_idx) in error_idxs:
+        for (df, error_idx, is_rtx) in error_idxs:
             # parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
             payload = parse_payload(df.payload[idx], USE_ECC=USE_ECC, USE_FEC=USE_FEC, USE_COMPRESSION=USE_COMPRESSION)
 
@@ -352,7 +352,7 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
                         pseudoseq = (df.seq[idx] // 4) * 2
 
             # compute the bit errors
-            error.bit_error_tmp[error_idx].append(compute_bit_errors(df.seq[idx], payload[data_start:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC))
+            error.bit_error_tmp[error_idx].append((is_rtx, compute_bit_errors(df.seq[idx], payload[data_start:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN, USE_FEC=USE_FEC)))
             last_pseudoseq = pseudoseq
 
     # initialize the total bit error counter for entire file
@@ -370,15 +370,22 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
                 tmp = PACKET_LEN * 8
                 counter += tmp  # when the seq number is lost, consider the entire packet payload as error
         else:
-            tmp = min(l)
-            counter += tmp  # when the seq number received several times, consider the minimum error
+            # Take out the bit errors. Each element in bit_error_tmp is a tuple containing
+            # two elements, whether or not it is a RTX packet, and the bit errors.
+            errors = [x[1] for x in l]
+
+            # Find which packet, RTX or non-RTX, yields the best result.
+            min_idx = np.argmin(np.array(errors))
+            if l[min_idx][0] == True:
+                rtx_corrections += 1
+
+            # when the seq number received several times, consider the minimum error
+            tmp = min(errors)
+            counter += tmp
         bit_error.append(tmp)
+
     # update the bit_error column
     error['bit_error'] = bit_error
-    # error = error.drop(columns='bit_error_tmp')
-    # print("Error statistics dataframe is:")
-    #print(error.to_string())
-    #print(counter)
 
     # Calculate etx
     etx = total_transmitted_packets/packets
