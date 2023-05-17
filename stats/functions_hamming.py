@@ -242,7 +242,7 @@ def radar_plot(metrics):
 
 
 def getSeqNum(line):
-    seq1 = line[19]
-    seq2 = line[20]
+    seq1 = line[18]
+    seq2 = line[19]
     seq = int(seq1 + seq2, 16)
     return seq
