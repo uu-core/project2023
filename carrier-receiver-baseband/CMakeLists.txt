@@ -37,8 +37,6 @@ pico_enable_stdio_uart(carrier_receiver_baseband 0)
 target_sources(carrier_receiver_baseband PRIVATE 
         main.c
         ../project_pico_libs/packet_generation.c
-        ../project_pico_libs/receiver_CC2500.c
-        ../project_pico_libs/carrier_CC2500.c
         ../project_pico_libs/backscatter.c
 )
 include_directories(../project_pico_libs)

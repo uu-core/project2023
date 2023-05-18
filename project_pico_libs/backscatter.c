@@ -169,8 +169,13 @@ void backscatter_program_init(PIO pio, uint sm, uint pin1, uint pin2, uint16_t d
 }
 
 void backscatter_send(PIO pio, uint sm, uint32_t *message, uint32_t len) {
+    
+    // Printing is for debug 
+    //printf("Data in message [i] (in function backscatter_send):\n");
     for(uint32_t i = 0; i < len; i++){
         pio_sm_put_blocking(pio, sm, message[i]); // set pin back to low
+        //printf("%d\n", message[i]);
     }
+    //printf("\n");
     sleep_ms(1); // wait for transmission to finish
 }
