@@ -47,7 +47,7 @@ int main()
   bool include_index = USE_COMPRESSION != 1;
   uint offset = pio_add_program(pio, &backscatter_program);
   backscatter_program_init(pio, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
-                                                               // backscatter_program_init(pio, sm, offset, PIN_TX1); // one antenna setup
+							       // backscatter_program_init(pio, sm, offset, PIN_TX1); // one antenna setup
 
   static uint8_t message[buffer_size(PAYLOADSIZE + 2, HEADER_LEN) * 4] = {0}; // include 10 header bytes
   static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0};         // initialize the buffer
@@ -83,23 +83,22 @@ int main()
     for (uint8_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++)
     {
       buffer[i] = ((uint32_t)message[4 * i + 3]) |
-                  (((uint32_t)message[4 * i + 2]) << 8) |
-                  (((uint32_t)message[4 * i + 1]) << 16) |
-                  (((uint32_t)message[4 * i]) << 24);
+		  (((uint32_t)message[4 * i + 2]) << 8) |
+		  (((uint32_t)message[4 * i + 1]) << 16) |
+		  (((uint32_t)message[4 * i]) << 24);
     }
     /* put the data to FIFO */
     backscatter_send(pio, sm, buffer, buffer_size(PAYLOADSIZE, HEADER_LEN));
-    seq++;
     sleep_ms(TX_DURATION);
 
 #if USE_RETRANSMISSION == 1
-    if ((seq % RETRANSMISSION_INTERVAL) == 0)
+    if (seq > 0 && (seq % RETRANSMISSION_INTERVAL) == 0)
     {
       rtx_enabled = !rtx_enabled;
 
       /* No need to save the sequence number, since it will automatically
-         wrap around to 0. We need it to reset to 0 in order for the
-         RTX to be done correctly. */
+	 wrap around to 0. We need it to reset to 0 in order for the
+	 RTX to be done correctly. */
       uint16_t tmp_file_pos = file_position;
       uint32_t tmp_seed = seed;
 
@@ -121,5 +120,9 @@ int main()
 #endif
     }
 #endif
+
+    /* Increase sequence number after checking if we are using RTX.
+       This is because we otherwise would miss the last packet with seq 255. */
+    seq++;
   }
 }
