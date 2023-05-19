@@ -244,5 +244,9 @@ def radar_plot(metrics):
 def getSeqNum(line):
     seq1 = line[18]
     seq2 = line[19]
-    seq = int(seq1 + seq2, 16)
+    str_sum = seq1 + seq2
+    if (str_sum == 'ke'):
+        return -1
+
+    seq = int(str_sum, 16)
     return seq
