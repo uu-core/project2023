@@ -26,14 +26,14 @@
 
 #define RADIO_SPI             spi0
 
-#define TX_DURATION             50 // send a packet every 50ms
-#define PACKET_DURATION         10
+#define TX_DURATION            200 // send a packet every 50ms
+#define PACKET_DURATION        100
 #define RECEIVER              1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1                  6
 #define PIN_TX2                 27
 #define CLOCK_DIV0              34 // larger
 #define CLOCK_DIV1              32 // smaller
-#define DESIRED_BAUD         65000
+#define DESIRED_BAUD         40000
 #define TWOANTENNAS          true
 
 #define CARRIER_FEQ     2450000000
@@ -60,16 +60,21 @@ int main() {
     uint8_t tx_payload_buffer[PAYLOADSIZE];
     
     // Mini packet: Header (10 bytes) + Payload (2 bytes)
-    static uint32_t bf_0[3] = {0};
-    static uint32_t bf_1[3] = {0};
-    static uint32_t bf_2[3] = {0};
-    static uint32_t bf_3[3] = {0};
-    static uint32_t bf_4[3] = {0};
-    static uint32_t bf_5[3] = {0};
-    static uint32_t bf_6[3] = {0};
+    // Original: [3], BCH: [4].
+    static uint32_t bf_0[4] = {0};
+    static uint32_t bf_1[4] = {0};
+    static uint32_t bf_2[4] = {0};
+    static uint32_t bf_3[4] = {0};
+    static uint32_t bf_4[4] = {0};
+    static uint32_t bf_5[4] = {0};
+    static uint32_t bf_6[4] = {0};
+
 
     /* loop */
     while (true) {
+
+        uint32_t encode = 0, decode;
+        uint32_t res = 0;
 
         /* generate new data */
         generate_data(tx_payload_buffer, PAYLOADSIZE, true);
@@ -83,9 +88,9 @@ int main() {
 
         // Printing for debug
         // buffer_size(PAYLOADSIZE, HEADER_LEN): 6 (*4 = 24)
-        printf("Buffer_size (PAYLOADSIZE, HEADER_LEN): %d\n", buffer_size(PAYLOADSIZE, HEADER_LEN));
+        // printf("Buffer_size (PAYLOADSIZE, HEADER_LEN): %d\n", buffer_size(PAYLOADSIZE, HEADER_LEN));
         
-        // Print packet content in DECIMAL
+        // Print packet content in DECIMAL (for debug)
         printf("Packet content in Dec: ");
         for (uint8_t i=0; i < sizeof(message); i++) {
             printf("%d ", message[i]);
@@ -126,6 +131,16 @@ int main() {
             printf("BF5 - %d: %x\n", i, bf_5[i]);
             printf("BF6 - %d: %x\n", i, bf_6[i]);
         }
+
+        /* Set BCH for payload */
+        setPacket(bf_0);
+        setPacket(bf_1);
+        setPacket(bf_2);
+        setPacket(bf_3);
+        setPacket(bf_4);
+        setPacket(bf_5);
+        setPacket(bf_6);
+
         
         printf("\n");
                     
@@ -133,21 +148,23 @@ int main() {
         // Size of buffer: 24 (bytes)
         // printf("sizeof(buffer): %d\n", sizeof(buffer));
         // printf("\n");
+        // Old backscattering
         // backscatter_send(pio,sm, buffer, sizeof(buffer));
 
-        backscatter_send(pio,sm, bf_0, 3);
+        // Old (pio, sm, bf, 3), New (pio, sm, bf, 4);
+        backscatter_send(pio,sm, bf_0, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_1, 3);
+        backscatter_send(pio,sm, bf_1, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_2, 3);
+        backscatter_send(pio,sm, bf_2, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_3, 3);
+        backscatter_send(pio,sm, bf_3, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_4, 3);
+        backscatter_send(pio,sm, bf_4, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_5, 3);
+        backscatter_send(pio,sm, bf_5, 4);
         sleep_ms(PACKET_DURATION);
-        backscatter_send(pio,sm, bf_6, 3);
+        backscatter_send(pio,sm, bf_6, 4);
 
         printf("------------------------------------------------------------------------------------------");
         printf("\n");
