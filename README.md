@@ -19,4 +19,4 @@ After BCH, payload size is 6 bytes.
 
 ## How to analyze our received packet?
 
-Please using "analysis.ipnb" to check the result of our received data.
+Please using "stats/analysis.ipynb" to check the result of our received data.
