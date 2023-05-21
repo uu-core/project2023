@@ -17,6 +17,6 @@ After BCH, payload size is 6 bytes.
 3. After receive, translate packet data (26 bits) into raw data (16 bits).
 4. Check remainder of BCH algorithm, if remainder is larger than 0, do correction.
 
-## How to analysis our received packet?
+## How to analyze our received packet?
 
 Please using "analysis.ipnb" to check the result of our received data.
