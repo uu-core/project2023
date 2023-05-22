@@ -202,8 +202,8 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {(df.psudoseq[packets-1])/10+1 - df.psudoseq[0]/10}.")
-    error.seq = range(int(df.psudoseq[0]/10), int((df.psudoseq[packets-1])/10)+1)
+    print(f"The total number of packets transmitted by the tag is {int((df.psudoseq[packets-1])/10+1)}.")
+    error.seq = range(0, int(last_pseudoseq/10)+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
@@ -234,6 +234,8 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
             #print("pseudoseq bigger than max or to off: " + str(pseudoseq))
             if idx == 0:
                 pseudoseq = 0
+            elif pseudoseq == last_pseudoseq:
+                continue
             else:
                 pseudoseq = prev_pseudoseq+10
 
