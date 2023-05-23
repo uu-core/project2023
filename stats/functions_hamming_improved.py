@@ -159,6 +159,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
+    num_bytes_data = 10
     packets = len(df)
     df['decoded_payload'] = None
     df['psudoseq'] = None
@@ -202,8 +203,8 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {int((df.psudoseq[packets-1])/10+1)}.")
-    error.seq = range(0, int(last_pseudoseq/10)+1)
+    print(f"The total number of packets transmitted by the tag is {int((df.psudoseq[packets-1])/num_bytes_data+1)}.")
+    error.seq = range(0, int(last_pseudoseq/num_bytes_data)+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
@@ -216,19 +217,19 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     for idx in range(packets):
 
         pseudoseq = df.iloc[idx, df.columns.get_loc('psudoseq')]
-        pseudoseq = int(pseudoseq/10) * 10
+        pseudoseq = int(pseudoseq/num_bytes_data) * num_bytes_data
         payload_string = df.iloc[idx, df.columns.get_loc('decoded_payload')] # may be unessecary
 
         payload = parse_payload(df.decoded_payload[idx])
 
         # deal with bit error in pseudoseq
-        if pseudoseq not in file_content.index: pseudoseq = prev_pseudoseq + 10
+        if pseudoseq not in file_content.index: pseudoseq = prev_pseudoseq + num_bytes_data
         # compute the bit errors
         
-        if pseudoseq % 10 != 0:
+        if pseudoseq % num_bytes_data != 0:
             print("pseudoseq not right: " + str(pseudoseq))
             print("Happned at idx: " + str(idx))
-            print("Should be: " + str(int(pseudoseq/10) * 10))
+            print("Should be: " + str(int(pseudoseq/num_bytes_data) * num_bytes_data))
 
         if pseudoseq > last_pseudoseq or abs(pseudoseq - prev_pseudoseq) > 500:
             #print("pseudoseq bigger than max or to off: " + str(pseudoseq))
@@ -236,15 +237,17 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
                 pseudoseq = 0
             elif pseudoseq == last_pseudoseq:
                 continue
+            elif prev_pseudoseq+num_bytes_data > last_pseudoseq:
+                pseudoseq = prev_pseudoseq
             else:
-                pseudoseq = prev_pseudoseq+10
+                pseudoseq = prev_pseudoseq+num_bytes_data
 
             # print("correction: " + str(pseudoseq))
             # print("Happned at idx: " + str(idx))
             # print("Max pseudoseq is: " + str(last_pseudoseq))
 
 
-        error_idx = int(pseudoseq/10)
+        error_idx = int(pseudoseq/num_bytes_data)
 
         # print(payload)
         # print((pseudoseq))

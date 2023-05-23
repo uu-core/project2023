@@ -179,6 +179,8 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
                 pseudoseq = 0
             elif pseudoseq == last_pseudoseq:
                 continue
+            elif prev_pseudoseq+num_bytes_data > last_pseudoseq:
+                pseudoseq = prev_pseudoseq
             else:
                 pseudoseq = prev_pseudoseq+num_bytes_data
 
