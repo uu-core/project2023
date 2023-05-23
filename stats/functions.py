@@ -14,6 +14,13 @@ from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 import math
 
+# define gx
+gx = 0x05B9 << (26-11)
+
+# Init Check Matrix
+CheckMatrix = np.zeros((26, 2), dtype=np.uint32)
+
+
 # read the log file
 def readfile(filename):
     types = {
@@ -48,6 +55,56 @@ def readfile(filename):
     df = df.drop(columns=['frame'])
     df.reset_index(inplace=True)
     return df
+
+# New: for the decode and combine the transmission pcaket
+def dataCombination(old_df):
+    df = old_df
+    df['payload']
+
+    return df
+
+def CorrectError(code):
+    decode = 0
+    res = 0
+    temp = code
+    decode = code
+    
+    #print("Decode: %2x" % code)
+    
+    # 2.1 Calculated remainder
+    for i in range(16):
+        if (code & 0x2000000) != 0:
+            code ^= gx
+        code = code << 1
+    
+    res = code >> (26-10)
+    
+    print("Remainder: %2x" % res)
+    
+    if res == 0:
+        return format(decode, 'x')
+    
+    # 2.2 Correct one bit error
+    for i in range(26):
+        if res == CheckMatrix[i][0]:
+            decode = decode ^ CheckMatrix[i][1]
+            return format(decode, 'x')
+    
+    # 2.3 Correct two bit error
+    for i in range(26):
+        for j in range(i + 1, 26):
+            if res == (CheckMatrix[i][0] ^ CheckMatrix[j][0]):
+                decode = decode ^ CheckMatrix[i][1] ^ CheckMatrix[j][1]
+                return format(decode, 'x')
+    
+    decode = temp
+    return format(decode, 'x')
+
+# Restore raw data from packet 
+def RestoreRawData(decode):
+    raw_data = decode >> 10
+    raw_data &= 0xFFFF
+    return format(raw_data, 'x')
 
 # parse the hex payload, return a list with int numbers for each byte
 def parse_payload(payload_string):
@@ -110,16 +167,10 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
     index = [NUM_16RND*i*2 for i in range(length)]
     df = pd.DataFrame(index=index, columns=['data'])
-    initial_seed = 0xabcd # initial seed
-    pseudo_seq = 0 # (16-bit)
-    seed  = initial_seed
+    seed  = 0xabcd # initial seed
     for i in index:
         payload_data = []
         for j in range(NUM_16RND):
-            if pseudo_seq > 0xffff:
-                pseudo_seq = 0
-                seed = initial_seed
-            pseudo_seq = pseudo_seq + 2
             number, seed = data(seed)
             payload_data.append((int(number) >> 8) - 0)
             payload_data.append(int(number) & LOW_BYTE)
@@ -129,26 +180,24 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     packets = len(df)
+    print(packets)
 
-    # dataframe records the bit error for each packet, use the seq number as index
-    error = pd.DataFrame(index=range(df.seq[0], df.seq[packets-1]+1), columns=['bit_error_tmp'])
+    # dataframe records the bit error for each packet
+    error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
     print(f"The total number of packets transmitted by the tag is {df.seq[packets-1]+1}.")
+    error.seq = range(df.seq[0], df.seq[packets-1]+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    print(file_content)
     last_pseudoseq = 0 # record the previous pseudoseq
     # start count the error bits
     for idx in range(packets):
         # return the matched row index for the specific seq number in log file
-        error_idx = df.seq[idx]
-        # No packet with this sequence was received, the entire packet payload being considered as error (see below)
-        if error_idx not in error.index:
-            continue
+        error_idx = error.index[error.seq == df.seq[idx]][0]
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
         payload = parse_payload(df.payload[idx])
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
