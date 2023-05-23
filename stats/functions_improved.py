@@ -14,43 +14,6 @@ from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 import math
 
-def error_position(bits):
-    return reduce(op.xor, [i for i, bit in enumerate(bits) if bit])
-
-def fix_error(bits):
-    error = error_position(bits)
-    bits[error] = not bits[error]
-    return bits
-
-def generate_array(hamming_code_number):
-    array = []
-
-    for b in range(32):
-        if hamming_code_number&(2**b) != 0:
-            array.insert(0, 1)
-        else:
-            array.insert(0, 0)
-
-    return array
-
-def get_data(bits):
-    data8_1 = 0
-    data8_2 = 0
-    data8_3 = 0
-    indx_data = [3,5,6,7,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
-    #print(bits)
-    for idx, b in enumerate(indx_data):
-        if bits[31-b] == 1:
-            #print(idx, b)
-            if idx < 8:
-                data8_1 = data8_1 + 2**idx
-            elif idx < 16:
-                data8_2 = data8_2 + 2**(idx-8)
-            elif idx < 24:
-                data8_3 = data8_3 + 2**(idx-16)
-
-    return data8_3, data8_2, data8_1
-
 # read the log file
 def readfile(filename):
     types = {
@@ -96,7 +59,7 @@ def popcount(n):
     return bin(n).count("1")
 
 # compare the received frame and transmitted frame and compute the number of bit errors
-def compute_bit_errors(payload, sequence, PACKET_LEN=28):
+def compute_bit_errors(payload, sequence, PACKET_LEN=32):
     return sum(
         map(
             popcount,
@@ -159,10 +122,12 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
+    num_bytes_data = 10
     packets = len(df)
-    df['decoded_payload'] = None
     df['psudoseq'] = None
     df['used_psudoseq'] = None
+
+
     
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
@@ -170,31 +135,11 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     # start count the error bits
     for idx in range(packets):
         
-        #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-       
-        #payload = get_data(parse_payload(df.payload[idx]))
-        undecoded_payload = parse_payload(df.payload[idx])
-        payload = []
-        for i in range (0,len(undecoded_payload),4):
-            load = undecoded_payload[i] << 24
-            load |= undecoded_payload[i+1] << 16
-            load |= undecoded_payload[i+2] << 8
-            load |= undecoded_payload[i+3]
-            data8_1, data8_2, data8_3 = get_data(generate_array(load))
-            payload.append(data8_1)
-            payload.append(data8_2)
-            payload.append(data8_3)
+        payload = parse_payload(df.payload[idx])
+
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
-        
-        payload_string = ""
 
-        for byte in payload:
-            payload_string += format(byte, '02x')
-            payload_string += " "
-
-        
         df.iloc[idx, df.columns.get_loc('psudoseq')] = pseudoseq
-        df.iloc[idx, df.columns.get_loc('decoded_payload')] = payload_string[0:len(payload_string)-1]
 
         if idx == packets - 1:
             last_pseudoseq = pseudoseq
@@ -202,8 +147,8 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     # dataframe records the bit error for each packet
     error = pd.DataFrame(columns=['seq', 'bit_error_tmp'])
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {int((df.psudoseq[packets-1])/10+1)}.")
-    error.seq = range(0, int(last_pseudoseq/10)+1)
+    print(f"The total number of packets transmitted by the tag is {int((df.psudoseq[packets-1])/num_bytes_data+1)}.")
+    error.seq = range(0, int(last_pseudoseq/num_bytes_data)+1)
     # bit_errors list initialization
     error.bit_error_tmp = [list() for x in range(len(error))]
     # compute in total transmitted file size
@@ -214,21 +159,19 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     prev_pseudoseq = 0
 
     for idx in range(packets):
-
         pseudoseq = df.iloc[idx, df.columns.get_loc('psudoseq')]
-        pseudoseq = int(pseudoseq/10) * 10
-        payload_string = df.iloc[idx, df.columns.get_loc('decoded_payload')] # may be unessecary
+        pseudoseq = int(pseudoseq/num_bytes_data) * num_bytes_data
 
-        payload = parse_payload(df.decoded_payload[idx])
+        #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
+        payload = parse_payload(df.payload[idx])
 
         # deal with bit error in pseudoseq
-        if pseudoseq not in file_content.index: pseudoseq = prev_pseudoseq + 10
-        # compute the bit errors
-        
-        if pseudoseq % 10 != 0:
+        if pseudoseq not in file_content.index: pseudoseq = prev_pseudoseq + num_bytes_data
+
+        if pseudoseq % num_bytes_data != 0:
             print("pseudoseq not right: " + str(pseudoseq))
             print("Happned at idx: " + str(idx))
-            print("Should be: " + str(int(pseudoseq/10) * 10))
+            print("Should be: " + str(int(pseudoseq/num_bytes_data) * num_bytes_data))
 
         if pseudoseq > last_pseudoseq or abs(pseudoseq - prev_pseudoseq) > 500:
             #print("pseudoseq bigger than max or to off: " + str(pseudoseq))
@@ -237,26 +180,18 @@ def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
             elif pseudoseq == last_pseudoseq:
                 continue
             else:
-                pseudoseq = prev_pseudoseq+10
+                pseudoseq = prev_pseudoseq+num_bytes_data
 
-            # print("correction: " + str(pseudoseq))
-            # print("Happned at idx: " + str(idx))
-            # print("Max pseudoseq is: " + str(last_pseudoseq))
+        # return the matched row index for the specific seq number in log file
+        error_idx = int(pseudoseq/num_bytes_data)
 
-
-        error_idx = int(pseudoseq/10)
-
-        # print(payload)
-        # print((pseudoseq))
-        # print((df.iloc[idx, df.columns.get_loc('seq')]))
-        # print(file_content.loc[pseudoseq, 'data'])
-        # print(error_idx)
+        # compute the bit errors
         error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
 
         df.iloc[idx, df.columns.get_loc('used_psudoseq')] = pseudoseq
 
         prev_pseudoseq = pseudoseq
-
+        
 
     # initialize the total bit error counter for entire file
     counter = 0

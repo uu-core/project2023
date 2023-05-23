@@ -121,7 +121,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
+def compute_ber(df, PACKET_LEN=28, MAX_SEQ=256):
     packets = len(df)
 
     # dataframe records the bit error for each packet
