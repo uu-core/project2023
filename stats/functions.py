@@ -386,6 +386,7 @@ def compute_ber(df_full, PACKET_LEN=32, MAX_SEQ=256, USE_ECC=False, USE_FEC=Fals
 
     # update the bit_error column
     error['bit_error'] = bit_error
+    # print(error.to_string())
 
     # Calculate etx
     etx = total_transmitted_packets/packets

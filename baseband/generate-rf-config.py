@@ -22,16 +22,16 @@ parser.add_argument("divider1", type=int,
                     help=f"clock divider @ {CLKFREQ} MHz for frequency 1 shift; must be an even number e.g. 18 for {(CLKFREQ/18):.3f} Mhz")
 parser.add_argument("baudrate", type=int,
                     help="baud-rate [baud] e.g. 100000 for 100kBaud")
-parser.add_argument("--ecc", action='store_true', default=False,
-                    help="If you are using Error Code Correction")
 parser.add_argument("--fec", action='store_true', default=False,
                     help="If you are using Walsh code Error Correction")
+parser.add_argument("--rtx", action='store_true', default=False,
+                    help="If you are using retransmission")
 
 args = parser.parse_args()
 d0 = args.divider0
 d1 = args.divider1
 b = args.baudrate
-ecc = args.ecc
+rtx = args.rtx
 fec = args.fec
 
 if (CLKFREQ*(10**6)) % args.baudrate != 0:
@@ -44,10 +44,13 @@ assert d1 % 2 == 0 and d1 >= 2, "d1 must be an even integer larger than 1"
 assert b > 0, "baud-rate can not be negative"
 
 suffix = ""
-if ecc:
-    suffix = "_ecc"
+if rtx:
+    suffix = "_rtx"
 elif fec:
     suffix = "_fec"
+elif fec and rtx:
+    suffix = "_fec_rtx"
+
 out_path = os.path.abspath(f"../stats/configs/{d0}_{d1}_{int(b / 1000)}k{suffix}.xml")
 
 fcenter = (CLKFREQ*1000/d0 + CLKFREQ*1000/d1)/2
@@ -55,10 +58,10 @@ fdeviation = abs(CLKFREQ*1000/d1 - fcenter)
 frequency = CARRIER_FREQ + (fcenter / 1000)
 bandwidth = (b/1000 + 2*fdeviation)
 bandwidth_index = 0
-if ecc:
-    packet_len = 40
-elif fec:
+if rtx:
     packet_len = 8
+elif fec:
+    packet_len = 7
 else:
     packet_len = 16
 
@@ -136,7 +139,7 @@ replacements = {
     "CENTER_FREQUENCY": to_rf_hex(math.floor(frequency)),
     "DEVIATION": to_rf_hex(int(fdeviation * RF_STUDIO_DEVIATION_RATIO)),
     "PACKET_LENGTH": to_rf_hex(packet_len),
-    "PACKET_COUNT": 500,
+    "PACKET_COUNT": 2560,
 }
 
 with open("./template_rf_config.xml", "r") as infile, open(out_path, "w") as outfile:
