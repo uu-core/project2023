@@ -14,6 +14,7 @@ from pylab import rcParams
 rcParams["figure.figsize"] = 16, 4
 import math
 
+
 # read the log file
 def readfile(filename):
     types = {
@@ -49,6 +50,160 @@ def readfile(filename):
     df.reset_index(inplace=True)
     return df
 
+
+#binary to integer
+def bin_int(new_array):
+    int_list = [int("".join(map(str, new_array[i:i+8])), 2) for i in range(0, len(new_array), 8)]
+    #print("decoded payload:", int_list)
+    return int_list
+#putting binary bits into array
+def bin_to_array(binary_val):
+    bit_array = [int(bit) for bit in binary_val]
+    return bit_array
+#parity bits calculation
+def parity_calc(bits):
+    r = 0
+    flag = False
+    while not flag:
+        if 2 ** r >= bits + r + 1:
+            flag = True
+            return r
+        else:
+            r += 1
+
+def parity_check(arry):
+    arr1=arry[:32]
+    #print("array1:",arr1)
+    arr2=arry[32:]
+    #print("array2:",arr2)
+    bits = 24  #we encoded 3 bytes each
+    x=0
+    count=0
+    err_count=0
+    p_bits = parity_calc(bits)
+    #print("p_bits:",p_bits)
+    #print("before correction:",arry)
+    
+    del_pos = []
+    pad_pos = [29,30,31,61,62,63]
+    #array location of bits to be deleted that includes parity bits and padded bits
+    for i in range(p_bits):
+        del_pos.append(int(math.pow(2, i) - 1))
+        del_pos.append(31+int(math.pow(2, i) - 1))
+    del_pos = np.append(del_pos,pad_pos)
+    del_pos = np.sort(del_pos)[::-1]
+    
+    #print("del_pos",del_pos)
+    #index of the parity position and their corresponding data bits
+    while(count<2): 
+        array = []
+        parity_array = []
+        if count ==0:
+            array = arr1
+        else:
+            array = arr2
+        x=0
+        while x<p_bits: 
+
+            p_pos = int(math.pow(2, x) - 1)
+            ctr = int(math.pow(2, x))
+            #print("p_pos:", p_pos)
+            index_arr = []  #stores the location of parity bit and its corresponding data bits
+            data_array = []
+            j = 0
+            for i in range(p_pos, bits+p_bits):
+                if ctr != 0:
+                    index_arr.append(i)
+                    j += 1
+                    ctr -= 1
+                    if ctr != 0:
+                        i += 1
+                else:
+                    ctr = int(math.pow(2, x))
+                    i = ctr + i + 1
+            j_index = j
+            #print("j_index:",j_index) 
+            #print("index_array length:",len(index_arr))
+            #print("index_arr:",index_arr)
+            for i in range(j_index):
+                #print("i:", i)
+                #print("len(index_arr):", len(index_arr))
+                #print("j_index:", j_index)
+                #print("array:", array)
+                #print("index_arr:", index_arr)
+                data_array.append(array[index_arr[i]])
+            parity_count = data_array.count(1)
+            if parity_count%2 != 0:
+                #print("even parity, no error")
+                err_count+=1
+            #else: 
+                #err_count+=1
+            parity_array.append(array[p_pos])
+            x+=1
+        
+        #print("parity_array",parity_array)
+        parity_array = parity_array[::-1]
+        parity_dec = int(''.join(map(str, parity_array)), 2)
+        
+        
+        #error correction
+        if err_count !=0:
+            #print("error count:",err_count)
+            #print("Bit error at:",parity_dec)
+            if array[parity_dec-1]==0:
+                array[parity_dec-1]=1
+                
+            else:
+                array[parity_dec-1]=0
+            if count==0:
+                arr1 = array
+            else:
+                arr2 = array
+        count+=1
+    new_array = arr1 + arr2
+    #print("After correction:",new_array)
+    
+    #removing parity and padded bits
+    for i in del_pos:
+        del new_array[i]
+    #print("After deletion:",new_array)
+    new_list = bin_int(new_array)
+    return new_list
+
+
+
+    
+    
+    
+#payload decoding
+def parity_decode(payload_String):
+   
+    #for x in range(len(df)):
+    #print("Payload string",payload_String)
+    enc_list = parse_payload(payload_String)
+        #print(enc_list)
+    #if x == 0 :
+    enc_payload = np.array(enc_list).reshape(1,len(enc_list))
+    #else:
+        #enc_payload = np.append(enc_payload,[enc_list],axis=0)
+    #print("enc payload:", enc_payload)
+    bin_array = np.vectorize(np.binary_repr)(enc_payload,8)
+    #print("binary array: ",bin_array)
+    combined_bin_array = np.apply_along_axis(lambda x: ''.join(x), axis=1, arr=bin_array)
+    #for i in range(len(combined_bin_array)):
+     #   arry = bin_to_array(combined_bin_array[i])
+      #  parity_check(arry)
+    binary_array = bin_to_array(combined_bin_array[0])
+    #binary_array = np.vectorize(np.binary_repr)(combined_bin_array,1)
+    #print("combined bin array ",combined_bin_array)
+    #print("binary array:",binary_array)
+    #print("length of binary array:",len(binary_array))
+    result = parity_check(binary_array)
+    return result
+    #print('length of array')
+    #print(len(arry))
+          
+           
 # parse the hex payload, return a list with int numbers for each byte
 def parse_payload(payload_string):
     tmp = map(lambda x: int(x, base=16), payload_string.split())
@@ -110,10 +265,16 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
     length = int(np.ceil(TOTAL_NUM_16RND/NUM_16RND))
     index = [NUM_16RND*i*2 for i in range(length)]
     df = pd.DataFrame(index=index, columns=['data'])
-    seed  = 0xabcd # initial seed
+    initial_seed = 0xabcd # initial seed
+    pseudo_seq = 0 # (16-bit)
+    seed  = initial_seed
     for i in index:
         payload_data = []
         for j in range(NUM_16RND):
+            if pseudo_seq > 0xffff:
+                pseudo_seq = 0
+                seed = initial_seed
+            pseudo_seq = pseudo_seq + 2
             number, seed = data(seed)
             payload_data.append((int(number) >> 8) - 0)
             payload_data.append(int(number) & LOW_BYTE)
@@ -144,7 +305,8 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
         if error_idx not in error.index:
             continue
         #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx])
+        #payload = parse_payload(df.payload[idx])
+        payload = parity_decode(df.payload[idx])
         pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
         # deal with bit error in pseudoseq
         if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
@@ -192,3 +354,9 @@ def radar_plot(metrics):
     lines, labels = plt.thetagrids(np.degrees(label_loc), labels=categories, fontsize=18)
     plt.legend(fontsize=18, loc='upper right')
     plt.show()
+
+
+        
+    
+    
+    

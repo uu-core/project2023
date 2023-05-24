@@ -40,11 +40,29 @@
 #define CLOCK_DIV0              40 // larger
 #define CLOCK_DIV1              36 // smaller
 #define DESIRED_BAUD            89990
-#define TWOANTENNAS          false
+#define TWOANTENNAS             true
 
 #define CARRIER_FEQ     2470000000
     /*Modified payloadsize*/
 #define NEW_PAYLOAD 6
+#define EXTRA_BYTE 2
+
+int parity_calc(int bits)
+{
+    int r = 0;
+    bool flag = false;
+    while(!flag)
+    {
+        if((int)pow(2,r)>=bits+r+1)
+        {
+            flag=true;
+            return r;
+        }
+       else
+        r++;
+    }
+}
+
 
 int main() {
     /* setup SPI */
@@ -79,13 +97,18 @@ int main() {
     backscatter_program_init(pio, sm, PIN_TX1, PIN_TX2, CLOCK_DIV0, CLOCK_DIV1, DESIRED_BAUD, &backscatter_conf, instructionBuffer, TWOANTENNAS);
 
     //static uint8_t message[PAYLOADSIZE + HEADER_LEN];  // include 10 header bytes
-    static uint8_t message[NEW_PAYLOAD + HEADER_LEN];  // include 10 header bytes                                    // MODIFIED PAYLOADSIZE
+    static uint8_t message[PAYLOADENC + HEADER_LEN];  // include 10 header bytes                                    // MODIFIED PAYLOADSIZE
+
+    static uint8_t msg[PAYLOADSIZE + HEADER_LEN];
+
     //static uint32_t buffer[buffer_size(PAYLOADSIZE, HEADER_LEN)] = {0}; // initialize the buffer
-    static uint32_t buffer[buffer_size(NEW_PAYLOAD, HEADER_LEN)] = {0}; // initialize the buffer                   // MODIFIED PAYLOADSIZE
+    static uint32_t buffer[buffer_size(PAYLOADENC, HEADER_LEN)] = {0}; // initialize the buffer                   // MODIFIED PAYLOADSIZE
     //static uint32_t buffer[10] = {0};
     static uint8_t seq = 0;
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
-    uint8_t tx_payload_buffer[NEW_PAYLOAD];                     // MODIFIED PAYLOADSIZE
+    uint8_t tx_payload_buffer[PAYLOADSIZE];                     // MODIFIED PAYLOADSIZE
+    //uint8_t dummy_payload_buffer[10];
+    uint8_t A[8]={0}; //array for the encoded decimal value
     //uint8_t tx_payload_buffer[PAYLOADSIZE];
     /* Start carrier */
     setupCarrier();
@@ -129,21 +152,170 @@ int main() {
                 // backscatter new packet if receiver is listening
                 if (rx_ready){
                     /* generate new data */
-                    //generate_data(tx_payload_buffer, PAYLOADSIZE, true);
-                    generate_data(tx_payload_buffer, NEW_PAYLOAD, true);   //MODIFIED PAYLOADSIZE
+                    generate_data(tx_payload_buffer, PAYLOADSIZE, true);   //MODIFIED PAYLOADSIZE
+
 
                     /* add header (10 byte) to packet */
                     add_header(&message[0], seq, header_tmplate);
                     /* add payload to packet */
                     //memcpy(&message[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
-                    memcpy(&message[HEADER_LEN], tx_payload_buffer, NEW_PAYLOAD);  //MODIFIED PAYLOADSIZE
 
+
+                    /*Adding Forward Error Correction encoding*/
+
+
+                    memcpy(&msg[HEADER_LEN], tx_payload_buffer, PAYLOADSIZE);
+                    printf("\n transaction buffer:\n");
+                    for(int i = 0; i<PAYLOADSIZE; i++)
+                    {
+                        printf("tx_payload_buffer[%d]: %X\n",i,tx_payload_buffer[i]);
+                    }
+                    //uint16_t n = (uint16_t)msg[11]|((uint16_t)msg[10])<<8;
+                    //uint32_t n = (uint32_t)msg[13]|((uint16_t)msg[12])<<8|((uint32_t)msg[11])<<16|((uint32_t)msg[10])<<24;
+                    uint32_t n[2];
+                    n[0] = (uint32_t)msg[15]|((uint16_t)msg[14])<<8|((uint32_t)msg[13])<<16|((uint32_t)0x00)<<24;       //splitting 6 byte into 3 bytes each, n1 & n2
+                    n[1] = (uint32_t)msg[12]|((uint16_t)msg[11])<<8|((uint32_t)msg[10])<<16|((uint32_t)0x00)<<24;
+
+
+                    int bin[32] = {0}; //to add the binary bits of the actual data
+                    int buf[32] = {0};   // since one number n1 will be of size 32bit // to add the binary bits of n
+                    int main_buf[64]={0};  //to add the binary bits of n1 and n2 after parity addition
+                    int ctr,count,p_pos,p_bits,x,j_index,index;
+                    int index_arr[32]={0}; //to store the position of data bits used to calculate the parity bit
+                    uint32_t temp;
+                    printf("start.....\n");
+                    count =0;
+                    while(count<2)  /*setting count to two because we are encoding 3 bytes each twice for 6 byte data*/
+                    {
+                        index = 0;
+                        ctr =0;
+                        p_pos= 0;
+                        p_bits= 0;
+                        j_index= 0;
+                        x= 0;
+                        temp =n[count];
+
+
+                        //printf("temp:%X\n",temp);
+
+
+                        while(temp>0){
+                        bin[index] = temp%2;
+                        temp=temp/2;
+                        index++;
+                        }
+
+                         printf("Original binary data:\n");
+                        for(int i =index-1; i>=0 ; i--)
+                        {
+                            printf("%d ",bin[i]);
+                        }
+                    
+                    p_bits = parity_calc(index);  // calculates the number of parity bits
+                    
+                    
+                    for(int i = (index+p_bits-1),j = index-1;i>=0;i--)
+                    {
+                        if(i!=0 && i!=1 && i!=3 && i!=7 && i!=15)  /*adding the data bits to positions other than the parity positions*/
+                        {
+                            buf[i] = bin[j];
+                            j--;
+                        }
+                    }
+                    printf("\nparity added buffer:\n");
+                    for(int i=index+p_bits-1;i>=0;i--)
+                    {
+                        printf("%d ",buf[i]);
+                    }
+
+
+                    //to get the index of the parity bit and its corresponding data bits
+                        while(x<p_bits)
+                        {
+                            p_pos = (int)pow(2,x)-1;
+                            ctr = (int)pow(2,x);
+                            printf("p_pos: %d\n",p_pos);
+                            for(int i=p_pos,j=0;i<(index+p_bits);)
+                            {
+                                if(ctr!=0)
+                                {
+                                    index_arr[j] = i;     /*storing the location of parity bits and their corresponding data bits*/
+                                    j++;
+                                    ctr--;
+                                    if(ctr!=0)
+                                    i++;                
+                                }
+                                else{
+                                    ctr = (int)pow(2,x);
+                                    i = ctr + i + 1;
+                                }
+                                //printf("%d:%d , ",index_arr[j],j);
+                                j_index = j;                                
+                            }
+                            //to add parity values to its position
+                            for(int i =1 ; i<j_index;i++)
+                            {
+                                buf[p_pos] = buf[p_pos] ^ buf[index_arr[i]];
+                            }                              
+                            x++;
+                        }
+                        for(int i =0;i<32;i++)
+                        {
+                            if(count == 0)
+                            main_buf[i] = buf[i];
+                            else
+                            main_buf[i+32] = buf[i];
+                        }
+                        
+                        for (int i=63;i>=0;i--)
+                        {
+                            printf("%d ", main_buf[i]);
+                        }
+                         printf("\n");
+                        count++;
+                    }
+                        printf("\n");
+                        // for (int i=63;i>=0;i--)
+                        // {
+                        //     printf("%d ", main_buf[i]);
+                        // }
+                        int c = 0;
+                        int k =0;
+                    
+                        //binary to decimal conversion
+                        while(k<8)
+                        {
+                            for(int i=c,j=0;i<c+8;i++,j++)
+                            {
+                                A[k] = A[k]+((int)pow(2,j)*main_buf[i]);
+                            }
+                            c=c+8;
+                            k++;
+                        }
+                        printf("\n");
+                        for(int i=7; i>=0; i--)
+                        {
+                            printf("%X ",A[i]); 
+                        }
+
+
+
+
+                    memcpy(&message[HEADER_LEN], A, PAYLOADENC);  //MODIFIED PAYLOADSIZE
+                    printf("\nmessage:\n");
+                    for (int i = 0 ; i<HEADER_LEN+PAYLOADENC;i++)
+                    {
+                        printf("%X ",message[i]);
+                    }
+                    printf("\n****************\n");
                     /* casting for 32-bit fifo */
                     //for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) 
-                    for (uint8_t i=0; i < buffer_size(NEW_PAYLOAD, HEADER_LEN); i++) {
-                    //for (uint8_t i=0; i < 10; i++) {
+                    for (uint8_t i=0; i < buffer_size(PAYLOADENC, HEADER_LEN); i++) {
+                    
                         buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
+                        printf("%X ",buffer[i]);
                     }
+                    printf("\n****************\n");
                     /*put the data to FIFO*/
                     backscatter_send(pio,sm,buffer,sizeof(buffer));
                     //printf("Backscattered packet\n");

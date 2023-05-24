@@ -92,7 +92,7 @@ void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template) {
         packet[loop] = header_template[loop];
         }
     /* add the payload length*/
-    packet[HEADER_LEN-2] = 1 + PAYLOADSIZE; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
+    packet[HEADER_LEN-2] = 1 + PAYLOADENC; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
     /* add the packet as sequence number. */
     packet[HEADER_LEN-1] = seq;
 }
