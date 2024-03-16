@@ -2,6 +2,9 @@
 The implementation for backscatter tag onboard control unit to generate an information-bearing 2-FSK signal using Raspberry Pi Pico PIO.
 The stdout (printf) has been directed to USB.
 
+## Update
+This directory is largly obsolet (generate and assemble PIO during compilation). Please use the `project_pico_libs` instead (generate and assemble PIO at run-time) as shown in `carrier-receiver-baseband`.
+
 ## Repo Organization
 - `generate-backscatter-pio.py` provides a script to generate a PIO file for the desired shift frequencies and baud-rate.
 - `backscatter.pio` provides an example output of `generate-backscatter-pio.py`
@@ -38,10 +41,6 @@ Example: `python generate-backscatter-pio.py 20 18 100000 ./backscatter.pio`
 3. What is the relation between the two clock dividers to achieve the best possible deviation for a given offset frequency? This relation leaves one degree of freedom. Generate a table which provides the achievable offset frequencies (center) together with the most desirable frequency deviation.
 5. Question 2 highlighted a trade-off and question 3 highlighted a dependence. Create a simulation to identify the ideal trade-off parameter (table from question 3) for a given baudrate. How dependent are your results on the assumed distances and carrier?
 Notice that you know the worst case baseband spectrum from the baudrate, can estimate the carrier spectrum using the measurements in `carrier-characteristics` and can take reasonable assumptions for the path-loss model and RX filter response.
-6. Generate an experimental setup to estimate remaining parameters and calibrate the simulation.
-7. Knowing the SNR at the receiver, the used signal bandwidth and assuming an additive white Gaussian noise (AWGN) channel: What is the *channel capacity* of your occupied resources based on the Shannon–Hartley theorem?
-8. Assume you would like to optimize your parameters to maximize the channel capacity. Do you come to the same conclusion like for optimizing the SNR? Why/Why not?
-
 
 ### Antenna characteristics:
 - the provided antennas are [Molex 2128601001](https://www.molex.com/molex/products/part-detail/antennas/2128601001)
