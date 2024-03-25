@@ -3,7 +3,7 @@ Guide to configure Firefly to generate a unmodulated carrier in the range of 239
 
 You will control the board via serial port.
 
-## Install a compatible driver
+### Install a compatible driver (if needed: e.g. Windows)
 The device is compatible with the following driver: [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=overview)
 
 ## Access Serial Port
