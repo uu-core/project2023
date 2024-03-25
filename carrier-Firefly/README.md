@@ -3,6 +3,9 @@ Guide to configure Firefly to generate a unmodulated carrier in the range of 239
 
 You will control the board via serial port.
 
+## Install a compatible driver
+The device is compatible with the following driver: [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=overview)
+
 ## Access Serial Port
 <br> Install the python pyserial library:
 ```
@@ -19,7 +22,7 @@ ls /dev/
 ```
 <br> Access the device via serial port:
 ```
-python3 -m serial.tools.miniterm [your-port] 115200
+python3 -m serial.tools.miniterm -e [your-port] 115200
 ```
 
 ## Configuration Option
