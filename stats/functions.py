@@ -139,7 +139,7 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
     file_size = len(error) * PACKET_LEN * 8
     # generate the correct file
     file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    print(file_content)
+    #print(file_content)
     last_pseudoseq = 0 # record the previous pseudoseq
     # start count the error bits
     for idx in range(packets):
@@ -171,9 +171,9 @@ def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
         bit_error.append(tmp)
     # update the bit_error column
     error['bit_error'] = bit_error
-    # error = error.drop(columns='bit_error_tmp')
-    print("Error statistics dataframe is:")
-    print(error)
+    error = error.drop(columns='bit_error_tmp')
+    #print("Error statistics dataframe is:")
+    #print(error)
     return counter / file_size, error, file_content
 
 # plot radar chart
