@@ -23,7 +23,11 @@ The CC2500 can transmit and receive arbitrarily long packets. However, is FIFO i
 To transmit larger payloads, it would be necessary to continoulsy empty the fifo while receiving a packet which can lead to unwanted and timing dependent byte duplications as highlighted in the [datasheet errata](https://www.ti.com/lit/er/swrz002e/swrz002e.pdf).
 
 ### Radio Settings
-The radio settings and configuration can be generated using [SmartRF Studio](https://www.ti.com/tool/SMARTRFTM-STUDIO) and the datasheet of the corresponding module. Notice that the the configured baudrate of the Pico may be imprecise and differ from the one that the radio should be using. To export the register settings compatible with the provided examples, you can add a new template with the following settings (Register Export -> New ->):
+#### Radio Settings - Option 1 (dynamic):
+The CC2500 radio settings can be configured at run time using the provided functions in `project_pico_libs`.
+
+#### Radio Settings - Option 2 (SmartRF Studio/more optimized):
+Alternatively, the radio settings and configuration can be generated using [SmartRF Studio](https://www.ti.com/tool/SMARTRFTM-STUDIO) and the datasheet of the corresponding module. Notice that the the configured baudrate of the Pico may be imprecise and differ from the one that the radio should be using. To export the register settings compatible with the provided examples, you can add a new template with the following settings (Register Export -> New ->):
 - Header
     ```
     #ifndef RF_SETTING
