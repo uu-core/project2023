@@ -26,7 +26,6 @@ def readfile(filename):
         skiprows=0,
         header=None,
         dtype=types,
-        delim_whitespace=False,
         delimiter="|",
         on_bad_lines='warn',
         names = ["time_rx", "frame", "rssi"]
@@ -123,7 +122,7 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
             number, seed = data(seed)
             payload_data.append((int(number) >> 8) - 0)
             payload_data.append(int(number) & LOW_BYTE)
-        df.data[i] = payload_data
+        df.loc[i, "data"] = payload_data
     return df
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
