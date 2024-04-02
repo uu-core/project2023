@@ -7,7 +7,7 @@
 ;
 
 .program backscatter
-.side_set 1 opt
+;.side_set 1 opt
 
 ; --- PIO settings ---
 ; configer autopull
@@ -34,40 +34,38 @@
 ; 2. obtain from fifo: floor((b - w) / d1) - 1 // (number of full periods in symbol of frequency 1)
 ; 3. then simply provide data
 
-SET  pins   1  side 1  ; swtich output off
-OUT   isr  32          ; baud config for frequency 0
+SET  pins   1  ; switch output off
+;OUT   isr  32          ; baud config for frequency 0
 OUT     y  32          ; baud config for frequency 1
+IRQ clear 4
+.wrap_target ; main loop
 get_symbol:
     OUT  x  1          ; get data bit
-    JMP !x  send_0     ; jmp if x is zero
-    send_1:
-        MOV x  y                       ; load baud 1 config
+    JMP !x  section_wait    ; jmp if x is zero
+    OUT  x  1          ; get data bit
+    JMP !x  send_b10   ; jmp if x is zero
+    send_b10:  
+        MOV x  y                      ; load baud 1 config
         loop_1:
-            SET pins 1  side 1  [7]    ; for 5208.3 kHz - 12 cycles high
-            SET pins 1  side 1  [3]    ; for 5208.3 kHz - 12 cycles high
-            SET pins 0  side 0  [7]    ; for 5208.3 kHz - 12 cycles low
-            SET pins 0  side 0  [2]    ; for 5208.3 kHz - 12 cycles low
-            JMP x-- loop_1             ; 1 cycle  
-        ; to avoid a drift from imprecise baud-timing: stop the last period on time
-        ; the remaining cycles are:  (b - w) % d1 = (1250 - 4) % 24 => 22 cycles left to spend 
-        SET pins 1  side 1  [7]        ; spend 12 cycles of last period on high
-        SET pins 1  side 1  [3]        ; spend 12 cycles of last period on high
-        SET pins 0  side 0  [7]        ; spend 10 cycles of last period on low
-        SET pins 0  side 0  [1]        ; spend 10 cycles of last period on low
-        JMP get_symbol                 ; 
-    send_0:
-        MOV x isr                      ; load baud 0 config
-        loop_0:
-            SET pins 1  side 1  [7]    ; for 4464.3 kHz - 14 cycles high
-            SET pins 1  side 1  [5]    ; for 4464.3 kHz - 14 cycles high
-            SET pins 0  side 0  [7]    ; for 4464.3 kHz - 14 cycles low
-            SET pins 0  side 0  [4]    ; for 4464.3 kHz - 14 cycles low
-            JMP x-- loop_0             ; 1 cycle  
-        ; to avoid a drift from imprecise baud-timing: stop the last period on time
-        ; the remaining cycles are:  (b - w) % d0 = (1250 - 4) % 28 => 14 cycles left to spend 
-        SET pins 1  side 1  [7]        ; spend 14 cycles of last period on high
-        SET pins 1  side 1  [5]        ; spend 14 cycles of last period on high
-        JMP get_symbol                 ; 
+            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            JMP x-- loop_1    ; 1 cycle
+        SET pins 1 [11]       ; spend 12 cycles of last period on high
+        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        JMP get_symbol
+    send_b11:
+        MOV x  y                       ; load baud 1 config
+        loop_2:
+            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            JMP x-- loop_2    ; 1 cycle
+        SET pins 1 [11]       ; spend 12 cycles of last period on high
+        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        JMP get_symbol
+    section_wait:
+        ; Do something in the wait section
+        JMP get_symbol  ; Example: Jump back to get_symbol
+.wrap
 
 % c-sdk {
 #include "pico/stdlib.h"
