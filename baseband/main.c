@@ -50,8 +50,7 @@ int main() {
             buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
         }
         /* put the data to FIFO */
-        backscatter_send(pio_1,sm1,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
-        backscatter_send(pio_2,sm2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
+        backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
 
         seq++;
         sleep_ms(TX_DURATION);

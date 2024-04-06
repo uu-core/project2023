@@ -142,19 +142,24 @@ static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint 
   }
 }
 
-static inline void backscatter_send(PIO pio, uint sm, uint32_t *message, uint32_t len) {
+static inline void backscatter_send(PIO p_1, PIO p_2, uint32_t *message, uint32_t len) {
+ for(uint32_t i = 0; i < len; i++){
+     pio_sm_put_blocking(p_1, 0, message[i]);
+     pio_sm_put_blocking(p_2, 1, message[i]);
+     sleep_ms(1);
+   }
   // Send data to the appropriate PIO instance based on sm
-  if(sm == 0) {
-    for(uint32_t i = 0; i < len; i++){
-        pio_sm_put_blocking(pio, sm, message[i]); // set pin back to low
-    }
-    sleep_ms(1); // wait for transmission to finish
-  } else if(sm == 1) {
-    for(uint32_t i = 0; i < len; i++){
-        pio_sm_put_blocking(pio, sm, message[i]); // set pin back to low
-    }
-    sleep_ms(1); // wait for transmission to finish
-  }
+  //if(sm == 0) {
+  //  for(uint32_t i = 0; i < len; i++){
+  //      pio_sm_put_blocking(pio, sm, message[i]); // set pin back to low
+ //   }
+ //   sleep_ms(1); // wait for transmission to finish
+ // } else if(sm == 1) {
+ //   for(uint32_t i = 0; i < len; i++){
+ //       pio_sm_put_blocking(pio, sm, message[i]); // set pin back to low
+ //   }
+  //  sleep_ms(1); // wait for transmission to finish
+ // }
 }
 %}
 
