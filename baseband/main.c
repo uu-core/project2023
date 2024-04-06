@@ -22,9 +22,13 @@ int main() {
     PIO pio_2 = pio1;
     uint sm1 = 0;
     uint sm2 = 1;
+    gpio_init(3);
+    gpio_set_dir(3, GPIO_OUT);
+    gpio_put(3, 1);
+    sleep_ms(1);
     uint offset1 = pio_add_program(pio_1, &backscatter_pio_0_program);
     uint offset2 = pio_add_program(pio_2, &backscatter_pio_1_program);
- 
+
 
     //backscatter_program_init(pio1, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
     backscatter_program_init(pio_1, sm1, offset1, PIN_TX1,PIN_TX2); // one antenna setup
@@ -49,8 +53,16 @@ int main() {
         for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
             buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
         }
+
+        for(uint32_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++){
+            pio_sm_put_blocking(pio_1, 0, buffer[i]);
+            pio_sm_put_blocking(pio_2, 1, buffer[i]);
+            gpio_put(3, 0);
+//            sleep_ms(1);
+        }
+
         /* put the data to FIFO */
-        backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
+        //backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
 
         seq++;
         sleep_ms(TX_DURATION);

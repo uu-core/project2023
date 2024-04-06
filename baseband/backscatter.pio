@@ -37,7 +37,7 @@
 SET  pins   1  ; switch output off
 ;OUT   isr  32          ; baud config for frequency 0
 OUT     y  32          ; baud config for frequency 1
-IRQ clear 4
+WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
     OUT  x  1          ; get data bit
@@ -47,8 +47,8 @@ get_symbol:
     send_b10:  
         MOV x  y                      ; load baud 1 config
         loop_1:
-            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
             JMP x-- loop_1    ; 1 cycle
         SET pins 1 [11]       ; spend 12 cycles of last period on high
         SET pins 0  [9]       ; spend 10 cycles of last period on low
@@ -56,8 +56,8 @@ get_symbol:
     send_b11:
         MOV x  y                       ; load baud 1 config
         loop_2:
-            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
             JMP x-- loop_2    ; 1 cycle
         SET pins 1 [11]       ; spend 12 cycles of last period on high
         SET pins 0  [9]       ; spend 10 cycles of last period on low
@@ -72,7 +72,7 @@ get_symbol:
 SET  pins   1  ; switch output off
 ;OUT   isr  32          ; baud config for frequency 0
 OUT     y  32          ; baud config for frequency 1
-IRQ clear 4
+WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
     OUT  x  1          ; get data bit
@@ -82,8 +82,8 @@ get_symbol:
     send_b00:  
         MOV x  y                      ; load baud 1 config
         loop_1:
-            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
             JMP x-- loop_1    ; 1 cycle
         SET pins 1 [11]       ; spend 12 cycles of last period on high
         SET pins 0  [9]       ; spend 10 cycles of last period on low
@@ -91,8 +91,8 @@ get_symbol:
     send_b01:
         MOV x  y                       ; load baud 1 config
         loop_2:
-            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 1 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
             JMP x-- loop_2    ; 1 cycle
         SET pins 1 [11]       ; spend 12 cycles of last period on high
         SET pins 0  [9]       ; spend 10 cycles of last period on low
