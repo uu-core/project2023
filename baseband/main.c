@@ -22,6 +22,10 @@ int main() {
     PIO pio_2 = pio1;
     uint sm1 = 0;
     uint sm2 = 1;
+    gpio_init(2);
+    gpio_set_dir(2, GPIO_OUT);
+    gpio_put(2, 0);
+
     gpio_init(3);
     gpio_set_dir(3, GPIO_OUT);
     gpio_put(3, 1);
@@ -57,6 +61,7 @@ int main() {
         for(uint32_t i = 0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++){
             pio_sm_put_blocking(pio_1, 0, buffer[i]);
             pio_sm_put_blocking(pio_2, 1, buffer[i]);
+            gpio_put(2, 1);
             gpio_put(3, 0);
 //            sleep_ms(1);
         }
