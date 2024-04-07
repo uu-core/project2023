@@ -76,7 +76,7 @@ WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
     OUT  x  1          ; get data bit
-    JMP !x  section_wait    ; jmp if x is zero
+    JMP  x--  section_wait    ; jmp if x is one
     OUT  x  1          ; get data bit
     JMP !x  send_b00   ; jmp if x is zero
     send_b00:  
