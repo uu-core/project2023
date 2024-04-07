@@ -44,26 +44,34 @@ get_symbol:
     JMP !x  section_wait    ; jmp if x is zero
     OUT  x  1          ; get data bit
     JMP !x  send_b10   ; jmp if x is zero
-    send_b10:  
+    send_b11:
         MOV x  y                      ; load baud 1 config
         loop_1:
-            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [8]    ; for 5208.3 kHz - 9 cycles high
+            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles low
+            SET pins 1 [1]    ; for 5208.3 kHz - 3 cycles high
             JMP x-- loop_1    ; 1 cycle
-        SET pins 1 [11]       ; spend 12 cycles of last period on high
-        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        SET pins 1 [8]        ; spend 9 cycles of last period on high
+        SET pins 0  [11]      ; spend 12 cycles of last period on low
+        SET pins 1            ; spend 3 cycles of last period on high
         JMP get_symbol
-    send_b11:
+    send_b10:
         MOV x  y                       ; load baud 1 config
         loop_2:
+            SET pins 0 [2]    ; for 5208.3 kHz - 3 cycles low
             SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [1]    ; for 5208.3 kHz - 3 cycles low
             JMP x-- loop_2    ; 1 cycle
-        SET pins 1 [11]       ; spend 12 cycles of last period on high
-        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        SET pins 0 [2]        ; spend 3 cycles of last period on low
+        SET pins 1  [11]      ; spend 12 cycles of last period on high
+        SET pins 0            ; spend 3 cycles of last period on low
         JMP get_symbol
     section_wait:
-        ; Do something in the wait section
+        MOV x y         ; Do something in the wait section
+        loop_wait:
+            SET pins 0 [22]
+            JMP x-- loop_wait
+        SET pins 0 [21]
         JMP get_symbol  ; Example: Jump back to get_symbol
 .wrap
 
@@ -76,29 +84,37 @@ WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
     OUT  x  1          ; get data bit
-    JMP  x--  section_wait    ; jmp if x is one
+    JMP x--  section_wait    ; jmp if x is zero
     OUT  x  1          ; get data bit
-    JMP !x  send_b00   ; jmp if x is zero
-    send_b00:  
+    JMP x--  send_b00   ; jmp if x is zero
+    send_b01:
         MOV x  y                      ; load baud 1 config
         loop_1:
-            SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 1 [2]    ; for 5208.3 kHz - 3 cycles high
+            SET pins 0 [11]   ; for 5208.3 kHz - 12 cycles low
+            SET pins 1 [7]    ; for 5208.3 kHz - 9 cycles high
             JMP x-- loop_1    ; 1 cycle
-        SET pins 1 [11]       ; spend 12 cycles of last period on high
-        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        SET pins 1 [2]        ; spend 3 cycles of last period on high
+        SET pins 0  [11]      ; spend 12 cycles of last period on low
+        SET pins 1 [6]        ; spend 9 cycles of last period on high
         JMP get_symbol
-    send_b01:
+    send_b00:
         MOV x  y                       ; load baud 1 config
         loop_2:
+            SET pins 0 [8]    ; for 5208.3 kHz - 9 cycles low
             SET pins 1 [11]   ; for 5208.3 kHz - 12 cycles high
-            SET pins 0 [10]   ; for 5208.3 kHz - 12 cycles high
+            SET pins 0 [1]    ; for 5208.3 kHz - 3 cycles low
             JMP x-- loop_2    ; 1 cycle
-        SET pins 1 [11]       ; spend 12 cycles of last period on high
-        SET pins 0  [9]       ; spend 10 cycles of last period on low
+        SET pins 0 [8]        ; spend 9 cycles of last period on low
+        SET pins 1  [11]      ; spend 12 cycles of last period on high
+        SET pins 0            ; spend 3 cycles of last period on low
         JMP get_symbol
     section_wait:
-        ; Do something in the wait section
+        MOV x y         ; Do something in the wait section
+        loop_wait:
+            SET pins 0 [22]
+            JMP x-- loop_wait
+        SET pins 0 [21]
         JMP get_symbol  ; Example: Jump back to get_symbol
 .wrap
 
@@ -162,5 +178,3 @@ static inline void backscatter_send(PIO p_1, PIO p_2, uint32_t *message, uint32_
  // }
 }
 %}
-
-
