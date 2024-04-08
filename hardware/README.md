@@ -1,6 +1,10 @@
 # Pico-Backscatter: frontend
 The implementation for the backscatter tag frontend on a four-layer FR4 PCB with 1oz copper thickness and a spacing of 0.2mm between the top and first inner layer for 50 ohm impedance matching.
 
+### Antenna characteristics:
+- the provided antennas are [Molex 2128601001](https://www.molex.com/molex/products/part-detail/antennas/2128601001)
+- a quick guide of trace antennas can be found [here](https://www.ti.com/lit/an/swra351b/swra351b.pdf), which provides links to the most commen pcb antennas such as the [SWRA117 and its characteristics](https://www.ti.com/lit/an/swra117d/swra117d.pdf).
+
 ### Usage notes
 - The board can be used with the Maker Pi Pico (bottom connectors) or the Raspberry Pi Pico (top connectors). _Do not connect a RPI Pico and Maker Pi Pico at the same time._
 - For power measurements, a power profiler can be connected to J5. Remember that the board should not be powered by two sources at the same time. Therefore, _unplug the USB from the RPI Pico before using an external power supply, such as a power profiler_. Just in case that two supplies get connected at the same time, they are be protected by a schottky diode. Therefore the board is supplied with about 0.25V less than provided (the voltage drop can be avoided by: supplying the voltage directly to the VSYS pin rather than J5, which avoids the diode and is therefore unprotected. Another alternative is to replace the diode with a mosfet in standard reverse voltage protection configuration).
