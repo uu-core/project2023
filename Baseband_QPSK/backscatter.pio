@@ -1,10 +1,5 @@
-;
-; Automatically generated using "generate-backscatter-pio.py"
-; with the command: "python generate-backscatter-pio.py 28 24 100000 backscatter.pio --twoAntennas"
-;
 ; Backscatter PIO
-; Configured for two antenns
-;
+; Configured for two antennas
 
 .program backscatter
 .side_set 1 opt
@@ -14,12 +9,12 @@
 ; configered for 125 MHz clock
 
 ; --- backscatter settings ---
-; frequency 0 shift: 4.464 MHz       (1 period = 28 cycles @ 125 MHz clock)
-; frequency 1 shift: 5.208 Mhz       (1 period = 24 cycles @ 125 MHz clock)
-; center frequency shift: 4.836 MHz
-; deviation from center : 372.02 kHz
-; baud-rate 100.00 kBaud (1250.0 instructions per symbol)
-; occupied bandwith: 844.05 kHz
+; 1 period = 8 cycles @ 125 MHz clock
+; phase shift: 0, 90, 180, 270 degrees
+; send frequency: 15625 KHz
+
+; baud-rate 1000.00 kBaud (125.0 instructions per symbol to manage the actual data rate at 250 kbps)
+
 
 
 ; parameter 1:  b = clock-frequency/baud-rate (e.g. 1250.0 for 100.00 kBaud @ 125 MHz clock)   // number of clock cycles per symbol
@@ -39,8 +34,20 @@ OUT   isr  32          ; baud config for frequency 0
 OUT     y  32          ; baud config for frequency 1
 get_symbol:
     OUT  x  1          ; get data bit
-    JMP !x  send_0     ; jmp if x is zero
-    send_1:
+    JMP !x S0_     ; jmp if x is zero
+    JMP !y S10
+    ;here code to send 11
+    
+    S10:
+        ;here code to send 10
+    S0_:
+        JMP !y S00
+        ;here code to send 01
+    S00: 
+        ;here code to send 00
+
+
+
         MOV x  y                       ; load baud 1 config
         loop_1:
             SET pins 1  side 1  [7]    ; for 5208.3 kHz - 12 cycles high
