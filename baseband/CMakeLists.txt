@@ -19,7 +19,8 @@ pico_sdk_init()
 # include(example_auto_set_url.cmake)
 
 # Hardware-specific examples in subdirectories:
-add_executable(pio_backscatter)
+add_executable(pio_backscatter
+        build/backscatter.pio.h)
 
 # by default the header is generated into the build dir
 pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio)
@@ -30,7 +31,7 @@ target_sources(pio_backscatter PRIVATE
     main.c 
     ../project_pico_libs/packet_generation.c
 )
-include_directories(../project_pico_libs)
+include_directories(../project_pico_libs ./build)
 target_link_libraries(pio_backscatter PRIVATE pico_stdlib hardware_pio)
 
 pico_add_extra_outputs(pio_backscatter)
