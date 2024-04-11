@@ -1,0 +1,5 @@
+1 Implement Chio codes
+2 Chipcode offset for QPSK
+3 Packet specification
+4 Figuring frequency divider to fit 62.5 sym rate, freq falls in one of channels --- by freq divider and loops
+5 
