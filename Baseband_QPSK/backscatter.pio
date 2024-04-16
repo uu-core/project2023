@@ -37,7 +37,7 @@ get_symbol:
     JMP !x S0_     ; jmp if x is zero
     JMP !y S10
     ;here code to send 11
-    
+
     S10:
         ;here code to send 10
     S0_:
@@ -45,21 +45,16 @@ get_symbol:
         ;here code to send 01
     S00: 
         ;here code to send 00
-
-
+    
 
         MOV x  y                       ; load baud 1 config
         loop_1:
-            SET pins 1  side 1  [7]    ; for 5208.3 kHz - 12 cycles high
-            SET pins 1  side 1  [3]    ; for 5208.3 kHz - 12 cycles high
-            SET pins 0  side 0  [7]    ; for 5208.3 kHz - 12 cycles low
-            SET pins 0  side 0  [2]    ; for 5208.3 kHz - 12 cycles low
+            SET pins 1  side 1  [3]    ; for 5208.3 kHz - 4 cycles high
+            SET pins 0  side 0  [2]    ; for 5208.3 kHz - 4 cycles low
             JMP x-- loop_1             ; 1 cycle  
         ; to avoid a drift from imprecise baud-timing: stop the last period on time
-        ; the remaining cycles are:  (b - w) % d1 = (1250 - 4) % 24 => 22 cycles left to spend 
-        SET pins 1  side 1  [7]        ; spend 12 cycles of last period on high
+        ; the remaining cycles are:  (b - w) % d1 = (125 - 6) % 8 => 7 cycles left to spend 
         SET pins 1  side 1  [3]        ; spend 12 cycles of last period on high
-        SET pins 0  side 0  [7]        ; spend 10 cycles of last period on low
         SET pins 0  side 0  [1]        ; spend 10 cycles of last period on low
         JMP get_symbol                 ; 
     send_0:
