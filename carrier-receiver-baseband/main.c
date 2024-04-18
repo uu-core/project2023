@@ -83,11 +83,13 @@ int main() {
     uint8_t tx_payload_buffer[PAYLOADSIZE];
 
     /* Setup carrier */
+    printf("\nConfiguring one CC2500 as carrier generator:\n");
     setupCarrier();
     set_frecuency_tx(CARRIER_FEQ);
     sleep_ms(1);
 
     /* Start Receiver */
+    printf("\nConfiguring one CC2500 to approximate the obained radio settings:\n");
     event_t evt = no_evt;
     Packet_status status;
     uint8_t rx_buffer[RX_BUFFER_SIZE];
