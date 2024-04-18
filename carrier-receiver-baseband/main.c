@@ -89,7 +89,7 @@ int main() {
     sleep_ms(1);
 
     /* Start Receiver */
-    printf("\nConfiguring one CC2500 to approximate the obained radio settings:\n");
+    printf("\nConfiguring one CC2500 to approximate the obtained radio settings:\n");
     event_t evt = no_evt;
     Packet_status status;
     uint8_t rx_buffer[RX_BUFFER_SIZE];
