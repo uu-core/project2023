@@ -71,12 +71,32 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
 
     uint8_t data_start = 0;
     if(include_index){
+        //split the file_position into two bytes first the MSB part and second the LSB part
         buffer[0]   = (uint8_t) (file_position >> 8);
         buffer[1] = (uint8_t) (file_position & 0x00FF);
         data_start = 2;
     }
     for (uint8_t i=data_start; i < length; i=i+2) {
         uint16_t sample = generate_sample();
+        buffer[i]   = (uint8_t) (sample >> 8);
+        buffer[i+1] = (uint8_t) (sample & 0x00FF);
+    }
+}
+
+void generate_static_data(uint8_t *buffer, uint8_t length, bool include_index) {
+    if(length % 2 != 0){
+        printf("WARNING: generate_data has been used with an odd length.");
+    }
+    uint8_t data_start = 0;
+    if(include_index){
+        //split the file_position into two bytes first the MSB part and second the LSB part
+        buffer[0]   = (uint8_t) (0 >> 8);
+        buffer[1] = (uint8_t) (0 & 0x00FF);
+        data_start = 2;
+    }
+    for (uint8_t i=data_start; i < length; i=i+2) {
+        // change below sample to alter messsage sent
+        uint16_t sample = 0b0000000011111111;
         buffer[i]   = (uint8_t) (sample >> 8);
         buffer[i+1] = (uint8_t) (sample & 0x00FF);
     }

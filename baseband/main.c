@@ -30,9 +30,13 @@ int main() {
     uint8_t *header_tmplate = packet_hdr_template(RECEIVER);
     uint8_t tx_payload_buffer[PAYLOADSIZE];
 
+
     while (true) {
         /* generate new data */
-        generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+        //generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+
+        generate_static_data(tx_payload_buffer, PAYLOADSIZE, true);
+
 
         /* add header (10 byte) to packet */
         add_header(&message[0], seq, header_tmplate);

@@ -123,6 +123,7 @@ int main() {
                 if (rx_ready){
                     /* generate new data */
                     generate_data(tx_payload_buffer, PAYLOADSIZE, true);
+                    //generate_static_data(tx_payload_buffer, PAYLOADSIZE, true);
 
                     /* add header (10 byte) to packet */
                     add_header(&message[0], seq, header_tmplate);
