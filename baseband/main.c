@@ -174,7 +174,7 @@ int main() {
         printf("%02X ", PPDU[i]);
     }
     printf("\n");
-
+    printf("Size of PPDU %d\n", sizeof(PPDU));
 
     while (true) {
 
