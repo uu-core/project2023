@@ -11,11 +11,14 @@
 #include "hardware/clocks.h"
 #include "backscatter.pio.h"
 #include "packet_generation.h"
+//#include "chip_helpers/chip_helpers.h"
 
 #define TX_DURATION 250 // send a packet every 250ms (when changing baud-rate, ensure that the TX delay is larger than the transmission time)
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
 #define PIN_TX1 6
 #define PIN_TX2 27
+#define PreambleSize 4
+#define PayloadMaxSize 100
 
 #define POLY 0x8408
 // Define IEEE 802.15.4 frame structure
@@ -27,11 +30,13 @@ typedef struct {
     unsigned short source_PAN;
     unsigned short source_address;
     uint16_t FCS;
-    uint8_t Preamble[4];
+    uint8_t Preamble[PreambleSize];
     uint8_t SFD;
     uint8_t len;
-    uint8_t payload[100];
+    uint8_t payload[PayloadMaxSize];
 } Frame;
+
+#define MHR_SIZE 10
 
 void generateMHR(Frame frame, unsigned char output[]) {
     output[0] = frame.FCP & 0xFF;
@@ -103,8 +108,9 @@ int main() {
     uint32_t TEST_VALUE =   0b10110100101101001011010010110100;
 
     Frame frame;
-    uint8_t payload[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
-    unsigned char MHR[11];
+    #define PAYLOAD_SIZE 8
+    uint8_t payload[PAYLOAD_SIZE] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+    unsigned char MHR[MHR_SIZE];
 
     // Generate a Frame instance
     frame.FCP = 0x8841;
@@ -113,60 +119,56 @@ int main() {
     frame.destination_address = 0x1234;
     frame.source_PAN = 0x4444;
     frame.source_address = 0xABCD;
-    memcpy(frame.payload, payload, sizeof(payload));
+    memcpy(frame.payload, payload, PAYLOAD_SIZE);
 
     generateMHR(frame, MHR);
     
     printf("MHR: ");
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < MHR_SIZE; i++) {
         printf("%02X ", MHR[i]);
     }
     printf("\n");
 
-    frame.FCS = crc16(payload, sizeof(payload));
+    frame.FCS = crc16(payload, PAYLOAD_SIZE);
     
     printf("FCS of data is: 0x%04x\n", frame.FCS);
 
 
-    uint8_t MPDU[sizeof(MHR) + 2]; // Additional 2 bytes for the CRC value
+    uint8_t MPDU[MHR_SIZE + 2]; // Additional 2 bytes for the CRC value
 
     // Combine MHR and CRC value (FCS)
-    for (int i = 0; i < sizeof(MHR); i++) {
+    for (int i = 0; i < MHR_SIZE; i++) {
         MPDU[i] = MHR[i];
     }
 
     // Convert CRC value to bytes and append to MPDU
-    MPDU[sizeof(MHR)] = frame.FCS >> 8; // High byte
-    MPDU[sizeof(MHR) + 1] = frame.FCS & 0xFF; // Low byte
+    MPDU[MHR_SIZE] = frame.FCS >> 8; // High byte
+    MPDU[MHR_SIZE + 1] = frame.FCS & 0xFF; // Low byte
     
      // Print MPDU
     printf("MPDU: ");
-    for (int i = 0; i < sizeof(MPDU); i++) {
+    for (int i = 0; i < MHR_SIZE + 2; i++) {
         printf("%02X ", MPDU[i]);
     }
     printf("\n");
     //Assign Preamble , SFD and length
-     for (uint8_t i = 0 ; i < sizeof(frame.Preamble);i++)
+     for (uint8_t i = 0 ; i < sizeof(PreambleSize);i++)
     {
         frame.Preamble[i] = 0x00;
     }
     frame.SFD = 0xA7;
-    frame.len = sizeof(MPDU);
+    frame.len = MHR_SIZE + 2 + PAYLOAD_SIZE;
     
-    // PPDU array with the order of preamble, SFD, len, MPDU
-    uint8_t PPDU[sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len) + sizeof(MPDU)];
+    uint8_t PPDU[sizeof(PreambleSize) + sizeof(frame.SFD) + sizeof(frame.len)];
 
-    // Copy preamble to PPDU array
-    memcpy(PPDU, frame.Preamble, sizeof(frame.Preamble));
+    memcpy(PPDU, frame.Preamble, sizeof(PreambleSize));
 
-    // Copy SFD to PPDU array after preamble
-    PPDU[sizeof(frame.Preamble)] = frame.SFD;
+    PPDU[sizeof(PreambleSize)] = frame.SFD;
 
-    // Copy len to PPDU array after SFD
-    PPDU[sizeof(frame.Preamble) + sizeof(frame.SFD)] = sizeof(MPDU);
+    PPDU[sizeof(frame.Preamble) + sizeof(frame.SFD)] = frame.len;
 
     // Copy MPDU to PPDU array after len
-    memcpy(PPDU + sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len), MPDU, sizeof(MPDU));
+    memcpy(PPDU[sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len)], MPDU, MHR_SIZE + 2);
 
     // Print PPDU array
     printf("PPDU array: ");
@@ -176,6 +178,7 @@ int main() {
     printf("\n");
     printf("Size of PPDU %d\n", sizeof(PPDU));
 
+    uint len_inputBuffer = sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + sizeof(frame.FCS) + PAYLOAD_SIZE;
     while (true) {
 
 //        /* generate new data */
@@ -190,13 +193,17 @@ int main() {
 //        for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
 //            buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
 //        }
-
-        for(uint32_t i = 0; i < 1; i++){
-            pio_sm_put_blocking(pio_1, 0, TEST_VALUE);
-            pio_sm_put_blocking(pio_2, 1, TEST_VALUE);
-            gpio_put(2, 1);
-            gpio_put(3, 0);
-                    sleep_ms(1);
+        uint32_t outbuffer[4*len_inputBuffer];
+        uint bufferlen = data_to_pio_input(PPDU,len_inputBuffer,outbuffer,0);
+        for(uint32_t i = 0; i < bufferlen; i++){
+            pio_sm_put_blocking(pio_1, 0, outbuffer[i]);
+            pio_sm_put_blocking(pio_2, 1, outbuffer[i]);
+            if(i==0)
+            {
+                gpio_put(2, 1);
+                gpio_put(3, 0);
+            }
+                    //sleep_ms(1);
         }
 
         /* put the data to FIFO */

@@ -20,7 +20,7 @@ pico_sdk_init()
 
 # Hardware-specific examples in subdirectories:
 add_executable(pio_backscatter
-        build/backscatter.pio.h)
+        chip_helpers/chip_helpers.c)
 
 # by default the header is generated into the build dir
 pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio)
@@ -31,7 +31,7 @@ target_sources(pio_backscatter PRIVATE
     main.c 
     ../project_pico_libs/packet_generation.c
 )
-include_directories(../project_pico_libs ./build)
+include_directories(../project_pico_libs ./build ./chip_helpers)
 target_link_libraries(pio_backscatter PRIVATE pico_stdlib hardware_pio)
 
 pico_add_extra_outputs(pio_backscatter)
@@ -48,4 +48,3 @@ add_compile_options(-Wall
         -Wno-unused-function # we have some for the docs that aren't called
         -Wno-maybe-uninitialized
         )
-

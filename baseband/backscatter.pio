@@ -15,7 +15,6 @@
 
 ; --- backscatter settings ---
 ; frequency 0 shift: 4.464 MHz       (1 period = 28 cycles @ 125 MHz clock)
-; frequency 1 shift: 5.208 Mhz       (1 period = 24 cycles @ 125 MHz clock)
 ; center frequency shift: 4.836 MHz
 ; deviation from center : 372.02 kHz
 ; baud-rate 100.00 kBaud (1250.0 instructions per symbol)
@@ -25,18 +24,15 @@
 ; parameter 1:  b = clock-frequency/baud-rate (e.g. 1250.0 for 100.00 kBaud @ 125 MHz clock)   // number of clock cycles per symbol
 ; parameter 2:  w = 4 (wasted cycles per symbol: OUT -> JMP -> MOV -> ... -> JMP )            // fixed wasted cycles per symbol
 ; parameter 3: d0 = clock-frequency/shift-frequency-0 (e.g. 28 for 4.464 MHz @ 125 MHz clock) // must be an _even_ number
-; parameter 4: d1 = clock-frequency/shift-frequency-1 (e.g. 24 for 5.208 Mhz @ 125 MHz clock) // must be an _even_ number
 
 
 ; interface: 
 ; comment: the parameters have to be obtained from the fifo, since the SET command only provides 5-bit
 ; 1. obtain from fifo: floor((b - w) / d0) - 1 // (number of full periods in symbol of frequency 0)
-; 2. obtain from fifo: floor((b - w) / d1) - 1 // (number of full periods in symbol of frequency 1)
-; 3. then simply provide data
+; 2. then simply provide data
 
 SET  pins   1  ; switch output off
-;OUT   isr  32          ; baud config for frequency 0
-OUT     y  32          ; baud config for frequency 1
+OUT     y  32          ; baud config for frequency 
 WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
@@ -79,8 +75,7 @@ get_symbol:
 .program backscatter_pio_1
 
 SET  pins   1  ; switch output off
-;OUT   isr  32          ; baud config for frequency 0
-OUT     y  32          ; baud config for frequency 1
+OUT     y  32          ; baud config for frequency 
 WAIT 0 pin 3
 .wrap_target ; main loop
 get_symbol:
