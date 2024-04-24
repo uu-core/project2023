@@ -120,6 +120,7 @@ int main() {
     frame.destination_address = 0x1234;
     frame.source_PAN = 0x4444;
     frame.source_address = 0xABCD;
+    frame.SFD = 0xA7;
     memcpy(frame.payload, payload, PAYLOAD_SIZE);
 
     //Generate the MHR
@@ -131,7 +132,7 @@ int main() {
     }
     printf("\n");
 
-    uint8_t MPDU[MHR_SIZE + PAYLOAD_SIZE + 2]; // MHR + Payload + FCS (2 bytes)
+    uint8_t MPDU[MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS)]; // MHR + Payload + FCS (2 bytes)
 
     // Copy MHR to MPDU
     memcpy(MPDU, MHR, MHR_SIZE);
@@ -156,23 +157,24 @@ int main() {
     printf("\n");
     
     // Construct PPDU: Preamble + SFD + Length + MPDU + FCS (2 bytes)
-    uint8_t PPDU[PreambleSize + 1 + 1 + MHR_SIZE + PAYLOAD_SIZE + 2]; 
+    uint8_t PPDU[PreambleSize + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS)]; 
 
     // Copy Preamble to PPDU
     memset(PPDU, 0x00, PreambleSize);
 
     // Assign SFD to PPDU
-    PPDU[PreambleSize] = 0xA7;
+    PPDU[PreambleSize] = frame.SFD;
 
+    frame.len = MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS);
     // Assign Length to PPDU
-    PPDU[PreambleSize + 1] = MHR_SIZE + PAYLOAD_SIZE + 2; // Length includes MPDU and FCS
+    PPDU[PreambleSize + sizeof(frame.SFD)] = frame.len; // Length includes MPDU and FCS
 
     // Copy MPDU to PPDU after Length
-    memcpy(PPDU + PreambleSize + 1 + 1, MPDU, MHR_SIZE + PAYLOAD_SIZE + 2);
+    memcpy(PPDU + PreambleSize + sizeof(frame.SFD) + sizeof(frame.len), MPDU, MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS));
 
     // Print PPDU
     printf("PPDU: ");
-    for (int i = 0; i < PreambleSize + 1 + 1 + MHR_SIZE + PAYLOAD_SIZE + 2; i++) {
+    for (int i = 0; i < PreambleSize +sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS); i++) {
         printf("%02X ", PPDU[i]);
     }
     printf("\n");
@@ -180,7 +182,7 @@ int main() {
     //Length of PPDU
     printf("Length of PPDU: %ld\n", sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + sizeof(frame.FCS) + PAYLOAD_SIZE);
 
-    uint len_inputBuffer = PreambleSize + 1 + 1 + MHR_SIZE + PAYLOAD_SIZE + 2;
+    uint len_inputBuffer = PreambleSize + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS);
     
      while (true) {
 
