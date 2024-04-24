@@ -137,7 +137,7 @@ static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint 
      sm_config_set_out_shift(&c, false, true, 32);  // OUT shifts to left (MSB first), autopull after every 32 bit
      pio_sm_init(pio, sm, offset, &c);
        pio_sm_set_enabled(pio, sm, true);
-   pio_sm_put_blocking(pio, sm, 43); // floor((b - w) / d0) - 1 = floor((1250 - 4)/28) - 1   // -1 is requried since JMP 0-- is still true
+   pio_sm_put_blocking(pio, sm, 0); // floor((b - w) / d0) - 1 = floor((1250 - 4)/28) - 1   // -1 is requried since JMP 0-- is still true
 
   }
   // Initialize PIO 2
@@ -150,7 +150,7 @@ static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint 
      sm_config_set_out_shift(&c, false, true, 32);  // OUT shifts to left (MSB first), autopull after every 32 bit
      pio_sm_init(pio, sm, offset, &c);
        pio_sm_set_enabled(pio, sm, true);
-   pio_sm_put_blocking(pio, sm, 43); // floor((b - w) / d0) - 1 = floor((1250 - 4)/28) - 1   // -1 is requried since JMP 0-- is still true
+   pio_sm_put_blocking(pio, sm, 0); // floor((b - w) / d0) - 1 = floor((1250 - 4)/28) - 1   // -1 is requried since JMP 0-- is still true
 
   }
 }
