@@ -169,20 +169,21 @@ int main() {
     // Assign Length to PPDU
     PPDU[PreambleSize + sizeof(frame.SFD)] = frame.len; // Length includes MPDU and FCS
 
+    uint len_inputBuffer = PreambleSize + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS);
+
     // Copy MPDU to PPDU after Length
     memcpy(PPDU + PreambleSize + sizeof(frame.SFD) + sizeof(frame.len), MPDU, MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS));
 
     // Print PPDU
     printf("PPDU: ");
-    for (int i = 0; i < PreambleSize +sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS); i++) {
+    for (uint i = 0; i < len_inputBuffer; i++) {
         printf("%02X ", PPDU[i]);
     }
     printf("\n");
     
     //Length of PPDU
-    printf("Length of PPDU: %ld\n", sizeof(frame.Preamble) + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + sizeof(frame.FCS) + PAYLOAD_SIZE);
+    printf("Length of PPDU: %ld\n", len_inputBuffer);
 
-    uint len_inputBuffer = PreambleSize + sizeof(frame.SFD) + sizeof(frame.len) + MHR_SIZE + PAYLOAD_SIZE + sizeof(frame.FCS);
     
      while (true) {
 
