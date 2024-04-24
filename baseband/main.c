@@ -93,6 +93,14 @@ int main() {
     uint offset1 = pio_add_program(pio_1, &backscatter_pio_0_program);
     uint offset2 = pio_add_program(pio_2, &backscatter_pio_1_program);
 
+    // changing the clock frequency, 128 MHz to get the correct data rate for O-QPSK
+    #define SYS_FREQ_KHZ 128000
+    if(set_sys_clock_khz(SYS_FREQ_KHZ, true)) {
+        printf("clock correct");
+    }
+    else {
+        printf("clock error");
+    }
 
     //backscatter_program_init(pio1, sm, offset, PIN_TX1, PIN_TX2); // two antenna setup
     backscatter_program_init(pio_1, sm1, offset1, PIN_TX1,PIN_TX2); // one antenna setup
