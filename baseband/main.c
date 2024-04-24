@@ -11,6 +11,7 @@
 #include "hardware/clocks.h"
 #include "backscatter.pio.h"
 #include "packet_generation.h"
+//#include "chip_helpers/chip_helpers.h"
 
 #define TX_DURATION 250 // send a packet every 250ms (when changing baud-rate, ensure that the TX delay is larger than the transmission time)
 #define RECEIVER 1352 // define the receiver board either 2500 or 1352
