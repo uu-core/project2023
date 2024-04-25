@@ -183,7 +183,7 @@ int main() {
     uint offset2 = pio_add_program(pio_2, &backscatter_pio_1_program);
 
     // changing the clock frequency, 128 MHz to get the correct data rate for O-QPSK
-    #define SYS_FREQ_KHZ 128000
+    #define SYS_FREQ_KHZ 64000
     if(set_sys_clock_khz(SYS_FREQ_KHZ, true)) {
         printf("clock correct");
     }
