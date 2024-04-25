@@ -30,7 +30,6 @@ pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.p
 target_sources(pio_backscatter PRIVATE 
     main.c 
     ../project_pico_libs/packet_generation.c
-    chip_helpers/chip_helpers.c
 )
 include_directories(../project_pico_libs ./build ./chip_helpers)
 target_link_libraries(pio_backscatter PRIVATE pico_stdlib hardware_pio)
