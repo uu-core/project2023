@@ -1,0 +1,40 @@
+SET  pins   1  ; switch output off
+OUT     y  32          ; baud config for frequency
+WAIT 0 pin 3
+.wrap_target ; main loop
+get_symbol:
+    OUT  x  1          ; get data bit
+    JMP !x  section_wait    ; jmp if x is zero
+    OUT  x  1          ; get data bit
+    JMP !x  send_b10   ; jmp if x is zero
+    send_b11:
+        MOV x  y                      ; load baud 1 config
+        loop_1:
+            SET pins 1 [11]   ; for 3906.3 kHz - 12 cycles high
+            SET pins 0 [15]   ; for 3906.3 kHz - 16 cycles low
+            SET pins 1 [2]    ; for 3906.3 kHz - 4 cycles high
+            JMP x-- loop_1    ; 1 cycle
+        SET pins 1 [11]        ; spend 12 cycles of last period on high
+        SET pins 0  [15]      ; spend 16 cycles of last period on low
+        SET pins 1            ; spend 4 cycles of last period on high
+        JMP get_symbol
+    send_b10:
+        MOV x  y                       ; load baud 1 config
+        loop_2:
+            SET pins 0 [3]    ; for 3906.3 kHz - 4 cycles low
+            SET pins 1 [15]   ; for 3906.3 kHz - 16 cycles high
+            SET pins 0 [10]   ; for 3906.3 kHz - 12 cycles low
+            JMP x-- loop_2    ; 1 cycle
+        SET pins 0 [3]        ; spend 4 cycles of last period on low
+        SET pins 1  [15]      ; spend 16 cycles of last period on high
+        SET pins 0  [8]       ; spend 12 cycles of last period on low
+        JMP get_symbol
+    section_wait:
+        MOV x y         ; Do something in the wait section
+        loop_wait:
+            SET pins 0 [30]
+            JMP x-- loop_wait
+        SET pins 0 [28]
+        OUT x 1         ; skip to next symbol
+        JMP get_symbol  ; Example: Jump back to get_symbol
+.wrap
