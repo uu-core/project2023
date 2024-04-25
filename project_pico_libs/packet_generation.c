@@ -75,11 +75,23 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
         buffer[1] = (uint8_t) (file_position & 0x00FF);
         data_start = 2;
     }
-    for (uint8_t i=data_start; i < length; i=i+2) {
+    uint8_t i;
+    // uint8_t staticbuffer[] = {01,10,200,105,56,64,127,32,13,05,156,201}; // For main
+    uint8_t staticbuffer[] = {11,17,220,155,76,34,157,12,3,95,152,24}; // Other txn
+    //printf("DATA START: %hhu \t LENGTH: %d\n", data_start, length);
+    int j=0;
+    for (i=data_start; i < length; i=i+2) {
         uint16_t sample = generate_sample();
-        buffer[i]   = (uint8_t) (sample >> 8);
-        buffer[i+1] = (uint8_t) (sample & 0x00FF);
+        //buffer[i]   = (uint8_t) (sample >> 8);
+        //buffer[i+1] = (uint8_t) (sample & 0x00FF);
+        buffer[i]=staticbuffer[j];
+        buffer[i+1]=staticbuffer[j+1];
+        j+=2;
+        //printf("BUFFER %hhu : %hhu , %hhu \n", i, buffer[i],buffer[i+1]);
     }
+    //buffer[++i] = (uint8_t) 0xEE;
+    //buffer[++i] = (uint8_t) 0xEE;
+
 }
 
 /* including a header to the packet:
