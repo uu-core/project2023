@@ -141,7 +141,7 @@ enum SIGNAL_LEVEL {
 
 };
 
-#define _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN) (INPUT_LEN * 3)
+#define _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN, REPEATS) (INPUT_LEN * 4 * REPEATS)
 #define _signal_calc_len_for_convert_waves_to_lengths(INPUT_LEN) ((INPUT_LEN * 2) + 2)
 #define _signal_calc_len_for_convert_lengths_to_pio_ints(INPUT_LEN) (((7 * (INPUT_LEN-1))/32)+1)
 #define signal_calc_len_for_signal_code(INPUT_LEN)                       \
@@ -151,8 +151,16 @@ enum SIGNAL_LEVEL {
         )                                                                 \
     )
 
-
-int convert_to_signal_code(const uint8_t input_data[],  int input_length, uint32_t output_buffer[],
+/**
+ * Convert the signal data to the control bit for the pio
+ * @param input_data the data to convert
+ * @param input_length the length of the data
+ * @param repeats number of times each waveform should repeat
+ * @param output_buffer where the output will be saved
+ * @param output_length the length of the output buffer, use signal_calc_len_for_signal_code to calculate
+ * @return
+ */
+int convert_to_signal_code(const uint8_t input_data[],  int input_length, int repeats, uint32_t output_buffer[],
                              int output_length);
 
 #endif //PIO_GENERATE__DATA_FUNCS_SIGNAL_GENERATE_HELPERS_H

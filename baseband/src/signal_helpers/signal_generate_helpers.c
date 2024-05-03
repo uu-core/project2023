@@ -8,7 +8,7 @@
 
 /**
 
- TODO: make repeats, right now it only does one cycle per phase
+ DONE: make repeats, right now it only does one cycle per phase~~
  TODO: change input to uint32_t from uint8_t
 
 
@@ -53,17 +53,20 @@ const uint16_t waveforms[4] = {
 
 
 /**
- *
+ * use [_signal_calc_len_for_convert_to_wave_forms] to get size
  * @param input_data  bytes of data, reads each byte MS 2 bits to LS 2 Bits
  * @param output_buffer array that is 4 times input data 2 bits == 1 uint16_t -> 1 byte = 4 uint16_t
  */
-uint16_t *convert_to_wave_forms(const uint8_t input_data[], const int input_length, uint16_t *output_buffer) {
+uint16_t *convert_to_wave_forms(const uint8_t input_data[], const int input_length, const int repeats, uint16_t *output_buffer) {
     int out_index = 0;
     for (int i = 0; i < input_length; ++i) {
         uint8_t i_byte = input_data[i];
         for (int j = 3; j >= 0; --j) {
             uint8_t bits2 = (i_byte >> (j * 2)) & 0b11;
-            output_buffer[out_index++] = waveforms[bits2];
+            for(int k = 0; k < repeats;k++) {
+                output_buffer[out_index++] = waveforms[bits2];
+            }
+
         }
     }
     return output_buffer;
@@ -206,12 +209,12 @@ int convert_lengths_to_pio_ints(const int input_data[], const int input_length,
 }
 
 
-int convert_to_signal_code(const uint8_t input_data[], const int input_length, uint32_t output_buffer[],
+int convert_to_signal_code(const uint8_t input_data[], const int input_length, const int repeats, uint32_t output_buffer[],
                            const int output_length) {
     int waves_length = input_length * 3;
     uint16_t waves_array[waves_length];
     // IDK why but unless you pass a pointer back you can no longer access
-    uint16_t *waves_ptr = convert_to_wave_forms(input_data, input_length, waves_array);
+    uint16_t *waves_ptr = convert_to_wave_forms(input_data, input_length,repeats, waves_array);
     signal_dprint_bytes_arr("waves_ptr->", 2, ".", true, waves_ptr, waves_length);
 
     int lengths_length = (waves_length * 2) + 2;
