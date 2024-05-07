@@ -43,7 +43,7 @@ int main() {
     uint offset1 = pio_add_program(pio_1, &backscatter_pio_0_program);
 
     // changing the clock frequency, 128 MHz to get the correct data rate for O-QPSK
-#define SYS_FREQ_KHZ 64000
+#define SYS_FREQ_KHZ 128000
     if (set_sys_clock_khz(SYS_FREQ_KHZ, true)) {
         printf("clock correct");
     } else {
@@ -52,8 +52,8 @@ int main() {
     printf("HELLO\n");
 
     backscatter_program_init(pio_1, sm1, offset1, PIN_TX1, PIN_TX2); // one antenna setup
-
-//    while (true) {
+int i = 0;
+  while (true) {
 
 //        uint8_t data[] = {0x00};
 //        uint32_t chips[4 * 1];
@@ -63,12 +63,13 @@ int main() {
 //        int pio_data_buffer_len = convert_to_signal_code(
 //                chips, bufferlen, 1, pio_data_buffer,
 //                signal_calc_len_for_signal_code(4 * 1, 1));
-    printf("MADE IT!");
-        pio_sm_put_blocking(pio_1, 0, 0b01100011011111011110110111111111);
-//        if (i == 0) {
+    //printf("MADE IT!");
+        pio_sm_put_blocking(pio_1, 0, 0b11011011011011011011011011011011);
+if (i == 0) {
+    i++;
     gpio_put(2, 1);
     gpio_put(3, 0);
-//        }
+       }
 //
 //        for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
 //
@@ -77,7 +78,7 @@ int main() {
 
 //        while (true) {
 //
-//        }
+        }
     /* put the data to FIFO */
 //    backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
 
