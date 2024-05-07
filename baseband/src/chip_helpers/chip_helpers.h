@@ -18,7 +18,7 @@
  * @param out_buffer_idx the start index to save data in the buffer.
  * @return the next open index in the out_buffer, ie last used index +1, so you can repeatedly call this on a buffer if needed;
  */
-uint32_t data_to_pio_input(const uint8_t in_buffer[], uint32_t in_length, uint32_t out_buffer[], uint32_t out_buffer_idx);
+uint32_t data_to_pio_input(const uint32_t in_buffer[], uint32_t in_length, uint32_t out_buffer[], uint32_t out_buffer_idx);
 
 
 #endif //PICO_EXAMPLES_CHIP_HELPERS_H

@@ -54,8 +54,10 @@ int main() {
     backscatter_program_init(pio_1, sm1, offset1, PIN_TX1, PIN_TX2); // one antenna setup
 int i = 0;
   while (true) {
+        // Valid IEEE 802.15.4 Packet with payload "01 02 03 04 05 06 07" is { 00 00 00 00 A7 14 41 88 01 22 22 34 12 44 44 CD AB 01 02 03 04 05 06 07 17 7E 00 00 00 00 00 00} it is 26 bytes so padd 0 to make it to 32
+        // 00000000 A7144188 01222234 124444CD AB010203 04050607 177E0000 00000000
 
-        uint8_t data[] = {0x00};
+        uint32_t data[] = { 0x00000000,0xA7144188,0x01222234,0x124444CD,0xAB010203,0x04050607,0x177E0000,0x00000000};
         uint32_t chips[4 * 1];
         uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
 
