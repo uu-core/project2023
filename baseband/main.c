@@ -39,7 +39,7 @@ int main() {
     gpio_init(3);
     gpio_set_dir(3, GPIO_OUT);
     gpio_put(3, 1);
-    sleep_ms(1);
+    sleep_ms(5000);
     uint offset1 = pio_add_program(pio_1, &backscatter_pio_0_program);
 
     // changing the clock frequency, 128 MHz to get the correct data rate for O-QPSK
@@ -59,22 +59,22 @@ int i = 0;
         uint32_t chips[4 * 1];
         uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
 
-        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(4 * 1, 1)];
+        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(4 * 1, 4)];
         int pio_data_buffer_len = convert_to_signal_code(
-                chips, bufferlen, 1, pio_data_buffer,
-                signal_calc_len_for_signal_code(4 * 1, 1));
+                chips, bufferlen, 4, pio_data_buffer,
+                signal_calc_len_for_signal_code(4 * 1, 4));
     //printf("MADE IT!");
-        pio_sm_put_blocking(pio_1, 0, 0b11011011011011011011011011011011);
-if (i == 0) {
-    i++;
-    gpio_put(2, 1);
-    gpio_put(3, 0);
+        
+
+       for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
+
+           //sleep_ms(1);
+           pio_sm_put_blocking(pio_1, 0, pio_data_buffer[i]);
+            if (i == 0) {
+                gpio_put(2, 1);
+                gpio_put(3, 0);
+                }
        }
-//
-//        for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
-//
-//            //sleep_ms(1);
-//        }
 
 //        while (true) {
 //

@@ -78,12 +78,10 @@ convert_to_wave_forms(const uint32_t input_data[], const uint32_t input_length, 
                 output_buffer[out_index++] = waveforms[bits2];
                 signal_dprintln("out_index:%d", out_index);
                 signal_bin_bytes("bits2:", ".", bits2, 1, 8);
-                sleep_ms(200);
             }
 
         }
     }
-    sleep_ms(1000);
 //    memcpy(real_output_buffer, output_buffer, output_length * 4);
 
 }
