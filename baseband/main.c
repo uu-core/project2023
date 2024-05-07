@@ -52,35 +52,38 @@ int main() {
     printf("HELLO\n");
 
     backscatter_program_init(pio_1, sm1, offset1, PIN_TX1, PIN_TX2); // one antenna setup
-int i = 0;
-  while (true) {
+
+
+    uint32_t data[] = { 0x00000000,0xA7144188,0x01222234,0x124444CD,0xAB010203,0x04050607,0x177E0000,0x00000000};
+    uint32_t chips[4 * 1];
+    uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
+
+    uint32_t pio_data_buffer[signal_calc_len_for_signal_code(bufferlen, 4)];
+    int pio_data_buffer_len = convert_to_signal_code(
+            chips, bufferlen, 4, pio_data_buffer,
+            signal_calc_len_for_signal_code(bufferlen, 4));
+    printf("MADE IT!");
+    signal_dprint_bytes_arr("output->", 4, "", 0, pio_data_buffer, pio_data_buffer_len);
+
+
+    while (true) {
         // Valid IEEE 802.15.4 Packet with payload "01 02 03 04 05 06 07" is { 00 00 00 00 A7 14 41 88 01 22 22 34 12 44 44 CD AB 01 02 03 04 05 06 07 17 7E 00 00 00 00 00 00} it is 26 bytes so padd 0 to make it to 32
         // 00000000 A7144188 01222234 124444CD AB010203 04050607 177E0000 00000000
 
-        uint32_t data[] = { 0x00000000,0xA7144188,0x01222234,0x124444CD,0xAB010203,0x04050607,0x177E0000,0x00000000};
-        uint32_t chips[4 * 1];
-        uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
 
-        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(bufferlen, 4)];
-        int pio_data_buffer_len = convert_to_signal_code(
-                chips, bufferlen, 4, pio_data_buffer,
-                signal_calc_len_for_signal_code(bufferlen, 4));
-    //printf("MADE IT!");
-        
+        for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
 
-       for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
-
-           //sleep_ms(1);
-           pio_sm_put_blocking(pio_1, 0, pio_data_buffer[i]);
+            //sleep_ms(1);
+            pio_sm_put_blocking(pio_1, 0, pio_data_buffer[i]);
             if (i == 0) {
                 gpio_put(2, 1);
                 gpio_put(3, 0);
-                }
-       }
+            }
+        }
 
 //        while (true) {
 //
-        }
+    }
     /* put the data to FIFO */
 //    backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
 
