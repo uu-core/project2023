@@ -190,12 +190,13 @@ int convert_lengths_to_pio_ints(const int input_data[], const uint32_t input_len
     bool is_first_high = input_data[0] == 1;
 
 
-    int bit_idx = 0;
+     int bit_idx = 0;
     int output_buffer_idx = 0;
+    // clear output buffer first index, others are cleared by bitset func
+    output_buffer[output_buffer_idx] = 0;
     if (is_first_high) {
         // the pio starts low so make only do 4 low at first
         // then start the high based on the first length value
-        output_buffer[0] = 0;
         bit_idx += 1;
     }
     signal_bin_bytes("\t", ".", output_buffer[0], 4, 32);
