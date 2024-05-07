@@ -55,14 +55,14 @@ int main() {
 int i = 0;
   while (true) {
 
-//        uint8_t data[] = {0x00};
-//        uint32_t chips[4 * 1];
-//        uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
+        uint8_t data[] = {0x00};
+        uint32_t chips[4 * 1];
+        uint32_t bufferlen = data_to_pio_input(data, 1, chips, 0);
 
-//        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(4 * 1, 1)];
-//        int pio_data_buffer_len = convert_to_signal_code(
-//                chips, bufferlen, 1, pio_data_buffer,
-//                signal_calc_len_for_signal_code(4 * 1, 1));
+        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(4 * 1, 1)];
+        int pio_data_buffer_len = convert_to_signal_code(
+                chips, bufferlen, 1, pio_data_buffer,
+                signal_calc_len_for_signal_code(4 * 1, 1));
     //printf("MADE IT!");
         pio_sm_put_blocking(pio_1, 0, 0b11011011011011011011011011011011);
 if (i == 0) {

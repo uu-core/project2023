@@ -83,7 +83,6 @@
         signal_dputs("]");\
         signal_dputs("\n");\
     })
-
 #define signal_bin_bytes_num(MSG, BYTE_SEP, BYTES, BYTES_LEN, BITS)                                                            \
     ({                                                                                                           \
         signal_dputs(MSG);                                                                                       \

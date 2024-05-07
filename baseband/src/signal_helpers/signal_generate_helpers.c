@@ -3,6 +3,10 @@
 //
 
 #include <stdbool.h>
+#include <string.h>
+#include <sys/unistd.h>
+#include <pico/time.h>
+#include <malloc.h>
 #include "signal_generate_helpers.h"
 
 
@@ -57,20 +61,30 @@ const uint16_t waveforms[4] = {
  * @param input_data  bytes of data, reads each byte MS 2 bits to LS 2 Bits
  * @param output_buffer array that is 4 times input data 2 bits == 1 uint16_t -> 1 byte = 4 uint16_t
  */
-uint16_t *
-convert_to_wave_forms(const uint32_t input_data[], const uint32_t input_length, const int repeats, uint16_t *output_buffer) {
+void
+convert_to_wave_forms(const uint32_t input_data[], const uint32_t input_length, const int repeats,
+                      uint16_t *output_buffer, const uint32_t output_length) {
+
+//    uint16_t output_buffer[output_length];
     int out_index = 0;
+
     for (int i = 0; i < input_length; ++i) {
+        signal_dprintln("input_length:%lu, output_length:%lu, out_index:%d", input_length, output_length, out_index);
         uint32_t i_byte = input_data[i];
+        signal_bin_bytes("i_byte:", ".", i_byte, 4, 32);
         for (int j = 15; j >= 0; --j) {
             uint8_t bits2 = (i_byte >> (j * 2)) & 0b11;
             for (int k = 0; k < repeats; k++) {
                 output_buffer[out_index++] = waveforms[bits2];
+                signal_dprintln("out_index:%d", out_index);
+                signal_bin_bytes("bits2:", ".", bits2, 1, 8);
+                sleep_ms(200);
             }
 
         }
     }
-    return output_buffer;
+    sleep_ms(1000);
+//    memcpy(real_output_buffer, output_buffer, output_length * 4);
 
 }
 
@@ -84,8 +98,8 @@ convert_to_wave_forms(const uint32_t input_data[], const uint32_t input_length, 
  * @return the length of the data written to [output_buffer] maybe shorter than [output_buffer_size]
  */
 uint32_t convert_waves_to_lengths(const uint16_t input_data[],
-                             const uint32_t input_length, int output_buffer[],
-                             const uint32_t output_buffer_size) {
+                                  const uint32_t input_length, int output_buffer[],
+                                  const uint32_t output_buffer_size) {
 
 
     int output_index = 0;
@@ -213,17 +227,20 @@ int convert_lengths_to_pio_ints(const int input_data[], const uint32_t input_len
 int
 convert_to_signal_code(const uint32_t input_data[], uint32_t input_length, int repeats, uint32_t output_buffer[],
                        uint32_t output_length) {
+    signal_dputsln("Starting convert to signal code");
     uint32_t waves_length = input_length * 3;
-    uint16_t waves_array[waves_length];
-    // IDK why but unless you pass a pointer back you can no longer access
-    uint16_t *waves_ptr = convert_to_wave_forms(input_data, input_length, repeats, waves_array);
-    signal_dprint_bytes_arr("waves_ptr->", 2, ".", true, waves_ptr, waves_length);
+    uint16_t *waves_array = malloc(waves_length * sizeof(uint16_t));
 
+    // IDK why but unless you pass a pointer back you can no longer access
+    signal_dputsln("Starting convert_to_wave_forms");
+    convert_to_wave_forms(input_data, input_length, repeats, waves_array, waves_length);
+    signal_dprint_bytes_arr("waves_ptr->", 2, ".", true, waves_array, waves_length);
+    signal_dputsln("Starting convert_waves_to_lengths");
     uint32_t lengths_length = (waves_length * 2) + 2;
     int lengths_array[lengths_length];
-    uint32_t size_of_lengths_array = convert_waves_to_lengths(waves_ptr, waves_length, lengths_array, lengths_length);
+    uint32_t size_of_lengths_array = convert_waves_to_lengths(waves_array, waves_length, lengths_array, lengths_length);
     signal_dprint_int_arr("lengths_array->", lengths_array, size_of_lengths_array);
-    signal_dprintln("output_length:%d", output_length);
+    signal_dprintln("output_length:%lu", output_length);
     int ret = convert_lengths_to_pio_ints(lengths_array, size_of_lengths_array, output_buffer);
     return ret;
 }
