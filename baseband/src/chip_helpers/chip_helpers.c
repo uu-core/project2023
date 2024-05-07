@@ -2,6 +2,7 @@
 // Created by Caden Keese on 4/11/24.
 //
 
+#include <stdbool.h>
 #include "chip_helpers.h"
 
 // the chip codes expanded to fit the O-QPSK
@@ -51,7 +52,7 @@ const uint32_t  expanded_chips[16][2] = {
  * @param is_first if this is the first data being added to the buffer
  * @return the next starting index
  */
-uint append_oqpsk_chip_seq(uint32_t out_buffer[], uint buffer_start_idx, uint8_t seq_half_byte, bool is_first) {
+uint32_t append_oqpsk_chip_seq(uint32_t out_buffer[], uint32_t buffer_start_idx, uint8_t seq_half_byte, bool is_first) {
     if (is_first) {
         out_buffer[buffer_start_idx] = expanded_chips[seq_half_byte][0];
     } else {
@@ -80,8 +81,8 @@ uint append_oqpsk_chip_seq(uint32_t out_buffer[], uint buffer_start_idx, uint8_t
  * @param out_buffer_idx the start index to save data in the buffer.
  * @return the next open index in the out_buffer, ie last used index +1, so you can repeatedly call this on a buffer if needed;
  */
-uint data_to_pio_input(const uint8_t in_buffer[], uint in_length, uint32_t out_buffer[], uint out_buffer_idx) {
-    for (uint i = 0; i < in_length; ++i) {
+uint32_t data_to_pio_input(const uint8_t in_buffer[], uint32_t in_length, uint32_t out_buffer[], uint32_t out_buffer_idx) {
+    for (uint32_t i = 0; i < in_length; ++i) {
         
         uint8_t i_byte = in_buffer[i];
         uint8_t low = i_byte & 0x0F;

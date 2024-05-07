@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+
 // debug print functions
 
 // from the LSB/ right most byte == 0
@@ -14,7 +15,7 @@
     ((uint8_t) (SRC >> (8*BYTE_IDX)) & 0xFF)
 
 
-//#define SIGNAL_DEBUG
+#define SIGNAL_DEBUG
 //#define SIGNAL_DEBUG_NO_PRINT_LINE
 
 #ifndef SIGNAL_DEBUG
@@ -24,8 +25,8 @@
 #define signal_dputsln(MSG) ((void)0)
 #define signal_bin(MSG, BYTE, BITS) ((void)0)
 #define signal_binln(MSG, BYTE, BITS) ((void)0)
-#define signal_dprint_int_arr(MSG,ARRAY,ARRAY_LEN) ((void)0)
-#define signal_dprint_bytes_arr(MSG, NUM_BYTES,BYTE_SEP,INCLUDE_INDEXES, ARRAY, ARRAY_LEN) ((void)0)
+#define signal_dprint_int_arr(MSG, ARRAY, ARRAY_LEN) ((void)0)
+#define signal_dprint_bytes_arr(MSG, NUM_BYTES, BYTE_SEP, INCLUDE_INDEXES, ARRAY, ARRAY_LEN) ((void)0)
 #define signal_bin_bytes(MSG, BYTE_SEP, BYTES, BYTES_LEN, BITS) ((void)0)
 #else // SIGNAL_DEBUG
 #define SIGNAL_DEBUG_BYTE_TO_BINARY_PATTERN \
@@ -144,10 +145,10 @@ enum SIGNAL_LEVEL {
 #define _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN, REPEATS) (INPUT_LEN * 4 * REPEATS)
 #define _signal_calc_len_for_convert_waves_to_lengths(INPUT_LEN) ((INPUT_LEN * 2) + 2)
 #define _signal_calc_len_for_convert_lengths_to_pio_ints(INPUT_LEN) (((7 * (INPUT_LEN-1))/32)+1)
-#define signal_calc_len_for_signal_code(INPUT_LEN)                       \
+#define signal_calc_len_for_signal_code(INPUT_LEN, REPEATS)                       \
     _signal_calc_len_for_convert_lengths_to_pio_ints(                    \
         _signal_calc_len_for_convert_waves_to_lengths(                      \
-            _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN)       \
+            _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN, REPEATS)       \
         )                                                                 \
     )
 
@@ -158,9 +159,9 @@ enum SIGNAL_LEVEL {
  * @param repeats number of times each waveform should repeat
  * @param output_buffer where the output will be saved
  * @param output_length the length of the output buffer, use signal_calc_len_for_signal_code to calculate
- * @return
+ * @return the length of the filled buffer
  */
-int convert_to_signal_code(const uint8_t input_data[],  int input_length, int repeats, uint32_t output_buffer[],
-                             int output_length);
+int convert_to_signal_code(const uint32_t input_data[], uint32_t input_length, int repeats, uint32_t output_buffer[],
+                           uint32_t output_length);
 
 #endif //PIO_GENERATE__DATA_FUNCS_SIGNAL_GENERATE_HELPERS_H
