@@ -107,6 +107,7 @@ get_symbol:
 #define PIO_MIN_RX_BW 844048
 
 static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1, uint pin2){
+   set_sys_clock_khz(128000, true); // set clock to 128 MHz
    pio_gpio_init(pio, pin1);
    pio_sm_set_consecutive_pindirs(pio, sm, pin1, 1, true);
    pio_gpio_init(pio, pin2);
