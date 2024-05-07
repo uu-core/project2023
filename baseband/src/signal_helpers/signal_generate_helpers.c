@@ -103,7 +103,7 @@ uint32_t convert_waves_to_lengths(const uint16_t input_data[],
     int output_index = 0;
     uint32_t lengths_size = (input_length * 2) + 2; // max possible size
     if (output_buffer_size < lengths_size) {
-        signal_dprintln("!!! output_buffer_size: %d, is less than needed length: %d!", output_buffer_size,
+        signal_dprintln("!!! output_buffer_size: %lu, is less than needed length: %lu!", output_buffer_size,
                         lengths_size);
         return -1;
     }
@@ -159,7 +159,7 @@ uint32_t convert_waves_to_lengths(const uint16_t input_data[],
         //save the count in the next spot in the array
         output_buffer[output_index++] = count;
     }
-    signal_dprintln("lengths_index:%d, lengths_size:%d", output_index, lengths_size);
+    signal_dprintln("lengths_index:%d, lengths_size:%lu", output_index, lengths_size);
 
     signal_dprint_int_arr("LENGTHS: ", output_buffer, output_index);
 
@@ -241,6 +241,9 @@ convert_to_signal_code(const uint32_t input_data[], uint32_t input_length, int r
     signal_dprint_int_arr("lengths_array->", lengths_array, size_of_lengths_array);
     signal_dprintln("output_length:%lu", output_length);
     int ret = convert_lengths_to_pio_ints(lengths_array, size_of_lengths_array, output_buffer);
+    // free waves array
+    free(waves_array);
+
     return ret;
 }
 
