@@ -141,9 +141,10 @@ enum SIGNAL_LEVEL {
 
 };
 
-#define _signal_calc_len_for_convert_to_wave_forms(INPUT_LEN, REPEATS) (INPUT_LEN * 4 * REPEATS)
-#define _signal_calc_len_for_convert_waves_to_lengths(INPUT_LEN) ((INPUT_LEN * 2) + 2)
-#define _signal_calc_len_for_convert_lengths_to_pio_ints(INPUT_LEN) (((7 * (INPUT_LEN-1))/32)+1)
+#define _signal_calc_len_for_chip_length(NUMBER_INTS) (NUMBER_INTS * 16)
+#define _signal_calc_len_for_convert_to_wave_forms(CHIPS_LEN, REPEATS) (CHIPS_LEN / 2 * REPEATS)
+#define _signal_calc_len_for_convert_waves_to_lengths(WAVE_FORMS) ((WAVE_FORMS * 3) + 1)
+#define _signal_calc_len_for_convert_lengths_to_pio_ints(WAVELENGTH_LEN) (WAVELENGTH_LEN * 7 / 32)
 #define signal_calc_len_for_signal_code(INPUT_LEN, REPEATS)                       \
     _signal_calc_len_for_convert_lengths_to_pio_ints(                    \
         _signal_calc_len_for_convert_waves_to_lengths(                      \
