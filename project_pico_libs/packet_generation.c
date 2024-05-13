@@ -30,6 +30,53 @@ uint8_t *packet_hdr_template(uint16_t receiver){
     }
 }
 
+
+/*
+Chip translation according to Rhode and Schwarz O-QPSK modulation
+should take in a 8-bit value where only the 4 lowest bits are used
+*/
+uint32_t qpsk_chip_translation(char bit_sequence){
+    switch (bit_sequence)
+    {
+    case 0b0000:
+        return 0b11101101100111000011010100100010;
+    case 0b0001:
+        return 0b11101101100111000011010100100010;
+    case 0b0010:
+        return 0b00101110110110011100001101010010;
+    case 0b0011:
+        return 0b00100010111011011001110000110101;
+    case 0b0100:
+        return 0b01010010001011101101100111000011;
+    case 0b0101:
+        return 0b00110101001000101110110110011100;
+    case 0b0110:
+        return 0b11000011010100100010111011011001;
+    case 0b0111:
+        return 0b10011100001101010010001011101101;
+    case 0b1000:
+        return 0b10001100100101100000011101111011;
+    case 0b1001:
+        return 0b10111000110010010110000001110111;
+    case 0b1010:
+        return 0b01111011100011001001011000000111;
+    case 0b1011:
+        return 0b01110111101110001100100101100000;
+    case 0b1100:
+        return 0b00000111011110111000110010010110;
+    case 0b1101:
+        return 0b01100000011101111011100011001001;
+    case 0b1110:
+        return 0b10010110000001110111101110001100;
+    case 0b1111:
+        return 0b11001001011000000111011110111000;
+    default:
+        printf("ERROR: chip_translation has been used with an invalid bit sequence.");
+        return -1;
+    }
+}
+
+
 /* 
  * generate of a uniform random number.
  */
