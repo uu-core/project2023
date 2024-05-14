@@ -144,8 +144,8 @@ void generate_static_data(uint8_t *buffer, uint8_t length, bool include_index) {
     for (uint8_t i=data_start; i < length; i=i+2) {
         // change below sample to alter messsage sent
         uint16_t sample = 0b0000000011111111;
-        buffer[i]   = (uint8_t) (sample >> 8);
-        buffer[i+1] = (uint8_t) (sample & 0x00FF);
+        buffer[i]   = (uint8_t) 0b00000000;
+        buffer[i+1] = (uint8_t) 0b11111111;
     }
 }
 

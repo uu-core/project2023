@@ -44,8 +44,8 @@ OUT isr 32
 
 ; --- get_symbol = 128 cycles ---
 get_symbol:
-    OUT y 2 ; 1 cycle
-    MOV x y ; 1 cycle
+    OUT y 2 side 0; 1 cycle
+    MOV x y side 0; 1 cycle
     
     Loop_0:
          JMP x-- Loop_0
@@ -63,7 +63,8 @@ get_symbol:
         SET pins 0 side 0
         JMP x-- Loop_Send
 
-    JMP y-- Case_00 side 1; 1 cycle to reduce y (if jmp 0-- evaluates to true)
+    ;JMP y-- Case_00 side 1; 1 cycle to reduce y (if jmp 0-- evaluates to true)
+    MOV y y side 1
     Case_00:
         JMP y-- Case_01 side 1  ;1 instruction => 122 instructions
         SET pins 0 side 0 [1]   ;2 instructions
@@ -78,7 +79,8 @@ get_symbol:
         JMP y-- Case_11 side 0; 1 cycle = 126 cycles
         JMP get_symbol side 1 [1] ; 2 instructions => 128 instructions
     Case_11:
-        JMP get_symbol side 1 ; 1 instructions if 11 = 128 instructions 
+        JMP get_symbol side 1 ; 1 instructions if 11 = 128 instructions
+        ;JMP y-- get_symbol side 1
 
 % c-sdk {
 #include "pico/stdlib.h"
