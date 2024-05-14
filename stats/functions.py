@@ -129,14 +129,15 @@ def compute_ber_packet(df_row, PACKET_LEN=32):
     pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
     expected_data = payload_for_peudo_seq(pseudoseq,PACKET_LEN)
     # compute the bit errors
-    return compute_bit_errors(payload[2:], expected_data, PACKET_LEN=PACKET_LEN)
+    return (compute_bit_errors(payload[2:], expected_data, PACKET_LEN=PACKET_LEN), 8*(2+len(payload[2:]))) # 2+ for pseudo sequence
 
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
 def compute_ber(df, PACKET_LEN=32):
     # seq number initialization
     print(f"The total number of packets transmitted by the tag is {df.seq[len(df)-1]+1}.")
     if len(df) > 0:
-        return sum([compute_ber_packet(row,PACKET_LEN) for (_,row) in df.iterrows()])/(len(df)*PACKET_LEN)
+        errors,total = zip(*[compute_ber_packet(row,PACKET_LEN) for (_,row) in df.iterrows()])
+        return sum(errors)/sum(total)
     else:
         print("Warning, the log-file seems empty.")
         return 0.5
