@@ -2,6 +2,7 @@
 An educational project on backscatter using Raspberry Pi Pico
 
 ## --> Updates <--
+- 14.05.2024: Updated analysis script, seperating bit error rate from packet error rate.
 - 08.05.2023: Comment about the baud-rate: Notice that the baud-rate of the CC1352 is specified from 20-1000 kBaud (we tested it working as low as 30 kBaud with the backscatter setup). The CC2500 would allow for lower baud-rate configurations (specified down-to 1.2 kBaud). The timing of the state-machine is precise (no significant error or clock-difference needs to be considered).
 - 27.04.2023: The Python script (generating the PIO) generated state machines which did not compile due to a mistake by splitting the required delay over a number of instructions. The issue has been resolved. The C-implementation was not affected by this issue.
 - 29.03.2023: We added a new library `project_pico_libs/backscatter.c`. The `baseband` example demonstrates how to generate a PIO-file (python script) and assemble it using `pioasm`. This has the disadvantage that testing different baseband settings require a re-compilation for each setting. Therefore, we implemented a automatic generation of the state-machine binary in C (`project_pico_libs/backscatter.c`) and demonstrate its use in `carrier-receiver-baseband`. This enables changing the baseband settings on-the-fly for a convenient automation of tests.
