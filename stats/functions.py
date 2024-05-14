@@ -8,6 +8,7 @@
 from io import StringIO
 import matplotlib.pyplot as plt
 import numpy as np
+from functools import cache
 import pandas as pd
 from numpy import NaN
 from pylab import rcParams
@@ -69,18 +70,6 @@ def compute_bit_errors(payload, sequence, PACKET_LEN=32):
         )
     )
 
-# deal with seq field overflow problem, generate ground-truth sequence number
-def replace_seq(df, MAX_SEQ):
-    df['new_seq'] = None
-    count = 0
-    df.iloc[0, df.columns.get_loc('new_seq')] = df.seq[0]
-    for idx in range(1,len(df)):
-        if df.seq[idx] < df.seq[idx-1] - 50:
-            count += 1
-            # for the counter reset scanrio, replace the seq value with order
-        df.iloc[idx, df.columns.get_loc('new_seq')] = MAX_SEQ*count + df.seq[idx]
-    return df
-
 # a 8-bit random number generator with uniform distribution
 def rnd(seed):
     A1 = 1664525
@@ -125,56 +114,33 @@ def generate_data(NUM_16RND, TOTAL_NUM_16RND):
         df.loc[i, "data"] = payload_data
     return df
 
+file_content = None
+def payload_for_peudo_seq(pseudo_seq,PACKET_LEN):
+    global file_content
+    if type(file_content) == type(None): # generate data
+        file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
+    if pseudo_seq in file_content.index:
+        return file_content.loc[pseudo_seq, 'data']
+    else:
+        return file_content.loc[0, 'data'] # TODO: pseudo sequence not within the first expected range
+
+def compute_ber_packet(df_row, PACKET_LEN=32):
+    payload = parse_payload(df_row.payload)
+    pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
+    expected_data = payload_for_peudo_seq(pseudoseq,PACKET_LEN)
+    # compute the bit errors
+    return (compute_bit_errors(payload[2:], expected_data, PACKET_LEN=PACKET_LEN), 8*(2+len(payload[2:]))) # 2+ for pseudo sequence
+
 # main function to compute the BER for each frame, return both the error statistics dataframe and in total BER for the received data
-def compute_ber(df, PACKET_LEN=32, MAX_SEQ=256):
-    packets = len(df)
-
-    # dataframe records the bit error for each packet, use the seq number as index
-    error = pd.DataFrame(index=range(df.seq[0], df.seq[packets-1]+1), columns=['bit_error_tmp'])
+def compute_ber(df, PACKET_LEN=32):
     # seq number initialization
-    print(f"The total number of packets transmitted by the tag is {df.seq[packets-1]+1}.")
-    # bit_errors list initialization
-    error.bit_error_tmp = [list() for x in range(len(error))]
-    # compute in total transmitted file size
-    file_size = len(error) * PACKET_LEN * 8
-    # generate the correct file
-    file_content = generate_data(int(PACKET_LEN/2), TOTAL_NUM_16RND)
-    #print(file_content)
-    last_pseudoseq = 0 # record the previous pseudoseq
-    # start count the error bits
-    for idx in range(packets):
-        # return the matched row index for the specific seq number in log file
-        error_idx = df.seq[idx]
-        # No packet with this sequence was received, the entire packet payload being considered as error (see below)
-        if error_idx not in error.index:
-            continue
-        #parse the payload and return a list, each element is 8-bit data, the first 16-bit data is pseudoseq
-        payload = parse_payload(df.payload[idx])
-        pseudoseq = int(((payload[0]<<8) - 0) + payload[1])
-        # deal with bit error in pseudoseq
-        if pseudoseq not in file_content.index: pseudoseq = last_pseudoseq + PACKET_LEN
-        # compute the bit errors
-        error.bit_error_tmp[error_idx].append(compute_bit_errors(payload[2:], file_content.loc[pseudoseq, 'data'], PACKET_LEN=PACKET_LEN))
-        last_pseudoseq = pseudoseq
-
-    # initialize the total bit error counter for entire file
-    counter = 0
-    bit_error = []
-    # for the lost packet
-    for l in error.bit_error_tmp:
-        if l == []:
-            tmp = PACKET_LEN*8
-            counter += tmp # when the seq number is lost, consider the entire packet payload as error
-        else:
-            tmp =  min(l)
-            counter += tmp # when the seq number received several times, consider the minimum error
-        bit_error.append(tmp)
-    # update the bit_error column
-    error['bit_error'] = bit_error
-    error = error.drop(columns='bit_error_tmp')
-    #print("Error statistics dataframe is:")
-    #print(error)
-    return counter / file_size, error, file_content
+    print(f"The total number of packets transmitted by the tag is {df.seq[len(df)-1]+1}.")
+    if len(df) > 0:
+        errors,total = zip(*[compute_ber_packet(row,PACKET_LEN) for (_,row) in df.iterrows()])
+        return sum(errors)/sum(total)
+    else:
+        print("Warning, the log-file seems empty.")
+        return 0.5
 
 # plot radar chart
 def radar_plot(metrics):
