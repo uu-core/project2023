@@ -26,11 +26,13 @@ add_executable(pio_backscatter
 pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio)
 # however, alternatively you can choose to generate it somewhere else (in this case in the source tree for check in)
 #pico_generate_pio_header(pio_backscatter ${CMAKE_CURRENT_LIST_DIR}/backscatter.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR})
-FILE(GLOB_RECURSE SRC_FILES "src/**.c")
+FILE(GLOB_RECURSE C_SRC_FILES "src/**.c")
+FILE(GLOB_RECURSE CPP_SRC_FILES "src/**.cpp")
 target_sources(pio_backscatter PRIVATE
-        main.c
+        main.cpp
         ../project_pico_libs/packet_generation.c
-        ${SRC_FILES}
+        ${C_SRC_FILES}
+        ${CPP_SRC_FILES}
 )
 
 include_directories(BEFORE ../project_pico_libs ./build src/chip_helpers src/signal_helpers)
