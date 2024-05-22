@@ -3,3 +3,7 @@
 **/__pycache__/*
 **/.ipynb_checkpoints/*
 **/.DS_Store
+**/cmake-build-debug/
+**/.idea/*
+**/tio_**
+

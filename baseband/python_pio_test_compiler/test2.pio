@@ -1,0 +1,11 @@
+.wrap_target
+    SET  pins   0 [0];this may need to be 1, depending on if the pio sets low/high before or after this instruction
+    loop1:
+        OUT     x  1
+        JMP x-- loop1
+    SET  pins   1 [0] ; this may need to be 1, depending on if the pio sets low/high before or after this instruction
+    loop2:
+        OUT     y  1
+        JMP y-- loop2
+.wrap
+
