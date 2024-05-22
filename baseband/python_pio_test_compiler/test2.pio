@@ -8,3 +8,4 @@
         OUT     y  1
         JMP y-- loop2
 .wrap
+

@@ -285,6 +285,8 @@ int main() {
     printf("Length of PPDU: %ld\n", len_inputBuffer);
 
 
+
+
     while (true) {
 
 //        /* generate new data */
@@ -299,10 +301,17 @@ int main() {
 //        for (uint8_t i=0; i < buffer_size(PAYLOADSIZE, HEADER_LEN); i++) {
 //            buffer[i] = ((uint32_t) message[4*i+3]) | (((uint32_t) message[4*i+2]) << 8) | (((uint32_t) message[4*i+1]) << 16) | (((uint32_t)message[4*i]) << 24);
 //        }
-        uint32_t outbuffer[4 * len_inputBuffer];
-        uint bufferlen = data_to_pio_input(PPDU, len_inputBuffer, outbuffer, 0);
-        for (uint32_t i = 0; i < bufferlen; i++) {
-            pio_sm_put_blocking(pio_1, 0, outbuffer[i]);
+//        uint32_t outbuffer[4 * len_inputBuffer];
+//        uint bufferlen = data_to_pio_input(PPDU, len_inputBuffer, outbuffer, 0);
+        uint8_t data[] = {0x00};
+        uint32_t chips[4*1];
+        uint bufferlen = data_to_pio_input(data, 1, chips, 0);
+
+        uint32_t pio_data_buffer[signal_calc_len_for_signal_code(4*1, 1)];
+        int pio_data_buffer_len =  convert_to_signal_code(chips, bufferlen, 1,pio_data_buffer, signal_calc_len_for_signal_code(4*1, 1));
+        printf("MADE IT!");
+        for (uint32_t i = 0; i < pio_data_buffer_len; i++) {
+            pio_sm_put_blocking(pio_1, 0, pio_data_buffer[i]);
             if (i == 0) {
                 gpio_put(2, 1);
                 gpio_put(3, 0);
@@ -310,6 +319,9 @@ int main() {
             //sleep_ms(1);
         }
 
+        while(true){
+
+        }
         /* put the data to FIFO */
         //backscatter_send(pio_1,pio_2,buffer,buffer_size(PAYLOADSIZE, HEADER_LEN));
 

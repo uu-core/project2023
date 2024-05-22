@@ -7,12 +7,13 @@
 ;
 
 .program backscatter_pio_0
+ WAIT 0 pin 3
 .wrap_target
-    SET  pins   0 [0];this may need to be 1, depending on if the pio sets low/high before or after this instruction
+    SET  pins   0 [1];this may need to be 1, depending on if the pio sets low/high before or after this instruction
     loop1:
         OUT     x  1
         JMP x-- loop1
-    SET  pins   1 [0] ; this may need to be 1, depending on if the pio sets low/high before or after this instruction
+    SET  pins   1 [1] ; this may need to be 1, depending on if the pio sets low/high before or after this instruction
     loop2:
         OUT     y  1
         JMP y-- loop2
@@ -24,13 +25,13 @@
 % c-sdk {
 #include "pico/stdlib.h"
 #include "hardware/clocks.h"
-#define min(x, y) (((x) < (y)) ? (x) : (y))
+//#define min(x, y) (((x) < (y)) ? (x) : (y))
 #define PIO_BAUDRATE 100000
 #define PIO_CENTER_OFFSET 4836310
 #define PIO_DEVIATION 372024
 #define PIO_MIN_RX_BW 844048
 
-static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1, uint pin2){
+static inline void backscatter_program_init(PIO pio, uint sm, uint offset, uint pin1){
   // Initialize PIO 1
   if(sm == 0) {
      pio_gpio_init(pio, pin1);
