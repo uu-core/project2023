@@ -32,8 +32,12 @@
 #define RX_CSN                  17
 #define RX_GDO0_PIN             21
 
+#define TAG_RESET_PIN           20
+
 #define RX_BUFFER_SIZE          64
 #define EVENT_QUEUE_LENGTH      20 
+
+#define BUTTON_DEBOUNCE_DELAY   100
 
 #define SIDLE                 0x36
 #define   SRX                 0x34
@@ -72,7 +76,8 @@ typedef struct packet_status Packet_status;
 typedef enum _event_t{
     no_evt          = 0,
     rx_assert_evt   = 1,
-    rx_deassert_evt = 2
+    rx_deassert_evt = 2,
+    tag_reset_evt   = 3
 } event_t;
 
 // Address Config = No address check 

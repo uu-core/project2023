@@ -75,6 +75,8 @@ RF_setting cc2500_receiver[20] = {
   {.address = 0x26, .value = 0x11}, // CC2500_FSCAL0: Frequency Synthesizer Calibration
 };
 
+unsigned long     btn_time=0;
+
 void cs_select_rx() {
     asm volatile("nop \n nop \n nop");
     gpio_put(RX_CSN, 0);  // Active low
@@ -154,6 +156,15 @@ void receiver_isr(uint gpio, uint32_t events)
                     break;
             }
         break;
+        case TAG_RESET_PIN:
+            if ((to_ms_since_boot(get_absolute_time())-btn_time) > BUTTON_DEBOUNCE_DELAY) {
+                btn_time = to_ms_since_boot(get_absolute_time());
+                if(events == GPIO_IRQ_EDGE_FALL){
+                    evt = tag_reset_evt;
+                    queue_try_add(&event_queue, &evt);
+                }
+            }
+        break;
     }
 }
 
@@ -171,6 +182,7 @@ void setupReceiver(){
 
     /* GDO0 setup as interrupt */
     gpio_set_irq_enabled_with_callback(RX_GDO0_PIN, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &receiver_isr);
+    gpio_set_irq_enabled(TAG_RESET_PIN, GPIO_IRQ_EDGE_FALL, true); 
 
 }
 

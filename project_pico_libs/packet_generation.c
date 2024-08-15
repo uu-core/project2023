@@ -14,8 +14,11 @@
 #define DEFAULT_SEED 0xABCD
 uint32_t seed = DEFAULT_SEED;
 
-uint8_t packet_hdr_2500[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00};    // CC2500, the last two byte one for the payload length. and another is seq number
-uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51, 0xde, 0x00, 0x00};    // CC1352P7, the last two byte one for the payload length. and another is seq number
+uint8_t packet_hdr_2500[HEADER_LEN_UNCODED] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00};    // CC2500, the last two byte one for the payload length. and another is seq number
+uint8_t packet_hdr_1352[HEADER_LEN_UNCODED] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51, 0xde, 0x00, 0x00};    // CC1352P7, the last two byte one for the payload length. and another is seq number
+uint8_t packet_hdr_1352_lrm[HEADER_LEN_LRM] = {0xaa, 0xaa, 0xaa, 0xaa, 0xcc, 0xc3, 0xc3, 0xcc, 0xc3, 0x3c, 
+                                            0x33, 0x33, 0xcc, 0xc3, 0xc3, 0xcc, 0xc3, 0x3c, 0x33, 0x33,
+                                            0x33, 0x3c, 0x3c, 0x33, 0x3c, 0xc3, 0xcc, 0xcc, 0x00, 0x00};       // CC1352P7, LRM is hardcoded and cannot change except for the preamble
 
 /*
  * obtain the packet header template for the corresponding radio
@@ -25,9 +28,12 @@ uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51,
 uint8_t *packet_hdr_template(uint16_t receiver){
     if(receiver == 2500){
         return packet_hdr_2500;
-    }else{
+    }else if(receiver == 1352){
         return packet_hdr_1352;
+    }else{
+        return packet_hdr_1352_lrm;
     }
+    
 }
 
 /* 
@@ -91,14 +97,14 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index) {
  * seq: sequence number of the packet
  * header_template: obtained using packet_hdr_template()
  */
-void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template) {
+void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template, int header_sel_size) {
     /* fill in the header sequence*/
-    for(int loop = 0; loop < HEADER_LEN-2; loop++) {
+    for(int loop = 0; loop < header_sel_size-2; loop++) {
         packet[loop] = header_template[loop];
-        }
+    }
     /* add the payload length*/
-    packet[HEADER_LEN-2] = 1 + PAYLOADSIZE; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
+    packet[header_sel_size-2] = 1 + PAYLOADSIZE; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
     /* add the packet as sequence number. */
-    packet[HEADER_LEN-1] = seq;
+    packet[header_sel_size-1] = seq;
 }
 

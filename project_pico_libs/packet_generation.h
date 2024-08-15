@@ -12,11 +12,14 @@
 #include <string.h>
 #include <math.h>
 #include "pico/stdlib.h"
+#include "cc13xx_lrm_m2.h"
 #include "packet_generation.h"
 
 #define PAYLOADSIZE 14
-#define HEADER_LEN  10 // 8 header + length + seq
+#define HEADER_LEN_UNCODED  10 // 8 header + length + seq
+#define HEADER_LEN_LRM  30
 #define buffer_size(x, y) (((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1)) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
+#define buffer_size2(x, y, r, d) ((r == 13521)? (((2*d*x + y) % 4 == 0) ? ((2*d*x + y) / 4) : ((2*d*x + y) / 4 + 1)):(((x + y) % 4 == 0) ? ((x + y) / 4) : ((x + y) / 4 + 1))) // define the buffer size with ceil((PAYLOADSIZE+HEADER_LEN)/4)
 
 #ifndef MINMAX
 #define MINMAX
@@ -57,6 +60,6 @@ void generate_data(uint8_t *buffer, uint8_t length, bool include_index);
  * packet: buffer to be updated with the header
  * seq: sequence number of the packet
  */
-void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template);
+void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template, int header_sel_size);
 
 #endif
