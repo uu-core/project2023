@@ -16,6 +16,7 @@ uint32_t seed = DEFAULT_SEED;
 
 uint8_t packet_hdr_2500[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0xd3, 0x91, 0xd3, 0x91, 0x00, 0x00};    // CC2500, the last two byte one for the payload length. and another is seq number
 uint8_t packet_hdr_1352[HEADER_LEN] = {0xaa, 0xaa, 0xaa, 0xaa, 0x93, 0x0b, 0x51, 0xde, 0x00, 0x00};    // CC1352P7, the last two byte one for the payload length. and another is seq number
+ 
 
 /*
  * obtain the packet header template for the corresponding radio
@@ -167,5 +168,31 @@ void add_header(uint8_t *packet, uint8_t seq, uint8_t *header_template) {
     packet[HEADER_LEN-2] = 1 + PAYLOADSIZE; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
     /* add the packet as sequence number. */
     packet[HEADER_LEN-1] = seq;
+}
+//preamble sequence for the QPSK modulation The preamble sequence is defined to be 4 bytes (i.e. 8 symbols) of 0x00.
+//here casted as an integer (4 bytes)
+#define PREAMBLE (int)0
+#define PREAMBLE_LEN 4
+
+//SFD sequence for the QPSK modulation The SFD sequence is defined to be 1 byte (i.e. 2 symbols) of 0xA7.
+#define SFD 0xA7
+#define SFD_LEN 1
+
+//PHY Header is consisting of the length of the payload with size 1 byte.
+#define PHY_HEADER_LEN 1
+
+uint8_t packet_hdr_1352_qpsk[
+
+void add_qpsk_header(uint8_t *packet, uint8_t seq, uint8_t *header_template) {
+    /* fill in the preamble sequence*/
+    for(int i = 0; i < PREAMBLE_LEN; i++) {
+        packet[i] = PREAMBLE;
+    }
+    /* fill in the SFD sequence*/
+    packet[PREAMBLE_LEN] = SFD;
+    /* fill in the PHY header sequence*/
+    packet[PREAMBLE_LEN + SFD_LEN] = PHY_HEADER_LEN + PAYLOADSIZE; // The packet length is defined as the payload data, excluding the length byte and the optional CRC. (cc2500 data sheet, p. 30)
+    /* add the packet as sequence number. */
+    packet[PREAMBLE_LEN + SFD_LEN + PHY_HEADER_LEN] = seq;
 }
 

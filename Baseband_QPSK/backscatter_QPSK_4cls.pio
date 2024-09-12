@@ -17,6 +17,7 @@
 
 
 
+
 ; parameter 1:  b = clock-frequency/baud-rate: in our case fixed at 125 due to speed requirements
 ; parameter 2:  w = 6 (wasted cycles per symbol: OUT -> OUT -> JMP -> JMP -> MOV -> ... -> JMP )            // fixed wasted cycles per symbol
 ; parameter 3: d0 = clock-frequency/send frequency: We are starting with 8 with improvement possibility down to 4.
